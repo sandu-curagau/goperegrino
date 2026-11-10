@@ -1,0 +1,1026 @@
+[
+  {
+    "id": "tejo",
+    "name": "Caminho do Tejo",
+    "destination": "Fátima",
+    "color": "#236b72",
+    "km": 150,
+    "stages": [
+      {
+        "id": 1,
+        "from": "Lisboa",
+        "to": "Parque das Nações",
+        "start": [
+          -9.1327,
+          38.7101
+        ],
+        "end": [
+          -9.096,
+          38.767
+        ],
+        "km": 13,
+        "ascent": 30,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "from": "Parque das Nações",
+        "to": "Vila Franca de Xira",
+        "start": [
+          -9.096,
+          38.767
+        ],
+        "end": [
+          -8.989,
+          38.9537
+        ],
+        "km": 28,
+        "ascent": 65,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "from": "Vila Franca de Xira",
+        "to": "Azambuja",
+        "start": [
+          -8.989,
+          38.9537
+        ],
+        "end": [
+          -8.868,
+          39.0694
+        ],
+        "km": 20,
+        "ascent": 25,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "from": "Azambuja",
+        "to": "Santarém",
+        "start": [
+          -8.868,
+          39.0694
+        ],
+        "end": [
+          -8.6879,
+          39.2362
+        ],
+        "km": 32,
+        "ascent": 105,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "from": "Santarém",
+        "to": "Monsanto",
+        "start": [
+          -8.6879,
+          39.2362
+        ],
+        "end": [
+          -8.7084,
+          39.4621
+        ],
+        "km": 32,
+        "ascent": 150,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "from": "Monsanto",
+        "to": "Fátima",
+        "start": [
+          -8.7084,
+          39.4621
+        ],
+        "end": [
+          -8.6732,
+          39.6313
+        ],
+        "km": 25,
+        "ascent": 440,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "centenario",
+    "name": "Caminho do Centenário",
+    "destination": "Fátima",
+    "color": "#a65a30",
+    "km": 212,
+    "stages": [
+      {
+        "id": 1,
+        "from": "Vila Nova de Gaia",
+        "to": "Espinho",
+        "start": [
+          -8.6135,
+          41.1363
+        ],
+        "end": [
+          -8.6414,
+          41.007
+        ],
+        "km": 19,
+        "ascent": 170,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "from": "Espinho",
+        "to": "Ovar",
+        "start": [
+          -8.6414,
+          41.007
+        ],
+        "end": [
+          -8.6248,
+          40.8584
+        ],
+        "km": 19,
+        "ascent": 70,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "from": "Ovar",
+        "to": "Albergaria-a-Velha",
+        "start": [
+          -8.6248,
+          40.8584
+        ],
+        "end": [
+          -8.4792,
+          40.6945
+        ],
+        "km": 26,
+        "ascent": 210,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "from": "Albergaria-a-Velha",
+        "to": "Águeda",
+        "start": [
+          -8.4792,
+          40.6945
+        ],
+        "end": [
+          -8.4498,
+          40.5753
+        ],
+        "km": 18,
+        "ascent": 175,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "from": "Águeda",
+        "to": "Mealhada",
+        "start": [
+          -8.4498,
+          40.5753
+        ],
+        "end": [
+          -8.4478,
+          40.3782
+        ],
+        "km": 25,
+        "ascent": 225,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "from": "Mealhada",
+        "to": "Coimbra",
+        "start": [
+          -8.4478,
+          40.3782
+        ],
+        "end": [
+          -8.426,
+          40.2089
+        ],
+        "km": 22,
+        "ascent": 185,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "from": "Coimbra",
+        "to": "Condeixa-a-Nova",
+        "start": [
+          -8.426,
+          40.2089
+        ],
+        "end": [
+          -8.498,
+          40.1128
+        ],
+        "km": 16,
+        "ascent": 225,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "from": "Condeixa-a-Nova",
+        "to": "Pombal",
+        "start": [
+          -8.498,
+          40.1128
+        ],
+        "end": [
+          -8.6281,
+          39.9158
+        ],
+        "km": 35,
+        "ascent": 355,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "from": "Pombal",
+        "to": "Fátima",
+        "start": [
+          -8.6281,
+          39.9158
+        ],
+        "end": [
+          -8.6732,
+          39.6313
+        ],
+        "km": 32,
+        "ascent": 465,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "central",
+    "name": "Caminho Português Central",
+    "destination": "Santiago",
+    "color": "#003058",
+    "km": 260,
+    "stages": [
+      {
+        "id": 1,
+        "from": "Porto",
+        "to": "Vilarinho",
+        "start": [
+          -8.611,
+          41.1428
+        ],
+        "end": [
+          -8.6655,
+          41.3313
+        ],
+        "km": 27,
+        "ascent": 220,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "from": "Vilarinho",
+        "to": "Barcelos",
+        "start": [
+          -8.6655,
+          41.3313
+        ],
+        "end": [
+          -8.6152,
+          41.5319
+        ],
+        "km": 27,
+        "ascent": 320,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "from": "Barcelos",
+        "to": "Ponte de Lima",
+        "start": [
+          -8.6152,
+          41.5319
+        ],
+        "end": [
+          -8.5842,
+          41.7674
+        ],
+        "km": 32,
+        "ascent": 290,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "from": "Ponte de Lima",
+        "to": "Rubiães",
+        "start": [
+          -8.5842,
+          41.7674
+        ],
+        "end": [
+          -8.623,
+          41.9013
+        ],
+        "km": 18,
+        "ascent": 550,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "from": "Rubiães",
+        "to": "Valença/Tui",
+        "start": [
+          -8.623,
+          41.9013
+        ],
+        "end": [
+          -8.6449,
+          42.0467
+        ],
+        "km": 21,
+        "ascent": 220,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "from": "Valença/Tui",
+        "to": "O Porriño",
+        "start": [
+          -8.6449,
+          42.0467
+        ],
+        "end": [
+          -8.6188,
+          42.1612
+        ],
+        "km": 19,
+        "ascent": 135,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "from": "O Porriño",
+        "to": "Redondela",
+        "start": [
+          -8.6188,
+          42.1612
+        ],
+        "end": [
+          -8.6093,
+          42.2837
+        ],
+        "km": 16,
+        "ascent": 320,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "from": "Redondela",
+        "to": "Pontevedra",
+        "start": [
+          -8.6093,
+          42.2837
+        ],
+        "end": [
+          -8.6441,
+          42.431
+        ],
+        "km": 20,
+        "ascent": 275,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "from": "Pontevedra",
+        "to": "Caldas de Reis",
+        "start": [
+          -8.6441,
+          42.431
+        ],
+        "end": [
+          -8.6424,
+          42.6049
+        ],
+        "km": 22,
+        "ascent": 215,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "from": "Caldas de Reis",
+        "to": "Padrón",
+        "start": [
+          -8.6424,
+          42.6049
+        ],
+        "end": [
+          -8.6605,
+          42.7388
+        ],
+        "km": 24,
+        "ascent": 260,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "from": "Padrón",
+        "to": "Santiago",
+        "start": [
+          -8.6605,
+          42.7388
+        ],
+        "end": [
+          -8.5447,
+          42.8806
+        ],
+        "km": 34,
+        "ascent": 500,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "costa",
+    "name": "Caminho Português da Costa",
+    "destination": "Santiago",
+    "color": "#317599",
+    "km": 280,
+    "stages": [
+      {
+        "id": 1,
+        "from": "Porto",
+        "to": "Labruge",
+        "start": [
+          -8.611,
+          41.1428
+        ],
+        "end": [
+          -8.729,
+          41.2759
+        ],
+        "km": 24,
+        "ascent": 135,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "from": "Labruge",
+        "to": "Póvoa de Varzim",
+        "start": [
+          -8.729,
+          41.2759
+        ],
+        "end": [
+          -8.7614,
+          41.3794
+        ],
+        "km": 15,
+        "ascent": 55,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "from": "Póvoa de Varzim",
+        "to": "Esposende",
+        "start": [
+          -8.7614,
+          41.3794
+        ],
+        "end": [
+          -8.7821,
+          41.5317
+        ],
+        "km": 22,
+        "ascent": 105,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "from": "Esposende",
+        "to": "Viana do Castelo",
+        "start": [
+          -8.7821,
+          41.5317
+        ],
+        "end": [
+          -8.8287,
+          41.6932
+        ],
+        "km": 27,
+        "ascent": 190,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "from": "Viana do Castelo",
+        "to": "Caminha",
+        "start": [
+          -8.8287,
+          41.6932
+        ],
+        "end": [
+          -8.8387,
+          41.8758
+        ],
+        "km": 28,
+        "ascent": 255,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "from": "Caminha",
+        "to": "Oia",
+        "start": [
+          -8.8387,
+          41.8758
+        ],
+        "end": [
+          -8.8759,
+          42.0007
+        ],
+        "km": 22,
+        "ascent": 225,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "from": "Oia",
+        "to": "Vigo",
+        "start": [
+          -8.8759,
+          42.0007
+        ],
+        "end": [
+          -8.7228,
+          42.2396
+        ],
+        "km": 39,
+        "ascent": 450,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "from": "Vigo",
+        "to": "Redondela",
+        "start": [
+          -8.7228,
+          42.2396
+        ],
+        "end": [
+          -8.6093,
+          42.2837
+        ],
+        "km": 16,
+        "ascent": 210,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "from": "Redondela",
+        "to": "Pontevedra",
+        "start": [
+          -8.6093,
+          42.2837
+        ],
+        "end": [
+          -8.6441,
+          42.431
+        ],
+        "km": 20,
+        "ascent": 275,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "from": "Pontevedra",
+        "to": "Caldas de Reis",
+        "start": [
+          -8.6441,
+          42.431
+        ],
+        "end": [
+          -8.6424,
+          42.6049
+        ],
+        "km": 22,
+        "ascent": 215,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "from": "Caldas de Reis",
+        "to": "Padrón",
+        "start": [
+          -8.6424,
+          42.6049
+        ],
+        "end": [
+          -8.6605,
+          42.7388
+        ],
+        "km": 23,
+        "ascent": 255,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "from": "Padrón",
+        "to": "Santiago",
+        "start": [
+          -8.6605,
+          42.7388
+        ],
+        "end": [
+          -8.5447,
+          42.8806
+        ],
+        "km": 22,
+        "ascent": 485,
+        "description": "Percurso pedestre de demonstração entre {from} e {to}.",
+        "contacts": [
+          {
+            "service": "Polícia local",
+            "number": "000 000 000"
+          },
+          {
+            "service": "Centro de saúde",
+            "number": "000 000 000"
+          }
+        ]
+      }
+    ]
+  }
+]
