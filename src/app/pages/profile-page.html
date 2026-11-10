@@ -1,0 +1,254 @@
+<ion-content>
+  <main class="page">
+    <header class="page-heading">
+      <p class="kicker">GoPeregrino</p>
+      <h1>{{ locale.t('perfil') }}</h1>
+    </header>
+
+    <button class="premium-card" type="button" (click)="store.premiumOpen.set(true)">
+      <span class="tile"><ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon></span>
+      <span
+        ><strong>GoPeregrino Premium</strong
+        ><small>{{ locale.t(store.premium() ? 'premiumActive' : 'premiumTitle') }}</small></span
+      >
+      <span aria-hidden="true">›</span>
+    </button>
+
+    <section class="page-stack">
+      <label class="field profile-language surface"
+        >{{ locale.t('language') }}
+        <select
+          #language
+          [value]="store.state().language"
+          (change)="store.patch({ language: $any(language.value) })"
+        >
+          @for (entry of languages; track entry[0]) {
+            <option [value]="entry[0]" [selected]="entry[0] === store.state().language">
+              {{ entry[1] }}
+            </option>
+          }
+        </select>
+      </label>
+      <button class="surface row-card" type="button" (click)="open('trusted')">
+        <span class="tile"
+          ><ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon
+        ></span>
+        <span
+          ><strong>{{ locale.t('trusted') }}</strong
+          ><small>{{ store.state().trustedContact || locale.t('noneSet') }}</small></span
+        >
+        <span aria-hidden="true">›</span>
+      </button>
+    </section>
+
+    <h2>{{ locale.t('yourTrail') }}</h2>
+    <section class="page-stack">
+      @for (entry of premiumSections; track entry.id) {
+        <button class="surface row-card" type="button" (click)="open(entry.id, true)">
+          <span class="tile"><ion-icon [name]="entry.icon" aria-hidden="true"></ion-icon></span>
+          <span
+            ><strong>{{ locale.t(entry.id) }}</strong>
+            @if (entry.id === 'download' && downloaded()) {
+              <small>{{ locale.t('downloadDone') }}</small>
+            }
+          </span>
+          @if (!store.premium()) {
+            <ion-icon name="lock-closed-outline" aria-label="Premium"></ion-icon>
+          } @else {
+            <span aria-hidden="true">›</span>
+          }
+        </button>
+      }
+      <button class="surface row-card" type="button" (click)="open('suggest')">
+        <span class="tile"><ion-icon name="bed-outline" aria-hidden="true"></ion-icon></span>
+        <span
+          ><strong>{{ locale.t('suggest') }}</strong></span
+        ><span aria-hidden="true">›</span>
+      </button>
+      <button class="surface row-card" type="button" (click)="open('about')">
+        <span class="tile"
+          ><ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon
+        ></span>
+        <span
+          ><strong>{{ locale.t('about') }}</strong></span
+        ><span aria-hidden="true">›</span>
+      </button>
+    </section>
+  </main>
+</ion-content>
+
+@if (section(); as active) {
+  <app-sheet [title]="locale.t(active)" (closed)="close()">
+    @switch (active) {
+      @case ('trusted') {
+        <form class="sheet-stack" (submit)="$event.preventDefault(); saveContact(contact.value)">
+          <p class="muted">{{ locale.t('simulateOnly') }}</p>
+          <label class="field"
+            >{{ locale.t('trusted') }}
+            <input
+              #contact
+              type="tel"
+              maxlength="30"
+              [value]="store.state().trustedContact"
+              autocomplete="off"
+            />
+          </label>
+          <button class="primary" type="submit">{{ locale.t('save') }}</button>
+        </form>
+      }
+      @case ('journal') {
+        <div class="sheet-stack">
+          <div class="journal-highlight">
+            <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon>
+            <span
+              >{{ locale.t('kmToday')
+              }}<strong>{{ locale.number(currentDay()?.walked ?? 0, 1) }} km</strong></span
+            >
+          </div>
+          @for (day of walks(); track day.day) {
+            @if (day.walked && day.day !== currentDay()?.day) {
+              <div class="detail-line">
+                <strong>{{ locale.date(day.date) }} · {{ day.to }}</strong
+                ><span>{{ day.walked }} km</span>
+              </div>
+            }
+          }
+          <form class="sheet-stack" (submit)="$event.preventDefault(); saveNote(note.value)">
+            <label class="field"
+              >{{ locale.t('note') }}
+              <textarea
+                #note
+                rows="3"
+                maxlength="400"
+                [value]="store.state().notes[journalKey()] || ''"
+              ></textarea>
+            </label>
+            <button class="primary" type="submit">{{ locale.t('save') }}</button>
+          </form>
+          @if (currentDay()?.walked) {
+            <img class="journal-photo" src="trail-memory.svg" [alt]="locale.t('photo')" />
+          }
+        </div>
+      }
+      @case ('packing') {
+        <div class="sheet-stack">
+          @for (item of items; track item) {
+            <label class="detail-line">
+              <strong>{{ locale.t(item) }}</strong>
+              <input
+                #entry
+                type="checkbox"
+                [checked]="store.state().pack.includes(item)"
+                (change)="pack(item, entry.checked)"
+              />
+            </label>
+          }
+        </div>
+      }
+      @case ('breaks') {
+        <div class="sheet-stack">
+          @for (spot of pauseSpots(); track spot.id) {
+            <div class="row-card surface">
+              <span class="tile"
+                ><ion-icon
+                  [name]="spot.kind === 'water' ? 'water-outline' : 'cafe-outline'"
+                  aria-hidden="true"
+                ></ion-icon
+              ></span>
+              <span
+                ><strong>{{ locale.t(spot.kind) }} · {{ spot.location }}</strong
+                ><small>{{ locale.number(spot.km, 1) }} km</small></span
+              >
+            </div>
+          }
+        </div>
+      }
+      @case ('writeReviews') {
+        <form
+          class="sheet-stack"
+          (submit)="$event.preventDefault(); saveReview(place.value, +score.value, review.value)"
+        >
+          <label class="field"
+            >{{ locale.t('lodging') }}
+            <select
+              #place
+              [value]="reviewId()"
+              (change)="reviewId.set(place.value); notice.set(null)"
+              required
+            >
+              @for (entry of reviewPlaces(); track entry.id) {
+                <option [value]="entry.id" [selected]="entry.id === reviewId()">
+                  {{ entry.name }} · {{ entry.location.address.split(' · ')[0] }}
+                </option>
+              }
+            </select>
+          </label>
+          <label class="field"
+            >{{ locale.t('rating') }}
+            <input
+              #score
+              type="number"
+              min="1"
+              max="5"
+              [value]="store.state().reviews[reviewId()]?.score ?? 5"
+              required
+            />
+          </label>
+          <label class="field"
+            >{{ locale.t('review') }}
+            <textarea
+              #review
+              rows="3"
+              maxlength="280"
+              [value]="store.state().reviews[reviewId()]?.text || ''"
+              required
+            ></textarea>
+          </label>
+          <button class="primary" type="submit">{{ locale.t('save') }}</button>
+        </form>
+      }
+      @case ('download') {
+        <div class="sheet-stack">
+          <p class="kicker">{{ store.route()?.name }}</p>
+          <p class="muted">{{ downloadSize() }} MB · {{ locale.t('simulatedDownload') }}</p>
+          @if (downloaded()) {
+            <p class="download-success" role="status">
+              <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon
+              >{{ locale.t('downloadDone') }}
+            </p>
+          } @else if (downloadProgress()) {
+            <progress
+              [value]="downloadProgress()"
+              max="100"
+              [attr.aria-label]="locale.t('downloading')"
+            ></progress>
+            <p class="muted">{{ locale.t('downloading') }} {{ downloadProgress() }}%</p>
+          } @else {
+            <button class="primary" type="button" (click)="download()">
+              {{ locale.t('download') }}
+            </button>
+          }
+        </div>
+      }
+      @case ('suggest') {
+        <form
+          class="sheet-stack"
+          (submit)="$event.preventDefault(); suggest(suggestion.value); suggestion.value = ''"
+        >
+          <label class="field"
+            >{{ locale.t('propertyName') }}
+            <input #suggestion type="text" maxlength="80" required />
+          </label>
+          <button class="primary" type="submit">{{ locale.t('save') }}</button>
+        </form>
+      }
+      @case ('about') {
+        <img src="logo.png" class="about-logo" width="68" height="68" alt="GoPeregrino" />
+        <p class="muted">{{ locale.t('terms') }}</p>
+      }
+    }
+    @if (notice(); as feedback) {
+      <p class="success" role="status">{{ locale.t(feedback) }}</p>
+    }
+  </app-sheet>
+}

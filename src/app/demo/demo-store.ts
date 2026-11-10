@@ -41,6 +41,8 @@ interface DemoState {
   trustedContact: string;
   notes: Record<string, string>;
   pack: string[];
+  suggestions: string[];
+  reviews: Record<string, { score: number; text: string }>;
 }
 
 const storageKey = 'goperegrino-demo-v1';
@@ -60,6 +62,8 @@ function freshState(): DemoState {
     trustedContact: '',
     notes: {},
     pack: [],
+    suggestions: [],
+    reviews: {},
   };
 }
 

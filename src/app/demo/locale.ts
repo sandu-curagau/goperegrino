@@ -309,6 +309,16 @@ const messages = {
   nextPhoto: ['Fotografia seguinte', 'Next photo', 'Fotografía siguiente'],
   mapLabel: ['Mapa do percurso', 'Trail map', 'Mapa del recorrido'],
   schematic: ['Mapa esquemático', 'Schematic map', 'Mapa esquemático'],
+  simulatedPayment: [
+    'Compra simulada. Não há cobrança.',
+    'Simulated purchase. No charge.',
+    'Compra simulada. Sin cargo.',
+  ],
+  simulatedDownload: ['Transferência simulada', 'Simulated download', 'Descarga simulada'],
+  yourTrail: ['O seu caminho', 'Your Camino', 'Tu camino'],
+  rating: ['Classificação (1–5)', 'Rating (1–5)', 'Puntuación (1–5)'],
+  review: ['Avaliação', 'Review', 'Reseña'],
+  propertyName: ['Nome do alojamento', 'Property name', 'Nombre del alojamiento'],
   stageMap: ['Mapa de carimbos', 'Stamp map', 'Mapa de sellos'],
   collapse: ['Recolher', 'Collapse', 'Contraer'],
 } as const;

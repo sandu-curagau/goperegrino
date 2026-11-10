@@ -1,0 +1,76 @@
+.premium-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 13px;
+  border-radius: 17px;
+  background: linear-gradient(115deg, #003058, #18546e);
+  color: #fff;
+  text-align: left;
+}
+.premium-card > :nth-child(2) {
+  flex: 1;
+}
+.premium-card .tile {
+  background: #f2a60236;
+  color: #ffdc78;
+}
+.premium-card strong {
+  font-size: 14px;
+}
+.premium-card small {
+  display: block;
+  margin-top: 4px;
+  color: #e1ebf1;
+  font-size: 11px;
+}
+.profile-language {
+  padding: 11px 13px;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+.profile-language select {
+  min-height: 37px;
+}
+.journal-highlight {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 15px;
+  color: var(--brand);
+  background: #e8f0ef;
+  font-size: 12px;
+}
+.journal-highlight ion-icon {
+  font-size: 23px;
+}
+.journal-highlight strong {
+  display: block;
+  font-size: 20px;
+}
+.journal-photo {
+  width: 100%;
+  border-radius: 13px;
+}
+.download-success,
+.success {
+  color: #176046;
+  font-size: 13px;
+  font-weight: 700;
+}
+.download-success {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+progress {
+  width: 100%;
+  accent-color: var(--brand);
+}
+.about-logo {
+  display: block;
+  border-radius: 14px;
+}

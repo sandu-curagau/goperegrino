@@ -54,6 +54,11 @@ import { Point } from '../demo/models';
     svg {
       position: absolute;
       inset: 0;
+    }
+    :host {
+      bottom: var(--map-ad-height, 0px);
+    }
+    svg {
       width: 100%;
       height: 100%;
     }

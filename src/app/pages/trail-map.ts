@@ -69,6 +69,9 @@ function pinFeatures(lodgings: Lodging[]): FeatureCollection<GeoPoint, LodgingPr
     .map-canvas {
       opacity: 0;
     }
+    :host {
+      bottom: var(--map-ad-height, 0px);
+    }
     .map-canvas.ready {
       opacity: 1;
     }

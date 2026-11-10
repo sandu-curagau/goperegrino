@@ -1,4 +1,4 @@
-<main class="map-page">
+<main class="map-page" [class.has-ad]="store.started() && !store.premium()">
   @if (store.state().started) {
     @if (store.route(); as route) {
       @if (displayMap()) {
@@ -175,6 +175,13 @@
           >
             <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
           </button>
+        </div>
+      }
+      @if (!store.premium()) {
+        <div class="map-ad">
+          <ion-icon name="cafe-outline" aria-hidden="true"></ion-icon>
+          <span>{{ locale.t('adCopy') }}</span>
+          <span class="ad-label">{{ locale.t('ad') }}</span>
         </div>
       }
     } @else {

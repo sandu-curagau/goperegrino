@@ -302,3 +302,8 @@ ion-label {
     display: none;
   }
 }
+@media (width <= 900px) {
+  .phone-screen:has(.ion-page:not(.ion-page-hidden) .map-page.has-ad) .open-panel {
+    bottom: calc(119px + var(--ion-safe-area-bottom, 0px));
+  }
+}

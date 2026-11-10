@@ -24,8 +24,7 @@ export const tabs = [
   {
     path: 'perfil',
     icon: 'person-circle-outline',
-    loadComponent: () => import('./tab-page').then((m) => m.TabPage),
-    data: { title: 'Perfil' },
+    loadComponent: () => import('./pages/profile-page').then((m) => m.ProfilePage),
   },
 ] as const;
 
