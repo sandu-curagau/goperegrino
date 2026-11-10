@@ -23,6 +23,8 @@ import {
   pauseOutline,
   playOutline,
   refreshOutline,
+  checkmarkOutline,
+  listOutline,
   wifi,
 } from 'ionicons/icons';
 import { tabs } from './app.routes';
@@ -65,6 +67,8 @@ export class App {
       pauseOutline,
       playOutline,
       refreshOutline,
+      checkmarkOutline,
+      listOutline,
       wifi,
     });
   }

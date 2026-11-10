@@ -5,7 +5,13 @@
         <app-trail-sketch />
         @if (!store.state().offline) {
           @defer (when store.started()) {
-            <app-trail-map [recenter]="recenter()" (mapReady)="mapLoaded.set($event)" />
+            <app-trail-map
+              [recenter]="recenter()"
+              [target]="target()"
+              [pins]="pins()"
+              (selected)="selectLodging($event)"
+              (mapReady)="mapLoaded.set($event)"
+            />
           }
         }
       } @else {
@@ -55,6 +61,38 @@
             </div>
           </section>
           <div class="map-toolbar">
+            @if (displayMap()) {
+              <button
+                class="map-pill lodging-toggle"
+                type="button"
+                [attr.aria-pressed]="showPins()"
+                [attr.aria-label]="locale.t(showPins() ? 'hideLodging' : 'lodging')"
+                (click)="togglePins()"
+              >
+                <ion-icon name="bed-outline" aria-hidden="true"></ion-icon>{{ locale.t('lodging') }}
+              </button>
+              @if (showPins()) {
+                <button
+                  class="icon-button"
+                  type="button"
+                  [attr.aria-label]="locale.t('lodgingNearby')"
+                  (click)="showStays()"
+                >
+                  <ion-icon name="list-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button
+                  class="icon-button"
+                  type="button"
+                  [attr.aria-label]="locale.t('filters')"
+                  (click)="store.premium() ? openSheet.set('filters') : store.premiumOpen.set(true)"
+                >
+                  <ion-icon
+                    [name]="store.premium() ? 'options-outline' : 'lock-closed-outline'"
+                    aria-hidden="true"
+                  ></ion-icon>
+                </button>
+              }
+            }
             @if (store.state().offline && store.state().premium) {
               <span class="map-pill offline"
                 ><ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon
@@ -84,17 +122,51 @@
             class="icon-button"
             type="button"
             [attr.aria-label]="locale.t('myPosition')"
-            (click)="recenter.set(recenter() + 1)"
+            (click)="centerWalker()"
           >
             <ion-icon name="locate-outline" aria-hidden="true"></ion-icon>
           </button>
         }
         <button class="sos" type="button" (click)="sos()">SOS</button>
       </div>
-      @if (store.arrival(); as arrival) {
+      @if (displayMap() && selected(); as item) {
+        <div class="stay-peek surface">
+          <button type="button" class="stay-summary" (click)="openSheet.set('detail')">
+            <img #preview [src]="item.photos[0]" (error)="preview.src = 'stay.svg'" alt="" />
+            <span>
+              <span class="kicker" [class.partner]="item.partner">{{
+                item.partner ? locale.t('partner') : 'Booking.com'
+              }}</span>
+              <strong>{{ item.name }}</strong>
+              <small
+                >★ {{ locale.number(item.review_score, 1) }} ·
+                {{ locale.number(distanceToTrail(), 1) }} km {{ locale.t('trailDistance') }}</small
+              >
+              <small
+                ><b>{{ locale.money(item.price) }}</b> / {{ locale.t('night') }}</small
+              >
+            </span>
+          </button>
+          <button
+            type="button"
+            class="icon-button"
+            [attr.aria-label]="locale.t('close')"
+            (click)="selectedId.set(null)"
+          >
+            <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      } @else if (store.arrival(); as arrival) {
         <div class="arrival-banner surface" role="status">
           <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon>
-          <strong>{{ locale.t('arrivalNotice', { name: arrival }) }}</strong>
+          <button
+            class="arrival-link"
+            type="button"
+            [disabled]="!displayMap()"
+            (click)="showStays()"
+          >
+            {{ locale.t('arrivalNotice', { name: arrival }) }}
+          </button>
           <button
             class="icon-button"
             type="button"
@@ -117,6 +189,56 @@
     }
   }
 </main>
+
+@if (openSheet() === 'detail' && selected(); as item) {
+  <app-lodging-flow [lodging]="item" (closed)="openSheet.set(null)" />
+}
+@if (openSheet() === 'lodgings') {
+  <app-sheet [title]="locale.t('lodgingNearby')" (closed)="openSheet.set(null)">
+    <div class="sheet-stack">
+      @for (item of lodgings(); track item.id) {
+        <button class="row-card surface" type="button" (click)="selectLodging(item.id)">
+          <span class="tile" [class.partner]="item.partner"
+            ><ion-icon name="bed-outline" aria-hidden="true"></ion-icon
+          ></span>
+          <span
+            ><strong>{{ item.name }}</strong
+            ><small
+              >{{ propertyLocation(item) }} · ★ {{ locale.number(item.review_score, 1) }}</small
+            ></span
+          >
+          <span class="tag" [class.gold]="item.partner">{{ locale.money(item.price) }}</span>
+        </button>
+      } @empty {
+        <p>{{ locale.t('noStays') }}</p>
+      }
+    </div>
+  </app-sheet>
+}
+@if (openSheet() === 'filters') {
+  <app-sheet [title]="locale.t('advancedFilters')" (closed)="openSheet.set(null)">
+    <form
+      class="sheet-stack"
+      (submit)="
+        $event.preventDefault();
+        filters.set({ price: +price.value, laundry: laundry.checked, pets: pets.checked });
+        openSheet.set(null)
+      "
+    >
+      <label class="field"
+        >{{ locale.t('maxPrice') }}
+        <input #price type="number" min="10" max="100" [value]="filters().price" required
+      /></label>
+      <label class="detail-line"
+        >{{ locale.t('laundry') }} <input #laundry type="checkbox" [checked]="filters().laundry"
+      /></label>
+      <label class="detail-line"
+        >{{ locale.t('pets') }} <input #pets type="checkbox" [checked]="filters().pets"
+      /></label>
+      <button class="primary" type="submit">{{ locale.t('apply') }}</button>
+    </form>
+  </app-sheet>
+}
 
 @if (openSheet() === 'sos') {
   <app-sheet [title]="locale.t('safety')" (closed)="openSheet.set(null)">

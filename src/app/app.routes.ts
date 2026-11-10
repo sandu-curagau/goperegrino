@@ -17,7 +17,9 @@ export const routes: Routes = [
     loadComponent:
       path === 'mapa'
         ? () => import('./pages/map-page').then((module) => module.MapPage)
-        : () => import('./tab-page').then((module) => module.TabPage),
+        : path === 'reservas'
+          ? () => import('./pages/bookings-page').then((module) => module.BookingsPage)
+          : () => import('./tab-page').then((module) => module.TabPage),
   })),
   { path: '**', redirectTo: 'mapa' },
 ];

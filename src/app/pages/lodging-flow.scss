@@ -1,0 +1,58 @@
+.photo-frame {
+  position: relative;
+  height: 156px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #daeae5;
+}
+.photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-frame button {
+  position: absolute;
+  top: 50%;
+  width: 34px;
+  height: 38px;
+  transform: translateY(-50%);
+  font-size: 22px;
+}
+.previous {
+  left: 7px;
+}
+.next {
+  right: 7px;
+}
+.photo-count {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 4px 7px;
+  border-radius: 8px;
+  background: #002541d9;
+  color: #fff;
+  font-size: 10px;
+}
+.feature-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.booking-confirm {
+  justify-items: center;
+  text-align: center;
+}
+.confirm-mark {
+  display: grid;
+  width: 65px;
+  height: 65px;
+  place-items: center;
+  border-radius: 21px;
+  background: #dbefe3;
+  color: #165b41;
+  font-size: 30px;
+}
+[hidden] {
+  display: none !important;
+}

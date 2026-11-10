@@ -85,6 +85,7 @@ export class DemoStore {
   readonly state = this.stored.asReadonly();
   readonly offline = computed(() => this.state().offline);
   readonly started = computed(() => this.state().started);
+  readonly premium = computed(() => this.state().premium);
   readonly routes = signal<Camino[]>([]);
   readonly lodgings = signal<Lodging[]>([]);
   readonly points = signal<Waypoint[]>([]);
@@ -143,13 +144,14 @@ export class DemoStore {
     const position: Point = [a[0] + (b[0] - a[0]) * ratio, a[1] + (b[1] - a[1]) * ratio];
     return { position, partial: [...line.slice(0, next), position] };
   });
+  private readonly recentlyArrived = computed(() => this.state().distance - this.stageStart() < 2);
   readonly nearbyLodgings = computed(() => {
     const route = this.route();
     const stage = this.stage();
     if (!route || !stage) return [];
+    const first = this.recentlyArrived() ? stage.id - 1 : stage.id;
     return this.lodgings().filter(
-      (item) =>
-        item.routeId === route.id && (item.stageId === stage.id || item.stageId === stage.id + 1),
+      (item) => item.routeId === route.id && item.stageId >= first && item.stageId <= stage.id + 1,
     );
   });
   readonly nearbyPoints = computed(() => {

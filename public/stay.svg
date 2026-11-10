@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" fill="none">
+  <defs><linearGradient id="room" x2="0" y2="1"><stop stop-color="#e2f0ec"/><stop offset="1" stop-color="#a9c8be"/></linearGradient></defs>
+  <rect width="640" height="420" fill="url(#room)"/>
+  <path d="M0 309h640v111H0z" fill="#b98f6d"/>
+  <rect x="392" y="54" width="155" height="174" rx="7" fill="#f6e8cb" stroke="#718f88" stroke-width="8"/>
+  <path d="M395 181l43-43 28 32 24-48 54 60v42H395Z" fill="#8cac9e"/>
+  <path d="M469 57v167M393 143h150" stroke="#718f88" stroke-width="7"/>
+  <path d="M109 247v-37a37 37 0 0137-37h203a37 37 0 0137 37v37" fill="#1e4b63"/>
+  <rect x="100" y="235" width="297" height="95" rx="23" fill="#f5f4e8"/>
+  <path d="M104 267h289v43a20 20 0 01-20 20H124a20 20 0 01-20-20z" fill="#e5ad40"/>
+  <rect x="105" y="311" width="286" height="35" rx="10" fill="#1e4b63"/>
+  <path d="M122 342v22m252-22v22" stroke="#1e4b63" stroke-width="10" stroke-linecap="round"/>
+  <rect x="134" y="221" width="96" height="31" rx="10" fill="#fff"/>
+  <rect x="265" y="221" width="96" height="31" rx="10" fill="#fff"/>
+</svg>

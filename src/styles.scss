@@ -232,3 +232,78 @@ textarea:focus-visible {
 .detail-line span {
   color: var(--muted);
 }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 100px;
+  background: #e9f1f3;
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 750;
+}
+.tag.gold {
+  background: #ffefc7;
+}
+ion-content {
+  --background: var(--paper);
+}
+.page {
+  min-height: 100%;
+  max-width: 620px;
+  margin-inline: auto;
+  padding: calc(16px + var(--ion-safe-area-top, 0px)) 16px 72px;
+}
+.page-stack {
+  display: grid;
+  gap: 10px;
+}
+.row-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  color: var(--ink);
+  text-align: left;
+}
+.row-card > :nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.row-card strong {
+  font-size: 13px;
+}
+.row-card small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.tile {
+  display: inline-grid;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 13px;
+  color: var(--brand);
+  background: #e4efef;
+  font-size: 19px;
+}
+.empty-card {
+  padding: 25px 15px;
+  text-align: center;
+}
+.empty-card h2 {
+  margin: 10px 0 5px;
+}
+.empty-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.danger-text {
+  color: var(--danger);
+}

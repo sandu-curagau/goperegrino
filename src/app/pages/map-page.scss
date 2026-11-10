@@ -205,3 +205,87 @@
     bottom: 74px;
   }
 }
+.map-toolbar .icon-button {
+  box-shadow: 0 2px 12px #173d4729;
+}
+.lodging-toggle {
+  margin-right: auto;
+  min-height: 44px;
+  padding-inline: 11px;
+  box-shadow: 0 2px 12px #173d4729;
+}
+.lodging-toggle[aria-pressed='true'] {
+  background: #ffefc7;
+}
+.lodging-toggle ion-icon {
+  font-size: 17px;
+}
+.arrival-banner .arrival-link {
+  width: auto;
+  height: auto;
+  min-height: 38px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  color: var(--brand);
+  background: transparent;
+  font-weight: 750;
+}
+.stay-peek {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  right: 74px;
+  bottom: 30px;
+  display: flex;
+  align-items: flex-start;
+  box-shadow: 0 3px 12px #173d473d;
+}
+.stay-summary {
+  display: grid;
+  grid-template-columns: 47px 1fr;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+  padding: 8px 0 8px 8px;
+  text-align: left;
+  color: var(--ink);
+  background: transparent;
+}
+.stay-summary img {
+  width: 47px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 9px;
+  background: #e3efeb;
+}
+.stay-summary :is(strong, small) {
+  display: block;
+}
+.stay-summary strong {
+  margin: 3px 0;
+  font-size: 12px;
+}
+.stay-summary small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.stay-summary .kicker {
+  font-size: 8px;
+}
+.stay-summary .partner {
+  color: #76520a;
+}
+.stay-peek > .icon-button {
+  width: 34px;
+  height: 38px;
+}
+.tile.partner {
+  background: #ffefc7;
+}
+@media (width <= 900px) {
+  .stay-peek {
+    bottom: 74px;
+  }
+}
