@@ -13,6 +13,13 @@ import {
   ribbonOutline,
   lockClosedOutline,
   shieldCheckmarkOutline,
+  callOutline,
+  cloudOfflineOutline,
+  locateOutline,
+  notificationsOutline,
+  partlySunnyOutline,
+  rainyOutline,
+  sunnyOutline,
   wifi,
 } from 'ionicons/icons';
 import { tabs } from './app.routes';
@@ -44,6 +51,13 @@ export class App {
       ribbonOutline,
       lockClosedOutline,
       shieldCheckmarkOutline,
+      callOutline,
+      cloudOfflineOutline,
+      locateOutline,
+      notificationsOutline,
+      partlySunnyOutline,
+      rainyOutline,
+      sunnyOutline,
       wifi,
     });
   }

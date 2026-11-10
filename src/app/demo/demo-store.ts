@@ -83,6 +83,8 @@ export class DemoStore {
   private readonly router = inject(Router);
   private readonly stored = signal(readState());
   readonly state = this.stored.asReadonly();
+  readonly offline = computed(() => this.state().offline);
+  readonly started = computed(() => this.state().started);
   readonly routes = signal<Camino[]>([]);
   readonly lodgings = signal<Lodging[]>([]);
   readonly points = signal<Waypoint[]>([]);

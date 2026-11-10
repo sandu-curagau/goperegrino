@@ -14,7 +14,10 @@ export const routes: Routes = [
     path,
     title: `GoPeregrino · ${title}`,
     data: { title },
-    loadComponent: () => import('./tab-page').then((module) => module.TabPage),
+    loadComponent:
+      path === 'mapa'
+        ? () => import('./pages/map-page').then((module) => module.MapPage)
+        : () => import('./tab-page').then((module) => module.TabPage),
   })),
   { path: '**', redirectTo: 'mapa' },
 ];

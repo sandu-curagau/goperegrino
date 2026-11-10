@@ -308,6 +308,7 @@ const messages = {
   previousPhoto: ['Fotografia anterior', 'Previous photo', 'Fotografía anterior'],
   nextPhoto: ['Fotografia seguinte', 'Next photo', 'Fotografía siguiente'],
   mapLabel: ['Mapa do percurso', 'Trail map', 'Mapa del recorrido'],
+  schematic: ['Mapa esquemático', 'Schematic map', 'Mapa esquemático'],
   stageMap: ['Mapa de carimbos', 'Stamp map', 'Mapa de sellos'],
   collapse: ['Recolher', 'Collapse', 'Contraer'],
 } as const;

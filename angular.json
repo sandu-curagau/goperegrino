@@ -49,6 +49,16 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "maplibre-gl.css",
+                "input": "node_modules/maplibre-gl/dist",
+                "output": "maplibre"
+              },
+              {
+                "glob": "maplibre-gl-worker.mjs",
+                "input": "node_modules/maplibre-gl/dist",
+                "output": "maplibre"
               }
             ],
             "styles": [
@@ -60,7 +70,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "525kB",
+                  "maximumWarning": "625kB",
                   "maximumError": "1MB"
                 },
                 {

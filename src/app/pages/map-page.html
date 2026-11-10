@@ -1,0 +1,158 @@
+<main class="map-page">
+  @if (store.state().started) {
+    @if (store.route(); as route) {
+      @if (displayMap()) {
+        <app-trail-sketch />
+        @if (!store.state().offline) {
+          @defer (when store.started()) {
+            <app-trail-map [recenter]="recenter()" (mapReady)="mapLoaded.set($event)" />
+          }
+        }
+      } @else {
+        <div class="offline-state">
+          <span class="empty-icon"
+            ><ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon
+          ></span>
+          <h2>{{ locale.t('network') }}</h2>
+          <p>{{ locale.t('offlineCopy') }}</p>
+          <button class="primary" type="button" (click)="store.premiumOpen.set(true)">
+            Premium
+          </button>
+        </div>
+      }
+
+      @if (store.stage(); as stage) {
+        <div class="map-top">
+          <section class="stage-card surface">
+            <div class="stage-head">
+              <div>
+                <p class="kicker">
+                  {{ locale.t('stage') }} {{ stage.id }} / {{ route.stages.length }}
+                </p>
+                <h1>{{ stage.from }} <span aria-hidden="true">→</span> {{ stage.to }}</h1>
+              </div>
+              <div
+                class="weather"
+                [attr.title]="weather().simulated ? locale.t('weatherDemo') : 'Open-Meteo'"
+              >
+                <ion-icon [name]="weather().icon" aria-hidden="true"></ion-icon>
+                <strong>{{ weather().temperature }}°</strong>
+              </div>
+            </div>
+            <div class="metrics">
+              <div>
+                <strong>{{ locale.number(store.state().distance, 1) }} <span>km</span></strong
+                ><small>{{ locale.t('doneKm') }}</small>
+              </div>
+              <div>
+                <strong>{{ locale.number(store.stageRemaining(), 1) }} <span>km</span></strong
+                ><small>{{ locale.t('stageKm') }}</small>
+              </div>
+              <div>
+                <strong>{{ locale.number(store.remaining(), 1) }} <span>km</span></strong
+                ><small>{{ locale.t('totalKm') }}</small>
+              </div>
+            </div>
+          </section>
+          <div class="map-toolbar">
+            @if (store.state().offline && store.state().premium) {
+              <span class="map-pill offline"
+                ><ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon
+                >{{ locale.t('offline') }}</span
+              >
+            } @else if (!store.state().offline && mapLoaded() === false) {
+              <span class="map-pill">{{ locale.t('schematic') }}</span>
+            }
+            <button
+              class="icon-button alert-button"
+              type="button"
+              [attr.aria-label]="locale.t('warnings')"
+              (click)="openSheet.set('warnings')"
+            >
+              <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+              @if (store.warnings().length) {
+                <span aria-hidden="true"></span>
+              }
+            </button>
+          </div>
+        </div>
+      }
+
+      <div class="map-actions">
+        @if (displayMap()) {
+          <button
+            class="icon-button"
+            type="button"
+            [attr.aria-label]="locale.t('myPosition')"
+            (click)="recenter.set(recenter() + 1)"
+          >
+            <ion-icon name="locate-outline" aria-hidden="true"></ion-icon>
+          </button>
+        }
+        <button class="sos" type="button" (click)="sos()">SOS</button>
+      </div>
+    } @else {
+      <div class="offline-state">
+        <h2>{{ locale.t(store.dataError() ? 'dataError' : 'loading') }}</h2>
+        @if (store.dataError()) {
+          <button class="secondary" type="button" (click)="store.loadData()">
+            {{ locale.t('retry') }}
+          </button>
+        }
+      </div>
+    }
+  }
+</main>
+
+@if (openSheet() === 'sos') {
+  <app-sheet [title]="locale.t('safety')" (closed)="openSheet.set(null)">
+    <div class="sheet-stack">
+      <a class="primary emergency wide" href="tel:112"
+        ><ion-icon name="call-outline" aria-hidden="true"></ion-icon>{{ locale.t('call112') }}</a
+      >
+      <p class="muted">{{ locale.t('emergencyCopy') }}</p>
+      <button class="secondary wide" type="button" (click)="share()">
+        {{ locale.t(copied() ? 'copied' : 'share') }}
+      </button>
+      <p class="muted">{{ locale.t('simulatedPosition') }} · {{ roundedPosition() }}</p>
+      @if (link() && !copied()) {
+        <input class="share-link" readonly [value]="link()" [attr.aria-label]="locale.t('share')" />
+      }
+      <div class="detail-line">
+        <strong>{{ locale.t('trusted') }}</strong
+        ><span>{{ store.state().trustedContact || locale.t('noneSet') }}</span>
+      </div>
+      @for (contact of store.stage()?.contacts ?? []; track contact.service; let index = $index) {
+        <div class="detail-line">
+          <strong>{{ locale.t(index === 0 ? 'localPolice' : 'healthCentre') }}</strong
+          ><span>{{ contact.number }}</span>
+        </div>
+      }
+    </div>
+  </app-sheet>
+}
+@if (openSheet() === 'warnings') {
+  <app-sheet [title]="locale.t('warnings')" (closed)="openSheet.set(null)">
+    <div class="sheet-stack">
+      @for (notice of store.warnings(); track notice.id) {
+        <article class="surface notice">
+          <p class="kicker">{{ locale.t('stage') }} {{ notice.stageId }}</p>
+          <h3>{{ locale.t(warningKey(notice.id)) }}</h3>
+          @if (notice.type === 'route' || store.state().premium) {
+            <p>{{ locale.t(warningKey(notice.id, true)) }}</p>
+          } @else {
+            <button
+              class="text-button"
+              type="button"
+              (click)="openSheet.set(null); store.premiumOpen.set(true)"
+            >
+              <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon> Premium
+            </button>
+          }
+        </article>
+      } @empty {
+        <p>{{ locale.t('noWarnings') }}</p>
+      }
+    </div>
+  </app-sheet>
+}
