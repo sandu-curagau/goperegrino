@@ -249,6 +249,10 @@ textarea:focus-visible {
 ion-content {
   --background: var(--paper);
 }
+
+.maplibregl-ctrl-bottom-left {
+  max-width: calc(100% - 68px);
+}
 .page {
   min-height: 100%;
   max-width: 620px;

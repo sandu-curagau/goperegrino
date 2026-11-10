@@ -86,8 +86,17 @@ export class MapPage {
       .join(', '),
   );
   private readonly weatherCache = new Map<string, Weather>();
+  private readonly travel = computed(() => {
+    const { distance, routeId } = this.store.state();
+    return routeId + ':' + distance;
+  });
 
   constructor() {
+    effect(() => {
+      this.travel();
+      this.focusLodging.set(false);
+      this.selectedId.set(null);
+    });
     effect(() => {
       const id = this.store.mapLodging();
       if (!id) return;
@@ -123,6 +132,7 @@ export class MapPage {
   }
 
   protected selectLodging(id: string): void {
+    this.store.playing.set(false);
     this.selectedId.set(id);
     this.showPins.set(true);
     this.focusLodging.set(true);
@@ -134,8 +144,10 @@ export class MapPage {
     const next = !this.showPins();
     this.showPins.set(next);
     this.focusLodging.set(next);
-    if (next) this.store.arrival.set(null);
-    else this.selectedId.set(null);
+    if (next) {
+      this.store.playing.set(false);
+      this.store.arrival.set(null);
+    } else this.selectedId.set(null);
   }
 
   protected showStays(): void {

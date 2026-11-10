@@ -303,7 +303,21 @@ ion-label {
   }
 }
 @media (width <= 900px) {
-  .phone-screen:has(.ion-page:not(.ion-page-hidden) .map-page.has-ad) .open-panel {
+  .has-map-ad .open-panel {
     bottom: calc(119px + var(--ion-safe-area-bottom, 0px));
+  }
+}
+@supports (zoom: calc(100px / 100px)) {
+  @media (width > 900px) and (height < 888px) {
+    .presentation {
+      grid-template-rows: minmax(0, 1fr);
+    }
+    .phone {
+      justify-self: center;
+      zoom: clamp(0.58, calc((100dvh - 44px) / 844px), 1);
+    }
+    .demo-panel {
+      margin-top: clamp(16px, calc((100dvh - 625px) / 1.6), 104px);
+    }
   }
 }

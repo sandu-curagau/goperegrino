@@ -8,7 +8,7 @@
     </header>
 
     <div class="phone">
-      <div class="phone-screen">
+      <div class="phone-screen" [class.has-map-ad]="activeTab() === 'mapa' && !store.premium()">
         <div class="status-bar" aria-hidden="true">
           <span>9:41</span>
           <span class="status-island"></span>
@@ -19,7 +19,7 @@
           </span>
         </div>
 
-        <ion-tabs [inert]="!store.state().started">
+        <ion-tabs [inert]="!store.started()" (ionTabsDidChange)="activeTab.set($event.tab)">
           <ion-tab-bar slot="bottom">
             @for (tab of tabs; track tab.path) {
               <ion-tab-button [tab]="tab.path">

@@ -167,7 +167,7 @@ export class TrailMap {
         }),
       }));
       map.touchZoomRotate.disableRotation();
-      map.addControl(new AttributionControl({ compact: true }), 'bottom-right');
+      map.addControl(new AttributionControl({ compact: true }), 'bottom-left');
       this.resize = new ResizeObserver(() => {
         if (canvas.clientWidth && canvas.clientHeight) map.resize();
       });

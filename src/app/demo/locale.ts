@@ -60,6 +60,11 @@ const messages = {
     'Cuatro caminos, dos destinos.',
   ],
   comingSoon: ['Brevemente', 'Coming soon', 'Próximamente'],
+  upcomingRoutes: [
+    'Caminho Francês · Caminho do Norte · Caminho da Nazaré',
+    'French Way · Northern Way · Nazaré Way',
+    'Camino Francés · Camino del Norte · Camino de Nazaré',
+  ],
   departure: ['Data de partida', 'Departure date', 'Fecha de salida'],
   walkingDays: ['Dias a caminhar', 'Walking days', 'Días de caminata'],
   planned: ['O seu plano', 'Your itinerary', 'Tu itinerario'],

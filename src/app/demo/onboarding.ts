@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { DemoStore, languages } from './demo-store';
 import { Locale, Message } from './locale';
@@ -20,6 +21,7 @@ const slides: { title: Message; text: Message; icon: string }[] = [
 export class Onboarding {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
+  private readonly router = inject(Router);
   protected readonly languages = languages;
   protected readonly slides = slides;
   protected readonly step = signal(0);
@@ -43,6 +45,7 @@ export class Onboarding {
     if (!route) return;
     this.store.chooseRoute(route.id);
     this.store.patch({ date: this.startDate() || this.today, days: this.days() });
+    void this.router.navigateByUrl('/mapa');
   }
 
   protected shape(route: Camino): string {

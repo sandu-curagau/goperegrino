@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { IonApp, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -62,6 +62,7 @@ export class App {
   protected readonly tabs = tabs;
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
+  protected readonly activeTab = signal('mapa');
 
   constructor() {
     addIcons({

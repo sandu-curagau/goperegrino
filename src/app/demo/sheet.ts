@@ -8,6 +8,8 @@ import {
   viewChild,
 } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
+import { NavigationStart, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Locale } from './locale';
 
 @Component({
@@ -45,6 +47,17 @@ import { Locale } from './locale';
     .sheet::backdrop {
       background: #001a317b;
     }
+    @media (prefers-reduced-motion: no-preference) {
+      .sheet[open] {
+        animation: sheet-in 160ms ease-out;
+      }
+      @keyframes sheet-in {
+        from {
+          opacity: 0;
+          transform: translate(-50%, 12px);
+        }
+      }
+    }
     .sheet-heading {
       position: sticky;
       top: 0;
@@ -79,5 +92,10 @@ export class Sheet {
 
   constructor() {
     afterNextRender(() => this.sheet().nativeElement.showModal());
+    inject(Router)
+      .events.pipe(takeUntilDestroyed())
+      .subscribe((event) => {
+        if (event instanceof NavigationStart) this.sheet()?.nativeElement.close();
+      });
   }
 }

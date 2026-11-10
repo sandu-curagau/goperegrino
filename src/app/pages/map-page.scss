@@ -329,3 +329,13 @@
     bottom: calc(74px + var(--map-ad-height, 0px));
   }
 }
+.map-credit {
+  position: absolute;
+  right: 8px;
+  bottom: calc(6px + var(--map-ad-height, 0px));
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: #ffffffd9;
+  color: #385369;
+  font-size: 9px;
+}
