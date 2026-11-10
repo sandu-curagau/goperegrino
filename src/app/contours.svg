@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" fill="none">
+  <defs>
+    <path id="ridge" d="M-305 245C-177 156-146 71-13 70c121-1 125 92 245 126 98 28 184-6 245 67 50 61 37 127-6 166-58 52-147 7-193 62-58 67 18 157-54 221-59 53-187 32-270 66-70 29-113 83-143 143"/>
+  </defs>
+  <g stroke="#c4e1ef" stroke-opacity=".12" stroke-width="1" opacity=".65">
+    <use href="#ridge" transform="translate(-15 -56)"/>
+    <use href="#ridge" transform="translate(-34 -24)"/>
+    <use href="#ridge" transform="translate(-53 8)"/>
+    <use href="#ridge" transform="translate(-72 40)"/>
+    <use href="#ridge" transform="translate(-91 72)"/>
+    <use href="#ridge" transform="translate(-110 104)"/>
+    <use href="#ridge" transform="translate(-129 136)"/>
+    <use href="#ridge" transform="translate(-148 168)"/>
+    <use href="#ridge" transform="translate(-167 200)"/>
+    <use href="#ridge" transform="translate(-186 232)"/>
+  </g>
+  <g transform="translate(1510 870) rotate(180)" stroke="#c4e1ef" stroke-opacity=".095" stroke-width="1">
+    <use href="#ridge" transform="translate(-5 -110)"/>
+    <use href="#ridge" transform="translate(-25 -78)"/>
+    <use href="#ridge" transform="translate(-45 -46)"/>
+    <use href="#ridge" transform="translate(-65 -14)"/>
+    <use href="#ridge" transform="translate(-85 18)"/>
+    <use href="#ridge" transform="translate(-105 50)"/>
+    <use href="#ridge" transform="translate(-125 82)"/>
+    <use href="#ridge" transform="translate(-145 114)"/>
+  </g>
+</svg>

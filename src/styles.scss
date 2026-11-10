@@ -1,0 +1,22 @@
+@use '@ionic/angular/css/core.css';
+@use '@ionic/angular/css/normalize.css';
+@use '@ionic/angular/css/structure.css';
+@use '@ionic/angular/css/typography.css';
+
+:root {
+  --ion-font-family: Inter, system-ui, sans-serif;
+  --ion-background-color: #fff;
+  --ion-text-color: #102c41;
+  --ion-color-primary: #003058;
+  --ion-color-primary-rgb: 0, 48, 88;
+  --ion-color-primary-contrast: #fff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #002a4d;
+  --ion-color-primary-tint: #1a4569;
+  --ion-color-secondary: #f2a602;
+  --ion-color-secondary-rgb: 242, 166, 2;
+  --ion-color-secondary-contrast: #003058;
+  --ion-color-secondary-contrast-rgb: 0, 48, 88;
+  --ion-color-secondary-shade: #d59202;
+  --ion-color-secondary-tint: #f3af1b;
+}

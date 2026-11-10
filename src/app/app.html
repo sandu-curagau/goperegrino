@@ -1,0 +1,67 @@
+<ion-app>
+  <div class="presentation">
+    <header class="intro">
+      <img class="brand-logo" src="logo.png" alt="GoPeregrino" width="72" height="72" />
+      <p class="eyebrow">GoPeregrino, protótipo</p>
+      <h2>O caminho<br />começa aqui<span>.</span></h2>
+      <p class="intro-copy">Fátima e Santiago, passo a passo.</p>
+    </header>
+
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar" aria-hidden="true">
+          <span>9:41</span>
+          <span class="status-island"></span>
+          <span class="status-icons">
+            <ion-icon name="cellular"></ion-icon>
+            <ion-icon name="wifi"></ion-icon>
+            <ion-icon name="battery-full"></ion-icon>
+          </span>
+        </div>
+
+        <ion-tabs>
+          <ion-tab-bar slot="bottom" aria-label="Navegação principal">
+            @for (tab of tabs; track tab.path) {
+              <ion-tab-button [tab]="tab.path">
+                <span class="tab-icon">
+                  <ion-icon [name]="tab.icon" aria-hidden="true"></ion-icon>
+                </span>
+                <ion-label>{{ tab.title }}</ion-label>
+              </ion-tab-button>
+            }
+          </ion-tab-bar>
+        </ion-tabs>
+
+        <button
+          type="button"
+          class="open-panel"
+          aria-label="Abrir painel de demonstração"
+          aria-haspopup="dialog"
+          (click)="demoPanel.showModal()"
+        >
+          <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
+        </button>
+        <div class="home-indicator" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <aside class="demo-panel" aria-labelledby="demo-title">
+      <span class="panel-icon"
+        ><ion-icon name="options-outline" aria-hidden="true"></ion-icon
+      ></span>
+      <h2 id="demo-title">Painel de demonstração</h2>
+    </aside>
+  </div>
+
+  <dialog #demoPanel class="mobile-panel" aria-labelledby="mobile-demo-title">
+    <form method="dialog">
+      <span class="panel-icon"
+        ><ion-icon name="options-outline" aria-hidden="true"></ion-icon
+      ></span>
+      <h2 id="mobile-demo-title">Painel de demonstração</h2>
+      <button type="submit" class="close-panel" aria-label="Fechar painel de demonstração">
+        <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </form>
+  </dialog>
+</ion-app>
