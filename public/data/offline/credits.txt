@@ -1,0 +1,9 @@
+GoPeregrino offline trail extract
+
+Map tiles from OpenFreeMap (https://openfreemap.org/), based on OpenMapTiles
+(https://www.openmaptiles.org/) and OpenStreetMap contributors
+(https://www.openstreetmap.org/copyright). The OSM-derived data is available
+under the Open Database License (https://opendatacommons.org/licenses/odbl/1-0/).
+This pack retains a subset of layers and fields near the four demo routes.
+The generation script is scripts/gerar-mapa-offline.mjs.
+Noto Sans Regular is distributed under the SIL Open Font License.

@@ -19,7 +19,10 @@
           </span>
         </div>
 
-        <ion-tabs [inert]="!store.started()" (ionTabsDidChange)="activeTab.set($event.tab)">
+        <ion-tabs
+          [inert]="!store.started() || store.planningAnother()"
+          (ionTabsDidChange)="activeTab.set($event.tab)"
+        >
           <ion-tab-bar slot="bottom">
             @for (tab of tabs; track tab.path) {
               <ion-tab-button [tab]="tab.path">
@@ -32,11 +35,11 @@
           </ion-tab-bar>
         </ion-tabs>
 
-        @if (!store.state().started) {
+        @if (!store.started() || store.planningAnother()) {
           <app-onboarding />
         }
 
-        @if (store.started()) {
+        @if (store.started() && !store.planningAnother()) {
           <button
             type="button"
             class="open-panel"

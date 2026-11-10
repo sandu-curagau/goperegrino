@@ -321,3 +321,49 @@ ion-content {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+.maplibregl-popup-content:has(.pin-summary) {
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 6px 22px #0a2e4b33;
+}
+.pin-summary {
+  display: grid;
+  gap: 4px;
+  position: relative;
+  width: min(190px, 55vw);
+  padding: 10px;
+  color: var(--ink);
+  font: 500 11px/1.35 var(--ion-font-family);
+}
+.pin-summary strong {
+  margin-right: 14px;
+  font-size: 13px;
+}
+.pin-summary .primary {
+  min-height: 40px;
+  margin-top: 4px;
+}
+.pin-close {
+  position: absolute;
+  right: 3px;
+  top: 2px;
+  width: 29px;
+  height: 29px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 19px;
+}
+.selected-stay-pin {
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background: #0061a4;
+  box-shadow: 0 0 0 3px #003058;
+  pointer-events: none;
+}
+.selected-stay-pin.partner {
+  background: var(--gold);
+}

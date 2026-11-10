@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale } from '../demo/locale';
-import { Reservation } from '../demo/models';
+import { distanceToLodging, Reservation, stayPrice } from '../demo/models';
 import { Sheet } from '../demo/sheet';
 
 @Component({
@@ -13,6 +13,9 @@ import { Sheet } from '../demo/sheet';
         <header class="page-heading">
           <p class="kicker">GoPeregrino</p>
           <h1>{{ locale.t('myBookings') }}</h1>
+          @if (bookings().length) {
+            <p>{{ locale.t('byDistance') }}</p>
+          }
         </header>
         <div class="page-stack">
           @for (entry of bookings(); track entry.booking.code) {
@@ -28,6 +31,11 @@ import { Sheet } from '../demo/sheet';
                   >{{ locale.date(entry.booking.arrival) }} –
                   {{ locale.date(entry.booking.departure) }}</small
                 >
+                @if (entry.distance !== null) {
+                  <small class="booking-distance">{{
+                    locale.t('distanceAway', { km: locale.number(entry.distance, 1) })
+                  }}</small>
+                }
               </span>
               <span class="tag" [class.gold]="entry.booking.status === 'confirmed'">
                 {{
@@ -72,6 +80,16 @@ import { Sheet } from '../demo/sheet';
             <strong>{{ locale.t('guests') }}</strong
             ><span>{{ entry.booking.guests }}</span>
           </div>
+          @if (entry.distance !== null) {
+            <div class="detail-line">
+              <strong>{{ locale.t('byDistance') }}</strong
+              ><span>{{ locale.t('distanceAway', { km: locale.number(entry.distance, 1) }) }}</span>
+            </div>
+          }
+          <div class="detail-line">
+            <strong>{{ locale.t('totalStay') }}</strong
+            ><span>{{ locale.money(entry.total) }}</span>
+          </div>
           <button
             type="button"
             class="primary"
@@ -94,18 +112,34 @@ import { Sheet } from '../demo/sheet';
       </app-sheet>
     }
   `,
+  styles: '.booking-distance { color: var(--brand); font-weight: 750; }',
 })
 export class BookingsPage {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   protected readonly selection = signal<string | null>(null);
   protected readonly contact = signal(false);
-  protected readonly bookings = computed(() =>
-    this.store.state().reservations.flatMap((booking) => {
-      const place = this.store.lodgings().find((item) => item.id === booking.lodgingId);
-      return place ? [{ booking, place }] : [];
-    }),
-  );
+  protected readonly bookings = computed(() => {
+    const position = this.store.progress().position;
+    return this.store
+      .state()
+      .reservations.flatMap((booking) => {
+        const place = this.store.lodgings().find((item) => item.id === booking.lodgingId);
+        return place
+          ? [
+              {
+                booking,
+                place,
+                distance: distanceToLodging(position, place),
+                total:
+                  booking.total ??
+                  stayPrice(booking.arrival, booking.departure, booking.guests, place.price).total,
+              },
+            ]
+          : [];
+      })
+      .sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+  });
   protected readonly selected = computed(() =>
     this.bookings().find((entry) => entry.booking.code === this.selection()),
   );

@@ -12,16 +12,19 @@ import {
   viewChild,
 } from '@angular/core';
 import {
+  addProtocol,
   AttributionControl,
   type GeoJSONSource,
   Map as LibreMap,
   Marker,
+  Popup,
   setWorkerUrl,
 } from 'maplibre-gl';
 import type { Feature, FeatureCollection, LineString, Point as GeoPoint } from 'geojson';
 import { DemoStore } from '../demo/demo-store';
 import { Locale } from '../demo/locale';
 import { lodgingPoint, Lodging, Point } from '../demo/models';
+import { offlineStyle, offlineTile } from './offline-map';
 
 type LodgingProperties = { id: string; partner: boolean };
 const liberty = 'https://tiles.openfreemap.org/styles/liberty';
@@ -31,6 +34,7 @@ const roadShields = new Set([
   'road_shield_us',
 ]);
 const stroke = { 'line-cap': 'round', 'line-join': 'round' } as const;
+let protocolRegistered = false;
 
 function lineFeatures(lines: Point[][]): FeatureCollection<LineString> {
   return {
@@ -58,8 +62,34 @@ function pinFeatures(lodgings: Lodging[]): FeatureCollection<GeoPoint, LodgingPr
 
 @Component({
   selector: 'app-trail-map',
-  template:
-    '<div #canvas class="map-canvas" [attr.aria-label]="locale.t(\'mapLabel\')" [class.ready]="ready()"></div>',
+  template: `
+    <div
+      #canvas
+      class="map-canvas"
+      [attr.aria-label]="locale.t('mapLabel')"
+      [class.ready]="ready()"
+    ></div>
+    @if (ready()) {
+      <div class="zoom-controls">
+        <button
+          class="icon-button"
+          type="button"
+          [attr.aria-label]="locale.t('zoomIn')"
+          (click)="zoom(1)"
+        >
+          +
+        </button>
+        <button
+          class="icon-button"
+          type="button"
+          [attr.aria-label]="locale.t('zoomOut')"
+          (click)="zoom(-1)"
+        >
+          −
+        </button>
+      </div>
+    }
+  `,
   styles: `
     :host,
     .map-canvas {
@@ -81,6 +111,25 @@ function pinFeatures(lodgings: Lodging[]): FeatureCollection<GeoPoint, LodgingPr
     .map-canvas.ready {
       pointer-events: auto;
     }
+    .zoom-controls {
+      position: absolute;
+      top: clamp(167px, 37%, 220px);
+      left: 12px;
+      display: grid;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px #173d4729;
+      pointer-events: auto;
+    }
+    .zoom-controls button {
+      width: 38px;
+      height: 38px;
+      border-radius: 0;
+      font-size: 21px;
+    }
+    .zoom-controls button + button {
+      border-top: 1px solid var(--line);
+    }
   `,
 })
 export class TrailMap {
@@ -91,14 +140,22 @@ export class TrailMap {
   readonly pins = input<Lodging[]>([]);
   readonly target = input<Point>();
   readonly recenter = input(0);
+  readonly offline = input(false);
+  readonly activePin = input<Lodging>();
   readonly selected = output<string>();
+  readonly clearSelection = output<void>();
+  readonly openDetails = output<void>();
   readonly mapReady = output<boolean>();
 
   private map?: LibreMap;
   private marker?: Marker;
   private resize?: ResizeObserver;
-  private lastCenter?: Point;
+  private lastTarget?: Point;
   private lastRecenter = -1;
+  private lastRevision = -1;
+  private lastPosition?: Point;
+  private following = true;
+  private styleOffline = false;
   private failedTimer?: ReturnType<typeof setTimeout>;
   private readonly line = computed(() => lineFeatures(this.store.geometry()));
   private readonly walked = computed(() =>
@@ -130,32 +187,77 @@ export class TrailMap {
       if (this.ready()) void this.map?.getSource<GeoJSONSource>('lodgings')?.setData(pins);
     });
     effect(() => {
+      const offline = this.offline();
+      if (!this.map || offline === this.styleOffline) return;
+      this.styleOffline = offline;
+      this.ready.set(false);
+      this.armLoadingTimeout();
+      this.map.setStyle(offline ? offlineStyle : liberty, { diff: false });
+    });
+    effect(() => {
       const position = this.store.progress().position;
       const target = this.target();
       const recenter = this.recenter();
+      const revision = this.store.cameraRevision();
       const map = this.map;
       if (!this.ready() || !map || !position) return;
 
       this.marker?.setLngLat(position);
-      const center = target ?? position;
-      if (center !== this.lastCenter || recenter !== this.lastRecenter) {
-        this.lastCenter = center;
-        this.lastRecenter = recenter;
-        map.jumpTo({ center });
+      const newTarget = target && target !== this.lastTarget;
+      const explicit = revision !== this.lastRevision || recenter !== this.lastRecenter;
+      if (newTarget) {
+        this.following = false;
+        map.jumpTo({ center: target, zoom: Math.max(15.5, map.getZoom()) });
+      } else if (explicit || (this.following && position !== this.lastPosition)) {
+        this.following = true;
+        map.jumpTo({ center: position });
       }
+      this.lastPosition = position;
+      this.lastTarget = target;
+      this.lastRevision = revision;
+      this.lastRecenter = recenter;
     });
+    effect((onCleanup) => {
+      const item = this.activePin();
+      const map = this.map;
+      if (!item || !map || !this.ready()) return;
+      this.following = false;
+      const { popup, ring } = this.showPin(map, item);
+      onCleanup(() => {
+        popup.remove();
+        ring.remove();
+      });
+    });
+  }
+
+  protected zoom(step: number): void {
+    if (!this.map) return;
+    this.following = false;
+    this.map.easeTo({ zoom: this.map.getZoom() + step, duration: 180 });
+  }
+
+  private armLoadingTimeout(): void {
+    clearTimeout(this.failedTimer);
+    this.failedTimer = setTimeout(() => this.mapReady.emit(false), 10000);
   }
 
   private mount(): void {
     const canvas = this.canvas().nativeElement;
     const position = this.store.progress().position ?? [-8.611, 41.1428];
     setWorkerUrl(new URL('maplibre/maplibre-gl-worker.mjs', document.baseURI).href);
+    if (!protocolRegistered) {
+      addProtocol('trailpack', offlineTile);
+      protocolRegistered = true;
+    }
+    this.styleOffline = this.offline();
     try {
       const map = (this.map = new LibreMap({
         container: canvas,
-        style: liberty,
+        style: this.styleOffline ? offlineStyle : liberty,
         center: position,
         zoom: 13.5,
+        minZoom: 7,
+        maxZoom: 18,
         pitchWithRotate: false,
         dragRotate: false,
         touchPitch: false,
@@ -163,7 +265,11 @@ export class TrailMap {
         maxPitch: 0,
         transformStyle: (_previous, style) => ({
           ...style,
-          layers: style.layers.filter((layer) => !roadShields.has(layer.id)),
+          layers: style.layers.filter(
+            (layer) =>
+              !roadShields.has(layer.id) &&
+              (!('source-layer' in layer) || layer['source-layer'] !== 'poi'),
+          ),
         }),
       }));
       map.touchZoomRotate.disableRotation();
@@ -172,13 +278,17 @@ export class TrailMap {
         if (canvas.clientWidth && canvas.clientHeight) map.resize();
       });
       this.resize.observe(canvas);
-      this.failedTimer = setTimeout(() => this.mapReady.emit(false), 7000);
-      map.once('load', () => {
+      const dot = document.createElement('span');
+      dot.className = 'walker-marker';
+      this.marker = new Marker({ element: dot }).setLngLat(position).addTo(map);
+      map.on('movestart', (event) => {
+        if (event.originalEvent) this.following = false;
+      });
+      this.bindPinEvents(map);
+      this.armLoadingTimeout();
+      map.on('style.load', () => {
         clearTimeout(this.failedTimer);
         this.addLayers(map);
-        const dot = document.createElement('span');
-        dot.className = 'walker-marker';
-        this.marker = new Marker({ element: dot }).setLngLat(position).addTo(map);
         this.ready.set(true);
         this.mapReady.emit(true);
       });
@@ -188,6 +298,52 @@ export class TrailMap {
     } catch {
       this.mapReady.emit(false);
     }
+  }
+
+  private showPin(map: LibreMap, item: Lodging) {
+    const position = lodgingPoint(item);
+    const marker = document.createElement('span');
+    marker.className = item.partner ? 'selected-stay-pin partner' : 'selected-stay-pin';
+    marker.setAttribute('aria-hidden', 'true');
+    const ring = new Marker({ element: marker }).setLngLat(position).addTo(map);
+
+    const content = document.createElement('div');
+    content.className = 'pin-summary';
+    const type = document.createElement('small');
+    type.className = 'kicker';
+    type.textContent = item.partner ? this.locale.t('partner') : 'Booking.com';
+    const name = document.createElement('strong');
+    name.textContent = item.name;
+    const price = document.createElement('span');
+    price.textContent =
+      this.locale.money(item.price) +
+      ' / ' +
+      this.locale.t('night') +
+      ' · ★ ' +
+      this.locale.number(item.review_score, 1);
+    const details = document.createElement('button');
+    details.type = 'button';
+    details.className = 'primary';
+    details.textContent = this.locale.t('detail');
+    details.addEventListener('click', () => this.openDetails.emit());
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'pin-close';
+    close.textContent = '×';
+    close.setAttribute('aria-label', this.locale.t('close'));
+    close.addEventListener('click', () => this.clearSelection.emit());
+    content.append(type, name, price, details, close);
+    const popup = new Popup({
+      closeButton: false,
+      closeOnClick: false,
+      focusAfterOpen: false,
+      offset: 15,
+      maxWidth: '210px',
+    })
+      .setLngLat(position)
+      .setDOMContent(content)
+      .addTo(map);
+    return { popup, ring };
   }
 
   private addLayers(map: LibreMap): void {
@@ -258,7 +414,9 @@ export class TrailMap {
         'circle-stroke-color': '#fff',
       },
     });
+  }
 
+  private bindPinEvents(map: LibreMap): void {
     map.on('click', 'lodging-pin', (event) => {
       const id = event.features?.[0]?.properties?.['id'];
       if (typeof id === 'string') this.selected.emit(id);

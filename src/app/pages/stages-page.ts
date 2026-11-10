@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
-import { itinerary } from '../demo/itinerary';
+import { dayOptions, itinerary } from '../demo/itinerary';
 import { Locale } from '../demo/locale';
 import { dateInput } from '../demo/models';
 import { Sheet } from '../demo/sheet';
@@ -58,14 +58,15 @@ import { Sheet } from '../demo/sheet';
                 </label>
                 <label class="field"
                   >{{ locale.t('walkingDays') }}
-                  <select #days [value]="store.state().days">
-                    @for (stage of route.stages; track stage.id) {
-                      <option [value]="stage.id" [selected]="stage.id === store.state().days">
-                        {{ stage.id }}
+                  <select #days [value]="plan().length">
+                    @for (day of dayOptions(route); track day) {
+                      <option [value]="day" [selected]="day === plan().length">
+                        {{ day }}
                       </option>
                     }
                   </select>
                 </label>
+                <p class="muted">{{ locale.t('dayLimit') }}</p>
                 <button class="primary" type="submit">{{ locale.t('save') }}</button>
               </form>
             </app-sheet>
@@ -98,6 +99,7 @@ export class StagesPage {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   protected readonly editing = signal(false);
+  protected readonly dayOptions = dayOptions;
   protected readonly plan = computed(() => {
     const route = this.store.route();
     if (!route) return [];

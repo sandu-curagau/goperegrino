@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { DemoStore, languages } from './demo-store';
 import { Locale, Message } from './locale';
-import { itinerary } from './itinerary';
+import { dayOptions, itinerary } from './itinerary';
 import { Camino, dateInput } from './models';
 
 const slides: { title: Message; text: Message; icon: string }[] = [
@@ -24,11 +24,12 @@ export class Onboarding {
   private readonly router = inject(Router);
   protected readonly languages = languages;
   protected readonly slides = slides;
-  protected readonly step = signal(0);
+  protected readonly step = signal(this.store.planningAnother() ? 4 : 0);
   protected readonly selected = signal<Camino | undefined>(undefined);
   protected readonly startDate = signal(dateInput());
   protected readonly days = signal(1);
   protected readonly today = dateInput();
+  protected readonly dayOptions = dayOptions;
   protected readonly plan = computed(() => {
     const route = this.selected();
     return route ? itinerary(route, this.days(), this.startDate() || this.today) : [];
@@ -44,8 +45,14 @@ export class Onboarding {
     const route = this.selected();
     if (!route) return;
     this.store.chooseRoute(route.id);
+    this.store.planningAnother.set(false);
     this.store.patch({ date: this.startDate() || this.today, days: this.days() });
     void this.router.navigateByUrl('/mapa');
+  }
+
+  protected back(): void {
+    if (this.step() === 4 && this.store.planningAnother()) this.store.planningAnother.set(false);
+    else this.step.set(this.step() - 1);
   }
 
   protected shape(route: Camino): string {

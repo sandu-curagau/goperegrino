@@ -66,6 +66,7 @@ export interface Reservation {
   guests: number;
   name: string;
   status: 'confirmed' | 'cancelled';
+  total?: number;
 }
 
 export interface Stamp {
@@ -101,6 +102,16 @@ export function plusDays(value: string, days: number): string {
 export function lodgingPoint(lodging: Lodging): Point {
   const { longitude, latitude } = lodging.location.coordinates;
   return [longitude, latitude];
+}
+
+export function stayPrice(arrival: string, departure: string, guests: number, nightly: number) {
+  const nights = Math.max(1, (Date.parse(departure) - Date.parse(arrival)) / 86400000 || 1);
+  const rooms = Math.ceil(Math.max(1, guests) / 2);
+  return { nights, rooms, total: nights * rooms * nightly };
+}
+
+export function distanceToLodging(position: Point | undefined, lodging: Lodging): number | null {
+  return position ? kmBetween(position, lodgingPoint(lodging)) : null;
 }
 
 export function kmBetween(a: Point, b: Point): number {

@@ -2,20 +2,23 @@
   @if (store.state().started) {
     @if (store.route(); as route) {
       @if (displayMap()) {
-        <app-trail-sketch />
-        @if (!store.state().offline) {
-          @defer (when store.started()) {
-            <app-trail-map
-              [recenter]="recenter()"
-              [target]="target()"
-              [pins]="pins()"
-              (selected)="selectLodging($event)"
-              (mapReady)="mapLoaded.set($event)"
-            />
-          }
+        @if (mapLoaded() !== true) {
+          <div class="map-loading" aria-live="polite">
+            {{ locale.t(mapLoaded() === false ? 'mapUnavailable' : 'loadingMap') }}
+          </div>
         }
-        @if (store.offline() || mapLoaded() === false) {
-          <small class="map-credit">© OpenStreetMap · BRouter</small>
+        @defer (when store.started()) {
+          <app-trail-map
+            [offline]="store.offline()"
+            [recenter]="recenter()"
+            [target]="target()"
+            [pins]="pins()"
+            [activePin]="selected()"
+            (selected)="selectLodging($event)"
+            (clearSelection)="clearSelection()"
+            (openDetails)="openSheet.set('detail')"
+            (mapReady)="mapLoaded.set($event)"
+          />
         }
       } @else {
         <div class="offline-state">
@@ -38,7 +41,13 @@
                 <p class="kicker">
                   {{ locale.t('stage') }} {{ stage.id }} / {{ route.stages.length }}
                 </p>
-                <h1>{{ stage.from }} <span aria-hidden="true">→</span> {{ stage.to }}</h1>
+                <h1>
+                  @if (store.completed()) {
+                    {{ locale.t('trailFinished') }}
+                  } @else {
+                    {{ stage.from }} <span aria-hidden="true">→</span> {{ stage.to }}
+                  }
+                </h1>
               </div>
               <div
                 class="weather"
@@ -101,8 +110,6 @@
                 ><ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon
                 >{{ locale.t('offline') }}</span
               >
-            } @else if (!store.state().offline && mapLoaded() === false) {
-              <span class="map-pill">{{ locale.t('schematic') }}</span>
             }
             <button
               class="icon-button alert-button"
@@ -132,44 +139,25 @@
         }
         <button class="sos" type="button" (click)="sos()">SOS</button>
       </div>
-      @if (displayMap() && selected(); as item) {
-        <div class="stay-peek surface">
-          <button type="button" class="stay-summary" (click)="openSheet.set('detail')">
-            <img #preview [src]="item.photos[0]" (error)="preview.src = 'stay.svg'" alt="" />
-            <span>
-              <span class="kicker" [class.partner]="item.partner">{{
-                item.partner ? locale.t('partner') : 'Booking.com'
-              }}</span>
-              <strong>{{ item.name }}</strong>
-              <small
-                >★ {{ locale.number(item.review_score, 1) }} ·
-                {{ locale.number(distanceToTrail(), 1) }} km {{ locale.t('trailDistance') }}</small
-              >
-              <small
-                ><b>{{ locale.money(item.price) }}</b> / {{ locale.t('night') }}</small
-              >
-            </span>
-          </button>
-          <button
-            type="button"
-            class="icon-button"
-            [attr.aria-label]="locale.t('close')"
-            (click)="selectedId.set(null)"
-          >
-            <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
-          </button>
+      @if (store.completed()) {
+        <div class="arrival-banner surface">
+          <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
+          <div>
+            <strong>{{ route.destination }}</strong>
+            <button class="arrival-cta" type="button" (click)="store.completionOpen.set(true)">
+              {{ locale.t('viewSummary') }} <span aria-hidden="true">→</span>
+            </button>
+          </div>
         </div>
       } @else if (store.arrival(); as arrival) {
         <div class="arrival-banner surface" role="status">
           <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon>
-          <button
-            class="arrival-link"
-            type="button"
-            [disabled]="!displayMap()"
-            (click)="showStays()"
-          >
-            {{ locale.t('arrivalNotice', { name: arrival }) }}
-          </button>
+          <div>
+            <strong>{{ locale.t('arrivalTitle', { name: arrival }) }}</strong>
+            <button class="arrival-cta" type="button" (click)="showStays()">
+              {{ locale.t('findStays') }} <span aria-hidden="true">→</span>
+            </button>
+          </div>
           <button
             class="icon-button"
             type="button"
@@ -200,14 +188,40 @@
   }
 </main>
 
+@if (store.completionOpen() && store.completed() && store.route(); as route) {
+  <app-sheet [title]="locale.t('trailFinished')" (closed)="store.completionOpen.set(false)">
+    <div class="sheet-stack">
+      <div class="finish-hero">
+        <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
+        <p class="kicker">{{ route.name }}</p>
+        <h2>{{ locale.t('trailFinishedCopy', { name: route.destination }) }}</h2>
+        <span
+          >{{ route.km }} km · {{ route.stages.length }}
+          {{ locale.t('etapas').toLowerCase() }}</span
+        >
+      </div>
+      <button class="primary wide" type="button" (click)="finishAction('passport')">
+        {{ locale.t('viewPassport') }}
+      </button>
+      <button class="secondary wide" type="button" (click)="finishAction('route')">
+        {{ locale.t('anotherRoute') }}
+      </button>
+    </div>
+  </app-sheet>
+}
+
 @if (openSheet() === 'detail' && selected(); as item) {
   <app-lodging-flow [lodging]="item" (closed)="openSheet.set(null)" />
 }
 @if (openSheet() === 'lodgings') {
   <app-sheet [title]="locale.t('lodgingNearby')" (closed)="openSheet.set(null)">
     <div class="sheet-stack">
-      @for (item of lodgings(); track item.id) {
-        <button class="row-card surface" type="button" (click)="selectLodging(item.id)">
+      @if (sortedStays().length) {
+        <p class="muted">{{ locale.t('byDistance') }}</p>
+      }
+      @for (entry of sortedStays(); track entry.item.id) {
+        @let item = entry.item;
+        <button class="row-card surface" type="button" (click)="selectLodging(item.id, true)">
           <span class="tile" [class.partner]="item.partner"
             ><ion-icon name="bed-outline" aria-hidden="true"></ion-icon
           ></span>
@@ -217,7 +231,14 @@
               >{{ propertyLocation(item) }} · ★ {{ locale.number(item.review_score, 1) }}</small
             ></span
           >
-          <span class="tag" [class.gold]="item.partner">{{ locale.money(item.price) }}</span>
+          <span class="stay-list-price">
+            <span class="tag" [class.gold]="item.partner">{{ locale.money(item.price) }}</span>
+            @if (entry.distance !== null) {
+              <small>{{
+                locale.t('distanceAway', { km: locale.number(entry.distance, 1) })
+              }}</small>
+            }
+          </span>
         </button>
       } @empty {
         <p>{{ locale.t('noStays') }}</p>

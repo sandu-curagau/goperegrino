@@ -1,10 +1,11 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore, languages } from '../demo/demo-store';
 import { itinerary } from '../demo/itinerary';
 import { Locale, Message } from '../demo/locale';
 import { lodgingPoint, kmBetween } from '../demo/models';
 import { Sheet } from '../demo/sheet';
+import { loadOfflinePack } from './offline-map';
 
 type Section =
   'trusted' | 'journal' | 'packing' | 'breaks' | 'writeReviews' | 'download' | 'suggest' | 'about';
@@ -36,15 +37,9 @@ export class ProfilePage {
   ];
   protected readonly section = signal<Section | null>(null);
   protected readonly notice = signal<Message | null>(null);
-  protected readonly downloadProgress = signal(0);
-  private timer?: ReturnType<typeof setInterval>;
+  protected readonly downloading = signal(false);
 
-  protected readonly downloaded = computed(() =>
-    this.store.state().downloads.includes(this.store.state().routeId),
-  );
-  protected readonly downloadSize = computed(() =>
-    Math.min(150, Math.round((this.store.route()?.km ?? 150) / 2)),
-  );
+  protected readonly downloaded = computed(() => this.store.state().offlineDownloaded);
   protected readonly walks = computed(() => {
     const route = this.store.route();
     const { days, date, distance } = this.store.state();
@@ -81,10 +76,6 @@ export class ProfilePage {
   });
   protected readonly reviewId = signal('');
 
-  constructor() {
-    inject(DestroyRef).onDestroy(() => clearInterval(this.timer));
-  }
-
   protected open(section: Section, premium = false): void {
     if (premium && !this.store.premium()) {
       this.store.premiumOpen.set(true);
@@ -96,8 +87,6 @@ export class ProfilePage {
   }
 
   protected close(): void {
-    clearInterval(this.timer);
-    this.downloadProgress.set(0);
     this.section.set(null);
   }
 
@@ -130,17 +119,17 @@ export class ProfilePage {
     this.notice.set('saved');
   }
 
-  protected download(): void {
-    if (this.downloadProgress() || this.downloaded()) return;
-    const id = this.store.state().routeId;
-    this.downloadProgress.set(5);
-    this.timer = setInterval(() => {
-      const next = Math.min(100, this.downloadProgress() + 13);
-      this.downloadProgress.set(next);
-      if (next !== 100) return;
-      clearInterval(this.timer);
-      const downloads = this.store.state().downloads;
-      if (!downloads.includes(id)) this.store.patch({ downloads: [...downloads, id] });
-    }, 150);
+  protected async download(): Promise<void> {
+    if (this.downloading() || this.downloaded()) return;
+    this.notice.set(null);
+    this.downloading.set(true);
+    try {
+      await loadOfflinePack();
+      this.store.patch({ offlineDownloaded: true });
+    } catch {
+      this.notice.set('downloadError');
+    } finally {
+      this.downloading.set(false);
+    }
   }
 }

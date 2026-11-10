@@ -210,19 +210,15 @@
       @case ('download') {
         <div class="sheet-stack">
           <p class="kicker">{{ store.route()?.name }}</p>
-          <p class="muted">{{ downloadSize() }} MB · {{ locale.t('simulatedDownload') }}</p>
+          <p class="muted">{{ locale.t('trailMaps') }}</p>
           @if (downloaded()) {
             <p class="download-success" role="status">
               <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon
               >{{ locale.t('downloadDone') }}
             </p>
-          } @else if (downloadProgress()) {
-            <progress
-              [value]="downloadProgress()"
-              max="100"
-              [attr.aria-label]="locale.t('downloading')"
-            ></progress>
-            <p class="muted">{{ locale.t('downloading') }} {{ downloadProgress() }}%</p>
+          } @else if (downloading()) {
+            <progress [attr.aria-label]="locale.t('downloading')"></progress>
+            <p class="muted">{{ locale.t('downloading') }}</p>
           } @else {
             <button class="primary" type="button" (click)="download()">
               {{ locale.t('download') }}

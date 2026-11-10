@@ -5,7 +5,7 @@
       <div class="photo-frame">
         <img
           #picture
-          [src]="item.photos[photo()]"
+          [src]="store.offline() ? 'stay.svg' : item.photos[photo()]"
           (error)="picture.src = 'stay.svg'"
           [alt]="locale.t('photo')"
         />
@@ -55,18 +55,23 @@
           <p class="muted" role="status">{{ locale.t('contactDemo') }}</p>
         }
       } @else {
-        <button class="primary wide" type="button" (click)="step.set(1)">
+        <button
+          class="primary wide"
+          type="button"
+          [disabled]="store.offline()"
+          (click)="step.set(1)"
+        >
           {{ locale.t('book') }} <span aria-hidden="true">→</span>
         </button>
-        <p class="muted">{{ locale.t('bookingProvider') }}</p>
+        <p class="muted">
+          {{ locale.t(store.offline() ? 'bookingNeedsNetwork' : 'bookingProvider') }}
+        </p>
       }
     </div>
   } @else if (step() === 1 || step() === 2) {
     <form
       class="sheet-stack"
-      (submit)="
-        $event.preventDefault(); step() === 1 ? step.set(2) : confirm(guest.value, +count.value)
-      "
+      (submit)="$event.preventDefault(); step() === 1 ? step.set(2) : confirm(guest.value)"
     >
       <p class="kicker">{{ item.name }}</p>
       <p class="muted">{{ locale.t('simulateOnly') }}</p>
@@ -96,7 +101,15 @@
       </div>
       <label class="field" [hidden]="step() !== 1"
         >{{ locale.t('guests') }}
-        <input #count type="number" min="1" max="8" value="1" required />
+        <input
+          #count
+          type="number"
+          min="1"
+          max="8"
+          [value]="guests()"
+          (input)="guests.set(+count.value)"
+          required
+        />
       </label>
       <label class="field" [hidden]="step() !== 2"
         >{{ locale.t('guestName') }}
@@ -106,8 +119,29 @@
         >{{ locale.t('email') }}
         <input type="email" [required]="step() === 2" autocomplete="off" />
       </label>
-      <button class="primary wide" type="submit">
-        {{ locale.t(step() === 1 ? 'next' : 'confirmBooking') }}
+      <div class="surface price-summary" aria-live="polite">
+        <div>
+          <span>{{ locale.t('roomNight') }}</span
+          ><strong>{{ locale.money(item.price) }}</strong>
+        </div>
+        <div>
+          <span>{{ locale.t('nights') }} × {{ locale.t('rooms') }}</span
+          ><strong>{{ price().nights }} × {{ price().rooms }}</strong>
+        </div>
+        <div class="price-total">
+          <span>{{ locale.t('totalStay') }}</span
+          ><strong>{{ locale.money(price().total) }}</strong>
+        </div>
+      </div>
+      @if (step() === 2) {
+        <p class="muted">{{ locale.t('bookingPayment') }}</p>
+      }
+      <button class="primary wide" type="submit" [disabled]="store.offline()">
+        {{
+          step() === 1
+            ? locale.t('next')
+            : locale.t('payNow', { price: locale.money(price().total) })
+        }}
       </button>
       <button class="text-button wide" type="button" (click)="step.set(step() - 1)">
         {{ locale.t('back') }}
@@ -120,6 +154,9 @@
       ></span>
       <p class="kicker">{{ reservation.code }}</p>
       <strong>{{ item.name }}</strong>
+      <span class="tag gold"
+        >{{ locale.t('totalStay') }} · {{ locale.money(reservation.total ?? 0) }}</span
+      >
       <p class="muted">
         {{ locale.date(reservation.arrival) }} – {{ locale.date(reservation.departure) }}
       </p>

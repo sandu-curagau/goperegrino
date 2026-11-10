@@ -37,7 +37,7 @@ import { Locale } from './locale';
             [max]="route.km"
             step="0.1"
             [value]="store.state().distance"
-            (input)="store.move(+range.value)"
+            (input)="store.seek(+range.value)"
           />
         </label>
 

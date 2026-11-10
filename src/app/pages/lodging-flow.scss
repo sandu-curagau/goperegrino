@@ -56,3 +56,23 @@
 [hidden] {
   display: none !important;
 }
+.price-summary {
+  padding: 8px 12px;
+}
+.price-summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 12px;
+}
+.price-summary .price-total {
+  margin-top: 4px;
+  padding: 9px 0 4px;
+  border-top: 1px solid var(--line);
+  font-weight: 750;
+}
+.price-total strong {
+  color: var(--brand);
+  font-size: 16px;
+}

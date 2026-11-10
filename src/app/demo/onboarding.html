@@ -85,11 +85,7 @@
     </div>
   } @else {
     <div class="setup">
-      <button
-        class="text-button back"
-        type="button"
-        (click)="step.set(step() - 1); scroll.scrollTop = 0"
-      >
+      <button class="text-button back" type="button" (click)="back(); scroll.scrollTop = 0">
         ← {{ locale.t('back') }}
       </button>
       @if (step() === 4) {
@@ -162,12 +158,13 @@
           <label class="field"
             >{{ locale.t('walkingDays') }}
             <select #count [value]="days()" (change)="days.set(+count.value)">
-              @for (stage of route.stages; track stage.id) {
-                <option [value]="stage.id" [selected]="stage.id === days()">{{ stage.id }}</option>
+              @for (day of dayOptions(route); track day) {
+                <option [value]="day" [selected]="day === days()">{{ day }}</option>
               }
             </select>
           </label>
         </div>
+        <p class="muted">{{ locale.t('dayLimit') }}</p>
         <div class="plan">
           @for (item of plan(); track item.day) {
             <div class="plan-row">

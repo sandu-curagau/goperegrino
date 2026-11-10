@@ -1,11 +1,11 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale, Message } from '../demo/locale';
-import { kmBetween, Lodging, lodgingPoint, Point } from '../demo/models';
+import { distanceToLodging, Lodging, lodgingPoint, Point } from '../demo/models';
 import { Sheet } from '../demo/sheet';
 import { TrailMap } from './trail-map';
-import { TrailSketch } from './trail-sketch';
 import { LodgingFlow } from './lodging-flow';
 
 type MapSheet = 'sos' | 'warnings' | 'lodgings' | 'filters' | 'detail';
@@ -16,13 +16,14 @@ interface Weather {
 }
 
 @Component({
-  imports: [IonIcon, Sheet, TrailMap, TrailSketch, LodgingFlow],
+  imports: [IonIcon, Sheet, TrailMap, LodgingFlow],
   templateUrl: './map-page.html',
   styleUrl: './map-page.scss',
 })
 export class MapPage {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
+  private readonly router = inject(Router);
   protected readonly weather = signal<Weather>({
     temperature: 17,
     icon: 'partly-sunny-outline',
@@ -34,8 +35,8 @@ export class MapPage {
   protected readonly copied = signal(false);
   protected readonly link = signal('');
   protected readonly showPins = signal(false);
-  protected readonly focusLodging = signal(false);
   protected readonly selectedId = signal<string | null>(null);
+  protected readonly target = signal<Point | undefined>(undefined);
   protected readonly filters = signal({ price: 90, laundry: false, pets: false });
   protected readonly lodgings = computed(() => {
     const filter = this.filters();
@@ -49,32 +50,24 @@ export class MapPage {
         )
       : items;
   });
-  protected readonly pins = computed(() => (this.showPins() ? this.lodgings() : []));
-  protected readonly selected = computed(() =>
-    this.lodgings().find((item) => item.id === this.selectedId()),
-  );
-  protected readonly target = computed(() => {
-    if (!this.focusLodging()) return undefined;
+  protected readonly pins = computed(() => {
+    if (!this.showPins()) return [];
+    const items = this.lodgings();
     const selected = this.selected();
-    return selected ? lodgingPoint(selected) : this.store.stage()?.end;
+    return selected && !items.some((item) => item.id === selected.id)
+      ? [...items, selected]
+      : items;
   });
-  protected readonly distanceToTrail = computed(() => {
-    const item = this.selected();
-    if (!item) return 0;
-    const point = lodgingPoint(item);
-    const line = this.store.geometry()[item.stageId - 1] ?? [];
-    return line.reduce((distance, end, index) => {
-      if (!index) return Math.min(distance, kmBetween(point, end));
-      const start = line[index - 1];
-      const [dx, dy] = [end[0] - start[0], end[1] - start[1]];
-      const square = dx * dx + dy * dy;
-      if (!square) return distance;
-      const t = Math.min(
-        1,
-        Math.max(0, ((point[0] - start[0]) * dx + (point[1] - start[1]) * dy) / square),
-      );
-      return Math.min(distance, kmBetween(point, [start[0] + dx * t, start[1] + dy * t]));
-    }, Infinity);
+  protected readonly selected = computed(() =>
+    this.selectedId()
+      ? this.store.lodgings().find((item) => item.id === this.selectedId())
+      : undefined,
+  );
+  protected readonly sortedStays = computed(() => {
+    const position = this.store.progress().position;
+    return this.lodgings()
+      .map((item) => ({ item, distance: distanceToLodging(position, item) }))
+      .sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
   });
   protected readonly displayMap = computed(
     () => !this.store.state().offline || !!this.store.state().premium,
@@ -86,28 +79,22 @@ export class MapPage {
       .join(', '),
   );
   private readonly weatherCache = new Map<string, Weather>();
-  private readonly travel = computed(() => {
-    const { distance, routeId } = this.store.state();
-    return routeId + ':' + distance;
-  });
 
   constructor() {
     effect(() => {
-      this.travel();
-      this.focusLodging.set(false);
-      this.selectedId.set(null);
+      this.store.cameraRevision();
+      this.clearSelection();
     });
     effect(() => {
       const id = this.store.mapLodging();
       if (!id) return;
-      this.selectLodging(id);
+      this.selectLodging(id, true);
       this.store.mapLodging.set(null);
     });
     effect(() => {
       if (!this.store.started()) {
         this.showPins.set(false);
-        this.focusLodging.set(false);
-        this.selectedId.set(null);
+        this.clearSelection();
         this.openSheet.set(null);
         this.filters.set({ price: 90, laundry: false, pets: false });
       }
@@ -131,33 +118,42 @@ export class MapPage {
     });
   }
 
-  protected selectLodging(id: string): void {
-    this.store.playing.set(false);
+  protected selectLodging(id: string, center = false): void {
+    const item = this.store.lodgings().find((entry) => entry.id === id);
+    if (!item) return;
     this.selectedId.set(id);
     this.showPins.set(true);
-    this.focusLodging.set(true);
+    this.target.set(center ? lodgingPoint(item) : undefined);
     this.store.arrival.set(null);
-    this.openSheet.set(null);
+    this.openSheet.set(!this.displayMap() || this.mapLoaded() === false ? 'detail' : null);
+  }
+
+  protected clearSelection(): void {
+    this.selectedId.set(null);
+    this.target.set(undefined);
   }
 
   protected togglePins(): void {
     const next = !this.showPins();
     this.showPins.set(next);
-    this.focusLodging.set(next);
-    if (next) {
-      this.store.playing.set(false);
-      this.store.arrival.set(null);
-    } else this.selectedId.set(null);
+    if (!next) this.clearSelection();
   }
 
   protected showStays(): void {
     if (!this.showPins()) this.togglePins();
+    this.store.arrival.set(null);
     this.openSheet.set('lodgings');
   }
 
   protected centerWalker(): void {
-    this.focusLodging.set(false);
+    this.clearSelection();
     this.recenter.update((value) => value + 1);
+  }
+
+  protected finishAction(action: 'passport' | 'route'): void {
+    this.store.completionOpen.set(false);
+    if (action === 'route') this.store.planningAnother.set(true);
+    else void this.router.navigateByUrl('/credencial');
   }
 
   protected propertyLocation(item: Lodging): string {

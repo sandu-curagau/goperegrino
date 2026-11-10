@@ -35,7 +35,7 @@ interface DemoState {
   distance: number;
   premium: 0 | 7 | 30;
   offline: boolean;
-  downloads: string[];
+  offlineDownloaded: boolean;
   reservations: Reservation[];
   stamps: Stamp[];
   trustedContact: string;
@@ -56,7 +56,7 @@ function freshState(): DemoState {
     distance: 0,
     premium: 0,
     offline: false,
-    downloads: [],
+    offlineDownloaded: false,
     reservations: [],
     stamps: [],
     trustedContact: '',
@@ -99,6 +99,9 @@ export class DemoStore {
   readonly playing = signal(false);
   readonly speed = signal(1);
   readonly arrival = signal<string | null>(null);
+  readonly completionOpen = signal(false);
+  readonly planningAnother = signal(false);
+  readonly cameraRevision = signal(0);
   readonly mapLodging = signal<string | null>(null);
   readonly premiumOpen = signal(false);
 
@@ -120,6 +123,7 @@ export class DemoStore {
         .reduce((sum, stage) => sum + stage.km, 0) ?? 0,
   );
   readonly remaining = computed(() => Math.max(0, (this.route()?.km ?? 0) - this.state().distance));
+  readonly completed = computed(() => !!this.route() && this.started() && this.remaining() === 0);
   readonly stageRemaining = computed(() =>
     Math.max(0, this.stageStart() + (this.stage()?.km ?? 0) - this.state().distance),
   );
@@ -244,7 +248,9 @@ export class DemoStore {
     if (!route) return;
     this.playing.set(false);
     this.arrival.set(null);
+    this.completionOpen.set(false);
     this.patch({ routeId: id, distance: 0, days: route.stages.length, started });
+    this.cameraRevision.update((revision) => revision + 1);
   }
 
   move(distance: number, announce = true): void {
@@ -254,10 +260,18 @@ export class DemoStore {
     const next = Math.min(route.km, Math.max(0, distance));
     const atEnd = next === route.km && this.state().distance < route.km;
     this.patch({ distance: next });
-    if (announce && (this.stageIndex() > before || atEnd)) {
-      this.arrival.set(atEnd ? route.destination : (this.stage()?.from ?? null));
+    if (atEnd) {
+      this.arrival.set(null);
+      this.completionOpen.set(announce);
+    } else if (announce && this.stageIndex() > before) {
+      this.arrival.set(this.stage()?.from ?? null);
     }
     if (next === route.km) this.playing.set(false);
+  }
+
+  seek(distance: number): void {
+    this.move(distance);
+    this.cameraRevision.update((revision) => revision + 1);
   }
 
   jumpTo(index: number): void {
@@ -268,13 +282,12 @@ export class DemoStore {
       false,
     );
     this.arrival.set(index ? stages[index].from : null);
+    this.cameraRevision.update((revision) => revision + 1);
   }
 
   showLodging(id: string): void {
     const item = this.lodgings().find((lodging) => lodging.id === id);
     if (!item) return;
-    if (item.routeId !== this.state().routeId) this.chooseRoute(item.routeId);
-    this.jumpTo(item.stageId - 1);
     this.arrival.set(null);
     this.mapLodging.set(id);
     void this.router.navigateByUrl('/mapa');
@@ -284,6 +297,9 @@ export class DemoStore {
     this.playing.set(false);
     this.speed.set(1);
     this.arrival.set(null);
+    this.completionOpen.set(false);
+    this.planningAnother.set(false);
+    this.cameraRevision.update((revision) => revision + 1);
     this.mapLodging.set(null);
     this.premiumOpen.set(false);
     this.stored.set(freshState());
