@@ -91,6 +91,20 @@
         }
         <button class="sos" type="button" (click)="sos()">SOS</button>
       </div>
+      @if (store.arrival(); as arrival) {
+        <div class="arrival-banner surface" role="status">
+          <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon>
+          <strong>{{ locale.t('arrivalNotice', { name: arrival }) }}</strong>
+          <button
+            class="icon-button"
+            type="button"
+            [attr.aria-label]="locale.t('close')"
+            (click)="store.arrival.set(null)"
+          >
+            <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      }
     } @else {
       <div class="offline-state">
         <h2>{{ locale.t(store.dataError() ? 'dataError' : 'loading') }}</h2>

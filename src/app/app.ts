@@ -20,15 +20,19 @@ import {
   partlySunnyOutline,
   rainyOutline,
   sunnyOutline,
+  pauseOutline,
+  playOutline,
+  refreshOutline,
   wifi,
 } from 'ionicons/icons';
 import { tabs } from './app.routes';
 import { DemoStore } from './demo/demo-store';
 import { Locale } from './demo/locale';
 import { Onboarding } from './demo/onboarding';
+import { DemoControls } from './demo/demo-controls';
 
 @Component({
-  imports: [IonApp, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs, Onboarding],
+  imports: [IonApp, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs, Onboarding, DemoControls],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',
@@ -58,6 +62,9 @@ export class App {
       partlySunnyOutline,
       rainyOutline,
       sunnyOutline,
+      pauseOutline,
+      playOutline,
+      refreshOutline,
       wifi,
     });
   }

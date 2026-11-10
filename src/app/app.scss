@@ -84,6 +84,8 @@ ion-label {
   inset: auto 12px max(12px, env(safe-area-inset-bottom));
   width: min(420px, calc(100% - 24px));
   padding: 16px;
+  max-height: calc(100dvh - 26px);
+  overflow: auto;
   border: 0;
   border-radius: 22px;
   color: var(--ion-color-primary);
@@ -95,13 +97,18 @@ ion-label {
 }
 
 .mobile-panel form,
-.demo-panel {
+.panel-heading {
   align-items: center;
   gap: 12px;
 }
 
-.mobile-panel form {
+.mobile-panel form,
+.panel-heading {
   display: flex;
+}
+
+.mobile-panel form {
+  margin-bottom: 14px;
 }
 
 .mobile-panel h2,
@@ -266,7 +273,11 @@ ion-label {
   }
 
   .demo-panel {
-    display: flex;
+    display: grid;
+    gap: 14px;
+    --panel-ink: #f3f8fc;
+    --panel-line: #90bac54f;
+    --panel-fill: #0b3049;
     align-self: start;
     margin-top: 104px;
     padding: 15px;

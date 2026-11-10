@@ -36,24 +36,29 @@
           <app-onboarding />
         }
 
-        <button
-          type="button"
-          class="open-panel"
-          [attr.aria-label]="locale.t('demo')"
-          aria-haspopup="dialog"
-          (click)="demoPanel.showModal()"
-        >
-          <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
-        </button>
+        @if (store.started()) {
+          <button
+            type="button"
+            class="open-panel"
+            [attr.aria-label]="locale.t('demo')"
+            aria-haspopup="dialog"
+            (click)="demoPanel.showModal()"
+          >
+            <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
+          </button>
+        }
         <div class="home-indicator" aria-hidden="true"></div>
       </div>
     </div>
 
     <aside class="demo-panel" aria-labelledby="demo-title">
-      <span class="panel-icon"
-        ><ion-icon name="options-outline" aria-hidden="true"></ion-icon
-      ></span>
-      <h2 id="demo-title">{{ locale.t('demo') }}</h2>
+      <div class="panel-heading">
+        <span class="panel-icon"
+          ><ion-icon name="options-outline" aria-hidden="true"></ion-icon
+        ></span>
+        <h2 id="demo-title">{{ locale.t('demo') }}</h2>
+      </div>
+      <app-demo-controls />
     </aside>
   </div>
 
@@ -67,5 +72,6 @@
         <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
       </button>
     </form>
+    <app-demo-controls />
   </dialog>
 </ion-app>
