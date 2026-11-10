@@ -1,25 +1,36 @@
 import { Routes } from '@angular/router';
 
 export const tabs = [
-  { path: 'mapa', title: 'Mapa', icon: 'map-outline' },
-  { path: 'etapas', title: 'Etapas', icon: 'footsteps-outline' },
-  { path: 'reservas', title: 'Reservas', icon: 'bed-outline' },
-  { path: 'credencial', title: 'Credencial', icon: 'ribbon-outline' },
-  { path: 'perfil', title: 'Perfil', icon: 'person-circle-outline' },
+  {
+    path: 'mapa',
+    icon: 'map-outline',
+    loadComponent: () => import('./pages/map-page').then((m) => m.MapPage),
+  },
+  {
+    path: 'etapas',
+    icon: 'footsteps-outline',
+    loadComponent: () => import('./pages/stages-page').then((m) => m.StagesPage),
+  },
+  {
+    path: 'reservas',
+    icon: 'bed-outline',
+    loadComponent: () => import('./pages/bookings-page').then((m) => m.BookingsPage),
+  },
+  {
+    path: 'credencial',
+    icon: 'ribbon-outline',
+    loadComponent: () => import('./pages/passport-page').then((m) => m.PassportPage),
+  },
+  {
+    path: 'perfil',
+    icon: 'person-circle-outline',
+    loadComponent: () => import('./tab-page').then((m) => m.TabPage),
+    data: { title: 'Perfil' },
+  },
 ] as const;
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'mapa' },
-  ...tabs.map(({ path, title }) => ({
-    path,
-    title: `GoPeregrino · ${title}`,
-    data: { title },
-    loadComponent:
-      path === 'mapa'
-        ? () => import('./pages/map-page').then((module) => module.MapPage)
-        : path === 'reservas'
-          ? () => import('./pages/bookings-page').then((module) => module.BookingsPage)
-          : () => import('./tab-page').then((module) => module.TabPage),
-  })),
+  ...tabs,
   { path: '**', redirectTo: 'mapa' },
 ];

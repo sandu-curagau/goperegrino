@@ -326,6 +326,7 @@ export class Locale {
   constructor() {
     effect(() => {
       document.documentElement.lang = this.tag();
+      document.title = this.t('prototype');
     });
   }
 
