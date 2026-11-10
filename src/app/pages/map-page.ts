@@ -30,6 +30,14 @@ export class MapPage {
     simulated: true,
   });
   protected readonly openSheet = signal<MapSheet | null>(null);
+  protected readonly warningDismissed = signal(false);
+  private readonly stageKey = computed(() => this.store.route()?.id + ':' + this.store.stage()?.id);
+  protected readonly warningTitle = computed(() => {
+    const preview = this.store
+      .warnings()
+      .find((notice) => notice.type === 'route' || this.store.premium());
+    return this.locale.t(preview ? this.warningKey(preview.id) : 'warnings');
+  });
   protected readonly recenter = signal(0);
   protected readonly mapLoaded = signal<boolean | undefined>(undefined);
   protected readonly copied = signal(false);
@@ -81,6 +89,10 @@ export class MapPage {
   private readonly weatherCache = new Map<string, Weather>();
 
   constructor() {
+    effect(() => {
+      this.stageKey();
+      this.warningDismissed.set(false);
+    });
     effect(() => {
       this.store.cameraRevision();
       this.clearSelection();

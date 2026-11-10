@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 import {
   addProtocol,
-  AttributionControl,
   type GeoJSONSource,
   Map as LibreMap,
   Marker,
@@ -70,6 +69,19 @@ function pinFeatures(lodgings: Lodging[]): FeatureCollection<GeoPoint, LodgingPr
       [class.ready]="ready()"
     ></div>
     @if (ready()) {
+      <details class="map-credits">
+        <summary [attr.aria-label]="locale.t('mapCredits')">
+          © OpenStreetMap <span aria-hidden="true">ⓘ</span>
+        </summary>
+        <div>
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener"
+            >© OpenStreetMap</a
+          >
+          <a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>
+          <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a>
+          <a href="https://brouter.de/" target="_blank" rel="noopener">BRouter</a>
+        </div>
+      </details>
       <div class="zoom-controls">
         <button
           class="icon-button"
@@ -91,6 +103,42 @@ function pinFeatures(lodgings: Lodging[]): FeatureCollection<GeoPoint, LodgingPr
     }
   `,
   styles: `
+    .map-credits {
+      position: absolute;
+      z-index: 1;
+      bottom: 6px;
+      left: 8px;
+      pointer-events: auto;
+    }
+    .map-credits summary,
+    .map-credits div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+    }
+    .map-credits summary {
+      padding: 4px 7px;
+      font-size: 10px;
+      list-style: none;
+      cursor: pointer;
+    }
+    .map-credits summary::-webkit-details-marker {
+      display: none;
+    }
+    .map-credits div {
+      position: absolute;
+      bottom: calc(100% + 4px);
+      left: 0;
+      display: grid;
+      min-width: 135px;
+      padding: 5px 8px;
+    }
+    .map-credits a {
+      padding-block: 4px;
+      color: var(--brand);
+      font-size: 11px;
+    }
     :host,
     .map-canvas {
       position: absolute;
@@ -113,7 +161,7 @@ function pinFeatures(lodgings: Lodging[]): FeatureCollection<GeoPoint, LodgingPr
     }
     .zoom-controls {
       position: absolute;
-      top: clamp(167px, 37%, 220px);
+      top: clamp(207px, 40%, 248px);
       left: 12px;
       display: grid;
       overflow: hidden;
@@ -273,7 +321,6 @@ export class TrailMap {
         }),
       }));
       map.touchZoomRotate.disableRotation();
-      map.addControl(new AttributionControl({ compact: true }), 'bottom-left');
       this.resize = new ResizeObserver(() => {
         if (canvas.clientWidth && canvas.clientHeight) map.resize();
       });
@@ -337,6 +384,7 @@ export class TrailMap {
       closeButton: false,
       closeOnClick: false,
       focusAfterOpen: false,
+      anchor: this.target() ? 'top' : undefined,
       offset: 15,
       maxWidth: '210px',
     })
@@ -417,12 +465,19 @@ export class TrailMap {
   }
 
   private bindPinEvents(map: LibreMap): void {
-    map.on('click', 'lodging-pin', (event) => {
-      const id = event.features?.[0]?.properties?.['id'];
-      if (typeof id === 'string') this.selected.emit(id);
-    });
-    map.on('click', 'lodging-clusters', async (event) => {
-      const feature = event.features?.[0];
+    map.on('click', async (event) => {
+      const target = event.originalEvent.target;
+      if (!this.ready() || (target instanceof Element && target.closest('.maplibregl-popup')))
+        return;
+      const [feature] = map.queryRenderedFeatures(event.point, {
+        layers: ['lodging-pin', 'lodging-clusters'],
+      });
+      const id = feature?.properties?.['id'];
+      if (typeof id === 'string') {
+        this.selected.emit(id);
+        return;
+      }
+      if (this.activePin()) this.clearSelection.emit();
       if (feature?.geometry.type !== 'Point') return;
       const center = feature.geometry.coordinates as Point;
       try {

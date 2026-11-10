@@ -5,8 +5,8 @@ import { Locale, Message } from './locale';
 import { Sheet } from './sheet';
 
 const plans = [
-  { days: 7, price: 2.99, destination: 'Fátima', label: 'days7' },
-  { days: 30, price: 4.99, destination: 'Santiago', label: 'days30' },
+  { days: 7, price: 2.99, label: 'days7' },
+  { days: 30, price: 4.99, label: 'days30' },
 ] as const;
 
 @Component({
@@ -33,9 +33,8 @@ const plans = [
               [checked]="selected() === plan.days"
               (change)="selected.set(plan.days)"
             />
-            <span class="kicker">{{ plan.destination }}</span>
+            <span class="kicker">{{ locale.t(plan.label) }}</span>
             <strong>{{ locale.money(plan.price) }}</strong>
-            <span>{{ locale.t(plan.label) }}</span>
           </label>
         }
       </fieldset>
@@ -137,7 +136,7 @@ export class PremiumPass {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   protected readonly selected = signal<7 | 30>(
-    this.store.premium() || (this.store.route()?.destination === 'Fátima' ? 7 : 30),
+    this.store.premium() || (this.store.state().days <= 7 ? 7 : 30),
   );
   protected readonly plans = plans;
   protected readonly features: Message[] = [

@@ -170,9 +170,12 @@ export class DemoStore {
         (item.stageId === stage?.id || item.stageId === this.stageIndex()),
     );
   });
-  readonly warnings = computed(() =>
-    this.notices().filter((item) => item.routeId === this.route()?.id),
-  );
+  readonly warnings = computed(() => {
+    const route = this.route();
+    const stage = this.stage();
+    if (!route || !stage || this.completed()) return [];
+    return this.notices().filter((item) => item.routeId === route.id && item.stageId === stage.id);
+  });
 
   private readonly trails = new Map<string, Promise<TrailLine>>();
   private lastTick = 0;

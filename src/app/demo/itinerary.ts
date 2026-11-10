@@ -1,7 +1,7 @@
 import { Camino, plusDays } from './models';
 
 // Use existing stage ends so every proposed overnight stop has accommodation in the demo.
-const dailyLimit = 40;
+const dailyLimit = 60;
 
 export function minimumDays(route: Camino): number {
   let days = 1;

@@ -123,6 +123,27 @@
               }
             </button>
           </div>
+          @if (store.warnings().length && !warningDismissed() && !selected()) {
+            <div class="stage-warning" role="status">
+              <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+              <span>{{ warningTitle() }}</span>
+              <button
+                type="button"
+                class="stage-warning-action"
+                (click)="openSheet.set('warnings')"
+              >
+                {{ locale.t('viewWarnings') }}
+              </button>
+              <button
+                type="button"
+                class="stage-warning-close"
+                [attr.aria-label]="locale.t('close')"
+                (click)="warningDismissed.set(true)"
+              >
+                ×
+              </button>
+            </div>
+          }
         </div>
       }
 
@@ -301,6 +322,9 @@
 @if (openSheet() === 'warnings') {
   <app-sheet [title]="locale.t('warnings')" (closed)="openSheet.set(null)">
     <div class="sheet-stack">
+      @if (store.warnings().length) {
+        <p class="muted">{{ locale.t('prototype') }}</p>
+      }
       @for (notice of store.warnings(); track notice.id) {
         <article class="surface notice">
           <p class="kicker">{{ locale.t('stage') }} {{ notice.stageId }}</p>
