@@ -1,0 +1,346 @@
+import { computed, effect, inject, Injectable } from '@angular/core';
+import { DemoStore } from './demo-store';
+
+const messages = {
+  mapa: ['Mapa', 'Map', 'Mapa'],
+  etapas: ['Etapas', 'Stages', 'Etapas'],
+  reservas: ['Reservas', 'Bookings', 'Reservas'],
+  credencial: ['Credencial', 'Passport', 'Credencial'],
+  perfil: ['Perfil', 'Profile', 'Perfil'],
+  demo: ['Painel de demonstração', 'Demo controls', 'Panel de demostración'],
+  close: ['Fechar', 'Close', 'Cerrar'],
+  back: ['Voltar', 'Back', 'Volver'],
+  cancel: ['Cancelar', 'Cancel', 'Cancelar'],
+  next: ['Continuar', 'Continue', 'Continuar'],
+  skip: ['Saltar introdução', 'Skip introduction', 'Saltar introducción'],
+  start: ['Começar', 'Get started', 'Empezar'],
+  startWalk: ['Iniciar percurso', 'Start my walk', 'Iniciar mi recorrido'],
+  language: ['Idioma', 'Language', 'Idioma'],
+  loading: ['A preparar o caminho…', 'Getting the trail ready…', 'Preparando el camino…'],
+  dataError: [
+    'Não foi possível carregar os caminhos.',
+    'Could not load the routes.',
+    'No se pudieron cargar los caminos.',
+  ],
+  retry: ['Tentar novamente', 'Try again', 'Intentar de nuevo'],
+  headline: [
+    'O Google Maps e o Booking do peregrino',
+    'Google Maps and Booking for pilgrims',
+    'El Google Maps y Booking del peregrino',
+  ],
+  introTitle: ['O caminho começa aqui.', 'Your Camino starts here.', 'El camino empieza aquí.'],
+  introCopy: [
+    'Fátima e Santiago, passo a passo.',
+    'Fátima and Santiago, step by step.',
+    'Fátima y Santiago, paso a paso.',
+  ],
+  prototype: ['GoPeregrino, protótipo', 'GoPeregrino prototype', 'GoPeregrino, prototipo'],
+  learn1: ['Cada passo, no mapa', 'Every step on the map', 'Cada paso, en el mapa'],
+  learn1Text: [
+    'Veja a etapa, a distância e o que falta para chegar ao destino.',
+    'See your stage, distance and how far you have left.',
+    'Consulta tu etapa, la distancia y lo que te queda hasta el destino.',
+  ],
+  learn2: ['Uma cama em dois toques', 'Find a bed in two taps', 'Una cama en dos toques'],
+  learn2Text: [
+    'Encontre alojamentos perto do caminho e reserve sem perder o ritmo.',
+    'Find and book a place to stay along the way.',
+    'Encuentra alojamiento cerca del camino y reserva sin perder el ritmo.',
+  ],
+  learn3: ['Caminhe com confiança', 'Walk with confidence', 'Camina con confianza'],
+  learn3Text: [
+    'Consulte avisos do percurso e partilhe a sua localização quando precisar.',
+    'Check trail alerts and share your location when needed.',
+    'Consulta avisos del camino y comparte tu ubicación cuando lo necesites.',
+  ],
+  choose: ['Escolha o seu caminho', 'Choose your Camino', 'Elige tu camino'],
+  chooseCopy: [
+    'Quatro caminhos, dois destinos.',
+    'Four routes, two destinations.',
+    'Cuatro caminos, dos destinos.',
+  ],
+  comingSoon: ['Brevemente', 'Coming soon', 'Próximamente'],
+  departure: ['Data de partida', 'Departure date', 'Fecha de salida'],
+  walkingDays: ['Dias a caminhar', 'Walking days', 'Días de caminata'],
+  planned: ['O seu plano', 'Your itinerary', 'Tu itinerario'],
+  day: ['Dia', 'Day', 'Día'],
+  stage: ['Etapa', 'Stage', 'Etapa'],
+  today: ['Hoje', 'Today', 'Hoy'],
+  walk: ['Caminhar', 'Walk', 'Caminar'],
+  pause: ['Pausa', 'Pause', 'Pausa'],
+  position: ['Posição no caminho', 'Position on the trail', 'Posición en el camino'],
+  jump: ['Saltar para a etapa', 'Jump to stage', 'Saltar a la etapa'],
+  network: ['Sem rede', 'No network', 'Sin conexión'],
+  premiumActive: ['Premium ativo', 'Premium active', 'Premium activo'],
+  reset: ['Repor demonstração', 'Reset demo', 'Restablecer demo'],
+  resetConfirm: [
+    'Repor a demonstração e apagar o progresso local?',
+    'Reset the demo and clear local progress?',
+    '¿Restablecer la demo y borrar el progreso local?',
+  ],
+  doneKm: ['percorridos', 'walked', 'recorridos'],
+  stageKm: ['até à etapa', 'to stage end', 'hasta fin de etapa'],
+  totalKm: ['até ao destino', 'to destination', 'hasta el destino'],
+  weatherDemo: ['Meteorologia de demonstração', 'Demo weather', 'Tiempo de demostración'],
+  offline: ['Offline', 'Offline', 'Sin conexión'],
+  offlineCopy: [
+    'Descarregue o caminho com o Premium para usar o mapa offline.',
+    'Download the route with Premium to use the map offline.',
+    'Descarga el camino con Premium para usar el mapa sin conexión.',
+  ],
+  myPosition: ['Centrar na minha posição', 'Centre on my position', 'Centrar en mi posición'],
+  lodging: ['Alojamentos', 'Places to stay', 'Alojamientos'],
+  lodgingNearby: [
+    'Alojamentos perto do caminho',
+    'Stays near the trail',
+    'Alojamientos cerca del camino',
+  ],
+  hideLodging: ['Ocultar alojamentos', 'Hide stays', 'Ocultar alojamientos'],
+  filters: ['Filtros', 'Filters', 'Filtros'],
+  maxPrice: ['Preço máximo por noite', 'Maximum nightly price', 'Precio máximo por noche'],
+  apply: ['Aplicar', 'Apply', 'Aplicar'],
+  noStays: [
+    'Nenhum alojamento corresponde aos filtros.',
+    'No stays match your filters.',
+    'Ningún alojamiento coincide con los filtros.',
+  ],
+  arrivalNotice: [
+    'Chegou a {name}. Já tem alojamento?',
+    'You reached {name}. Have a place to stay?',
+    'Has llegado a {name}. ¿Ya tienes alojamiento?',
+  ],
+  partner: ['Parceiro GoPeregrino', 'GoPeregrino partner', 'Colaborador GoPeregrino'],
+  night: ['noite', 'night', 'noche'],
+  reviews: ['avaliações', 'reviews', 'reseñas'],
+  trailDistance: ['do caminho', 'from the trail', 'del camino'],
+  detail: ['Ver alojamento', 'View stay', 'Ver alojamiento'],
+  facilities: ['Comodidades', 'Facilities', 'Servicios'],
+  freeCancel: [
+    'Cancelamento gratuito até 48 horas antes da chegada.',
+    'Free cancellation up to 48 hours before arrival.',
+    'Cancelación gratuita hasta 48 horas antes de la llegada.',
+  ],
+  bookingProvider: [
+    'Reserva fornecida por Booking.com',
+    'Booking provided by Booking.com',
+    'Reserva proporcionada por Booking.com',
+  ],
+  simulateOnly: [
+    'Demonstração. Use dados fictícios.',
+    'Demo. Use fictional details.',
+    'Demostración. Usa datos ficticios.',
+  ],
+  book: ['Reservar', 'Book', 'Reservar'],
+  call: ['Ligar', 'Call', 'Llamar'],
+  contact: ['Contactar alojamento', 'Contact property', 'Contactar con el alojamiento'],
+  contactDemo: [
+    'Este contacto é fictício. A ação foi simulada.',
+    'This is a fictional contact. The action was simulated.',
+    'Este contacto es ficticio. Se ha simulado la acción.',
+  ],
+  arrival: ['Chegada', 'Check-in', 'Llegada'],
+  leave: ['Saída', 'Check-out', 'Salida'],
+  guests: ['Pessoas', 'Guests', 'Personas'],
+  guestName: ['Nome do hóspede', 'Guest name', 'Nombre del huésped'],
+  email: ['E-mail', 'Email', 'Correo electrónico'],
+  confirmBooking: ['Confirmar reserva', 'Confirm booking', 'Confirmar reserva'],
+  bookingDone: ['Reserva confirmada', 'Booking confirmed', 'Reserva confirmada'],
+  bookingCancelled: ['Cancelada', 'Cancelled', 'Cancelada'],
+  viewBookings: ['Ver as minhas reservas', 'See my bookings', 'Ver mis reservas'],
+  myBookings: ['As minhas reservas', 'My bookings', 'Mis reservas'],
+  noBookings: ['Ainda não tem reservas', 'No bookings yet', 'Aún no tienes reservas'],
+  noBookingsCopy: [
+    'Os alojamentos que reservar no mapa aparecem aqui.',
+    'Places you book from the map appear here.',
+    'Los alojamientos que reserves en el mapa aparecerán aquí.',
+  ],
+  directions: ['Ver no mapa', 'Show on map', 'Ver en el mapa'],
+  cancelBooking: ['Cancelar reserva', 'Cancel booking', 'Cancelar reserva'],
+  cancelQuestion: [
+    'Cancelar esta reserva de demonstração?',
+    'Cancel this demo booking?',
+    '¿Cancelar esta reserva de demostración?',
+  ],
+  personalize: ['Personalizar etapas', 'Customise stages', 'Personalizar etapas'],
+  planCopy: [
+    'Planeie os seus dias até {name}.',
+    'Plan your days to {name}.',
+    'Planifica tus días hasta {name}.',
+  ],
+  stamp: ['Carimbar aqui', 'Stamp here', 'Sellar aquí'],
+  stampCopy: [
+    'Guarde as memórias do seu caminho.',
+    'Keep a record of your Camino.',
+    'Guarda los recuerdos de tu camino.',
+  ],
+  stampSpots: [
+    'Locais de carimbo próximos',
+    'Nearby stamp locations',
+    'Lugares de sellado cercanos',
+  ],
+  stampAdded: ['Carimbo registado', 'Stamp recorded', 'Sello registrado'],
+  stampEmpty: [
+    'O primeiro carimbo espera por si.',
+    'Your first stamp is waiting.',
+    'Tu primer sello te espera.',
+  ],
+  compostela: [
+    'Precisa de 2 carimbos por dia para a Compostela',
+    'You need 2 stamps per day for the Compostela',
+    'Necesitas 2 sellos al día para la Compostela',
+  ],
+  warnings: ['Avisos do caminho', 'Trail alerts', 'Avisos del camino'],
+  noWarnings: [
+    'Não há avisos para este caminho.',
+    'There are no alerts for this trail.',
+    'No hay avisos para este camino.',
+  ],
+  warning1: ['Desvio sinalizado', 'Signposted diversion', 'Desvío señalizado'],
+  warning1Text: [
+    'Há obras num troço à saída de Ponte de Lima. Siga as indicações no local.',
+    'There are works on a section after Ponte de Lima. Follow the signs on site.',
+    'Hay obras al salir de Ponte de Lima. Sigue las indicaciones en el lugar.',
+  ],
+  warning2: ['Reabasteça antes de sair', 'Refill before leaving', 'Repón agua antes de salir'],
+  warning2Text: [
+    'Há poucas fontes entre Santarém e Monsanto.',
+    'There are few fountains between Santarém and Monsanto.',
+    'Hay pocas fuentes entre Santarém y Monsanto.',
+  ],
+  warning3: ['Vento no litoral', 'Coastal winds', 'Viento en la costa'],
+  warning3Text: [
+    'São esperadas rajadas nas zonas mais expostas da etapa.',
+    'Gusts are expected in exposed areas along this stage.',
+    'Se esperan rachas en las zonas más expuestas de la etapa.',
+  ],
+  warning4: ['Poucas camas disponíveis', 'Beds are filling up', 'Quedan pocas camas'],
+  warning4Text: [
+    'Os alojamentos da próxima etapa estão a ficar completos.',
+    'Accommodation for the next stage is filling up.',
+    'Los alojamientos de la siguiente etapa se están llenando.',
+  ],
+  safety: ['Segurança', 'Safety', 'Seguridad'],
+  call112: ['Ligar 112', 'Call 112', 'Llamar al 112'],
+  emergencyCopy: [
+    'O 112 liga aos serviços de emergência reais. Use apenas numa emergência.',
+    '112 connects to real emergency services. Use only in an emergency.',
+    'El 112 conecta con servicios de emergencia reales. Úsalo solo en una emergencia.',
+  ],
+  share: ['Partilhar a minha localização', 'Share my location', 'Compartir mi ubicación'],
+  copied: ['Link copiado', 'Link copied', 'Enlace copiado'],
+  simulatedPosition: ['Posição simulada', 'Simulated position', 'Posición simulada'],
+  trusted: ['Contacto de confiança', 'Trusted contact', 'Contacto de confianza'],
+  localPolice: ['Polícia local', 'Local police', 'Policía local'],
+  healthCentre: ['Centro de saúde', 'Health centre', 'Centro de salud'],
+  noneSet: ['Por configurar', 'Not set', 'Sin configurar'],
+  premiumTitle: ['O caminho, à sua maneira', 'Your Camino, your way', 'El camino, a tu manera'],
+  premiumCopy: [
+    'Um passe para a sua viagem, sem renovação automática.',
+    'One pass for your trip, with no automatic renewal.',
+    'Un pase para tu viaje, sin renovación automática.',
+  ],
+  days7: ['7 dias', '7 days', '7 días'],
+  days30: ['30 dias', '30 days', '30 días'],
+  buy: ['Comprar passe', 'Buy pass', 'Comprar pase'],
+  offlineMaps: ['Mapas offline', 'Offline maps', 'Mapas sin conexión'],
+  planner: ['Planeador de etapas', 'Stage planner', 'Planificador de etapas'],
+  extraAlerts: [
+    'Alertas de tempo e alojamento',
+    'Weather and lodging alerts',
+    'Alertas de tiempo y alojamiento',
+  ],
+  advancedFilters: ['Filtros avançados', 'Advanced filters', 'Filtros avanzados'],
+  journal: ['Diário do percurso', 'Trail journal', 'Diario del camino'],
+  breaks: ['Pausas personalizadas', 'Personalised breaks', 'Pausas personalizadas'],
+  writeReviews: ['Escrever avaliações', 'Write reviews', 'Escribir reseñas'],
+  packing: ['Mochila', 'Packing list', 'Mochila'],
+  adFree: ['Sem publicidade', 'Ad-free', 'Sin publicidad'],
+  ad: ['Publicidade', 'Advertisement', 'Publicidad'],
+  adCopy: ['Um descanso sabe bem.', 'You deserve a rest.', 'Un descanso sienta bien.'],
+  download: ['Descarregar caminho', 'Download route', 'Descargar camino'],
+  downloadDone: [
+    'Caminho disponível offline',
+    'Route available offline',
+    'Camino disponible sin conexión',
+  ],
+  downloading: ['A descarregar…', 'Downloading…', 'Descargando…'],
+  suggest: [
+    'Sugira um alojamento parceiro',
+    'Suggest a partner property',
+    'Sugiere un alojamiento colaborador',
+  ],
+  suggestThanks: [
+    'Sugestão registada nesta demonstração.',
+    'Suggestion recorded in this demo.',
+    'Sugerencia registrada en esta demostración.',
+  ],
+  about: ['Sobre', 'About', 'Acerca de'],
+  terms: [
+    'Protótipo académico. Os percursos, alojamentos, contactos, reservas e pagamentos destinam-se à demonstração.',
+    'Academic prototype. Routes, accommodation, contacts, bookings and payments are for demonstration.',
+    'Prototipo académico. Las rutas, alojamientos, contactos, reservas y pagos son de demostración.',
+  ],
+  save: ['Guardar', 'Save', 'Guardar'],
+  saved: ['Guardado', 'Saved', 'Guardado'],
+  note: ['Nota do dia', 'Daily note', 'Nota del día'],
+  kmToday: ['Quilómetros de hoje', 'Kilometres today', 'Kilómetros de hoy'],
+  wifi: ['Wi-Fi', 'Wi-Fi', 'Wi-Fi'],
+  laundry: ['Lavandaria', 'Laundry', 'Lavandería'],
+  pets: ['Aceita animais', 'Pets allowed', 'Admite mascotas'],
+  kitchen: ['Cozinha', 'Kitchen', 'Cocina'],
+  breakfast: ['Pequeno-almoço', 'Breakfast', 'Desayuno'],
+  water: ['Água', 'Water', 'Agua'],
+  cafe: ['Café', 'Café', 'Cafetería'],
+  pharmacy: ['Farmácia', 'Pharmacy', 'Farmacia'],
+  church: ['Igreja', 'Church', 'Iglesia'],
+  packWater: ['Garrafa de água', 'Water bottle', 'Botella de agua'],
+  packShoes: ['Calçado de caminhada', 'Walking shoes', 'Calzado de senderismo'],
+  packRain: ['Impermeável', 'Rain jacket', 'Chubasquero'],
+  packKit: ['Primeiros socorros', 'First-aid kit', 'Botiquín'],
+  packPassport: ['Credencial do peregrino', 'Pilgrim passport', 'Credencial del peregrino'],
+  packBattery: ['Bateria portátil', 'Power bank', 'Batería portátil'],
+  stageDescription: [
+    'De {from} a {to}, com {km} km a pé.',
+    'Walk {km} km from {from} to {to}.',
+    'Camina {km} km de {from} a {to}.',
+  ],
+  photo: ['Fotografia ilustrativa', 'Illustrative photo', 'Fotografía ilustrativa'],
+  previousPhoto: ['Fotografia anterior', 'Previous photo', 'Fotografía anterior'],
+  nextPhoto: ['Fotografia seguinte', 'Next photo', 'Fotografía siguiente'],
+  mapLabel: ['Mapa do percurso', 'Trail map', 'Mapa del recorrido'],
+  stageMap: ['Mapa de carimbos', 'Stamp map', 'Mapa de sellos'],
+  collapse: ['Recolher', 'Collapse', 'Contraer'],
+} as const;
+
+export type Message = keyof typeof messages;
+
+@Injectable({ providedIn: 'root' })
+export class Locale {
+  private readonly store = inject(DemoStore);
+  private readonly column = computed(
+    () => ({ pt: 0, en: 1, es: 2 })[this.store.state().language as 'pt' | 'en' | 'es'] ?? 1,
+  );
+  readonly tag = computed(() => ['pt-PT', 'en-GB', 'es-ES'][this.column()]);
+
+  constructor() {
+    effect(() => {
+      document.documentElement.lang = this.tag();
+    });
+  }
+
+  t = (key: Message, values: Record<string, string | number> = {}): string =>
+    messages[key][this.column()].replace(/\{(\w+)\}/g, (_, name: string) =>
+      String(values[name] ?? ''),
+    );
+
+  number = (value: number, digits = 0): string =>
+    new Intl.NumberFormat(this.tag(), { maximumFractionDigits: digits }).format(value);
+
+  money = (value: number): string =>
+    new Intl.NumberFormat(this.tag(), { style: 'currency', currency: 'EUR' }).format(value);
+
+  date = (value: string): string =>
+    new Intl.DateTimeFormat(this.tag(), { day: 'numeric', month: 'short' }).format(
+      new Date(value.length === 10 ? value + 'T12:00:00' : value),
+    );
+}

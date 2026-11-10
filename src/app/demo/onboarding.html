@@ -1,0 +1,191 @@
+<section class="onboarding" aria-label="GoPeregrino" #scroll>
+  @if (step() < 4) {
+    <div class="welcome">
+      <div class="welcome-top">
+        <img src="logo.png" width="52" height="52" alt="GoPeregrino" />
+        <div class="welcome-wordmark">Go<span>Peregrino</span></div>
+      </div>
+      <div class="welcome-art" aria-hidden="true">
+        <svg viewBox="0 0 340 230" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+              <path d="M28 0H0v28" fill="none" stroke="#9fc5d6" stroke-opacity=".16" />
+            </pattern>
+          </defs>
+          <rect width="340" height="230" fill="url(#grid)" />
+          <g fill="none" stroke="#8eb7ca" stroke-opacity=".23">
+            <path d="M-30 100C40 110 42 3 127 28s28 106 134 88 126 33 128 101" />
+            <path d="M-30 118C55 131 56 26 126 47s38 110 135 88 102 18 113 82" />
+            <path d="M-30 137C62 155 70 48 126 66s46 112 135 89 85 11 98 64" />
+            <path d="M-30 156C70 177 82 68 125 85s57 112 136 90 69 3 82 47" />
+            <path d="M-30 175C74 199 96 91 126 104s63 109 135 92 48 1 62 26" />
+            <path d="M-30 194C80 219 111 109 130 123s64 105 131 94 34 0 45 8" />
+          </g>
+          <path
+            d="M49 194l29-16 14-26 27 2 23-22 19-2 21-34 26 5 20-28 31-9 22-27"
+            fill="none"
+            stroke="#f2a602"
+            stroke-width="3.5"
+            stroke-linejoin="round"
+            stroke-linecap="round"
+          />
+          <circle cx="49" cy="194" r="7" fill="#fff" stroke="#f2a602" stroke-width="3" />
+          <circle cx="281" cy="37" r="15" fill="#f2a602" fill-opacity=".2" />
+          <circle cx="281" cy="37" r="6" fill="#f2a602" />
+        </svg>
+        @if (step() > 0) {
+          <span class="slide-icon"><ion-icon [name]="slides[step() - 1].icon"></ion-icon></span>
+        }
+      </div>
+      <div class="welcome-content">
+        @if (step() === 0) {
+          <p class="kicker">{{ locale.t('prototype') }}</p>
+          <h1>{{ locale.t('headline') }}</h1>
+          <p>{{ locale.t('introCopy') }}</p>
+          <label class="field"
+            >{{ locale.t('language') }}
+            <select
+              [value]="store.state().language"
+              (change)="store.patch({ language: $any($event.target).value })"
+            >
+              @for (language of languages; track language[0]) {
+                <option [value]="language[0]" [selected]="store.state().language === language[0]">
+                  {{ language[1] }}
+                </option>
+              }
+            </select>
+          </label>
+          <button class="primary wide" type="button" (click)="step.set(1)">
+            {{ locale.t('start') }} <span aria-hidden="true">→</span>
+          </button>
+        } @else {
+          <div class="slide-dots" aria-hidden="true">
+            @for (slide of slides; track slide.title; let index = $index) {
+              <span [class.active]="step() === index + 1"></span>
+            }
+          </div>
+          <h1>{{ locale.t(slides[step() - 1].title) }}</h1>
+          <p>{{ locale.t(slides[step() - 1].text) }}</p>
+          <button
+            class="primary wide"
+            type="button"
+            (click)="step.set(step() + 1); scroll.scrollTop = 0"
+          >
+            {{ locale.t('next') }} <span aria-hidden="true">→</span>
+          </button>
+          <button
+            class="text-button wide"
+            type="button"
+            (click)="step.set(4); scroll.scrollTop = 0"
+          >
+            {{ locale.t('skip') }}
+          </button>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="setup">
+      <button
+        class="text-button back"
+        type="button"
+        (click)="step.set(step() - 1); scroll.scrollTop = 0"
+      >
+        ← {{ locale.t('back') }}
+      </button>
+      @if (step() === 4) {
+        <header class="page-heading">
+          <p class="kicker">GoPeregrino</p>
+          <h1>{{ locale.t('choose') }}</h1>
+          <p>{{ locale.t('chooseCopy') }}</p>
+        </header>
+        @if (store.dataError()) {
+          <p>{{ locale.t('dataError') }}</p>
+          <button class="secondary" type="button" (click)="store.loadData()">
+            {{ locale.t('retry') }}
+          </button>
+        } @else if (!store.routes().length) {
+          <p>{{ locale.t('loading') }}</p>
+        }
+        <div class="route-list">
+          @for (route of store.routes(); track route.id) {
+            <button
+              class="route-card surface"
+              type="button"
+              (click)="choose(route); scroll.scrollTop = 0"
+            >
+              <span class="route-art" [style.--route-color]="route.color" aria-hidden="true">
+                <svg viewBox="0 0 64 58">
+                  <polyline
+                    [attr.points]="shape(route)"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span>
+                <strong>{{ route.name }}</strong>
+                <small>{{ route.stages[0].from }} → {{ route.destination }}</small>
+                <small
+                  >{{ route.km }} km · {{ route.stages.length }}
+                  {{ locale.t('etapas').toLowerCase() }}</small
+                >
+              </span>
+              <span class="route-arrow" aria-hidden="true">›</span>
+            </button>
+          }
+        </div>
+        <h2>{{ locale.t('comingSoon') }}</h2>
+        <div class="surface upcoming">
+          <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
+          Caminho Francês · Caminho do Norte · Caminho da Nazaré
+        </div>
+      } @else if (selected(); as route) {
+        <header class="page-heading">
+          <p class="kicker">{{ route.destination }}</p>
+          <h1>{{ locale.t('planned') }}</h1>
+          <p>{{ route.name }}</p>
+        </header>
+        <div class="form-grid">
+          <label class="field"
+            >{{ locale.t('departure') }}
+            <input
+              #date
+              type="date"
+              [value]="startDate()"
+              [min]="today"
+              (change)="startDate.set(date.value && date.value >= today ? date.value : today)"
+            />
+          </label>
+          <label class="field"
+            >{{ locale.t('walkingDays') }}
+            <select #count [value]="days()" (change)="days.set(+count.value)">
+              @for (stage of route.stages; track stage.id) {
+                <option [value]="stage.id" [selected]="stage.id === days()">{{ stage.id }}</option>
+              }
+            </select>
+          </label>
+        </div>
+        <div class="plan">
+          @for (item of plan(); track item.day) {
+            <div class="plan-row">
+              <span class="number-chip">{{ item.day }}</span>
+              <span
+                ><strong>{{ item.to }}</strong
+                ><small>{{ locale.date(item.date) }}</small></span
+              >
+              <strong>{{ item.km }} km</strong>
+            </div>
+          }
+        </div>
+        <div class="setup-footer">
+          <button class="primary wide" type="button" (click)="begin()">
+            {{ locale.t('startWalk') }} <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      }
+    </div>
+  }
+</section>

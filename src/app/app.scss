@@ -199,6 +199,8 @@ ion-label {
   }
 
   .phone-screen {
+    --status-height: 52px;
+    --home-inset: 10px;
     overflow: hidden;
     border-radius: 41px;
   }
