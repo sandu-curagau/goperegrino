@@ -9,7 +9,113 @@
       </p>
     </header>
 
-    <section class="page-stack">
+    @if (store.walkingDay(); as day) {
+      <section class="daily-overview">
+        <div class="daily-top">
+          <p class="kicker">
+            {{ locale.t('day', { day: day.day }) }} · {{ locale.date(day.date) }}
+          </p>
+          <button
+            class="daily-weather"
+            type="button"
+            [disabled]="store.offline()"
+            [attr.aria-label]="locale.t('forecast')"
+            (click)="weatherOpen.set(true)"
+          >
+            <ion-icon
+              [name]="store.offline() ? 'cloud-offline-outline' : weather().icon"
+              aria-hidden="true"
+            ></ion-icon>
+            @if (!store.offline()) {
+              <span>{{ weather().temperature }}°</span>
+            }
+          </button>
+        </div>
+        <p class="daily-label">{{ locale.t(store.completed() ? 'trailFinished' : 'nextStop') }}</p>
+        <h2>{{ day.to }}</h2>
+        @if (!store.completed()) {
+          <div class="daily-metrics">
+            <div>
+              <strong>{{ locale.number(store.walkingDayRemaining(), 1) }} <small>km</small></strong
+              ><span>{{ locale.t('stageKm') }}</span>
+            </div>
+            <div>
+              <strong>{{ locale.t('walkingTime', eta()) }}</strong
+              ><span>{{ locale.t('estimatedTime') }}</span>
+            </div>
+          </div>
+          <div class="daily-progress">
+            <span>{{ locale.t('dayProgress') }}</span
+            ><strong
+              >{{ locale.number(dayProgress(), 1) }} / {{ locale.number(day.km, 1) }} km</strong
+            >
+          </div>
+          <progress
+            [value]="dayProgress()"
+            [max]="day.km"
+            [attr.aria-label]="locale.t('dayProgress')"
+          ></progress>
+          <button class="continue-walk" type="button" (click)="continueWalk()">
+            <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
+            >{{ locale.t('continueWalking') }}<span aria-hidden="true">→</span>
+          </button>
+        } @else {
+          <button class="continue-walk" type="button" (click)="open('journal')">
+            <ion-icon name="book-outline" aria-hidden="true"></ion-icon>{{ locale.t('journal')
+            }}<span aria-hidden="true">→</span>
+          </button>
+        }
+      </section>
+
+      @if (store.bookingPlanConflicts().length) {
+        <button class="plan-conflict-banner" type="button" (click)="reviewBookings()">
+          <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon
+          ><strong>{{ locale.t('planConflictsTitle') }}</strong
+          ><span>{{ store.bookingPlanConflicts().length }}</span
+          ><ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+        </button>
+      }
+
+      @if (!store.completed()) {
+        <section class="surface daily-lodging">
+          <span class="tile"><ion-icon name="bed-outline" aria-hidden="true"></ion-icon></span>
+          <div>
+            <p class="kicker">{{ locale.t('plannedLodging') }}</p>
+            @if (stay(); as reserved) {
+              <h3>{{ reserved.place.name }}</h3>
+              <p>
+                {{ locale.date(reserved.booking.arrival) }} –
+                {{ locale.date(reserved.booking.departure) }}
+              </p>
+              <button
+                class="text-button"
+                type="button"
+                (click)="viewReservation(reserved.booking.code)"
+              >
+                {{ locale.t('viewReservation') }} <span aria-hidden="true">→</span>
+              </button>
+            } @else {
+              <h3>{{ day.to }}</h3>
+              <p>{{ locale.t('noLodgingForStage') }}</p>
+              <button
+                class="text-button"
+                type="button"
+                [disabled]="store.offline()"
+                (click)="findStay()"
+              >
+                @if (store.offline()) {
+                  <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+                }
+                {{ locale.t('findStays') }} <span aria-hidden="true">→</span>
+              </button>
+            }
+          </div>
+        </section>
+      }
+    }
+
+    <h2 class="tools-heading">{{ locale.t('routeTools') }}</h2>
+    <section class="page-stack tools-grid">
       @for (entry of sections; track entry.id) {
         <button class="surface row-card" type="button" (click)="open(entry.id, entry.premium)">
           <span class="tile"><ion-icon [name]="entry.icon" aria-hidden="true"></ion-icon></span>
@@ -32,6 +138,12 @@
     </section>
   </main>
 </ion-content>
+
+@if (weatherOpen()) {
+  <app-sheet [title]="locale.t('forecast')" (closed)="weatherOpen.set(false)"
+    ><app-stage-forecast [weather]="weather()" [place]="store.walkingDay()?.to ?? ''"
+  /></app-sheet>
+}
 
 @if (section(); as active) {
   <app-sheet [title]="locale.t(active)" (closed)="close()">

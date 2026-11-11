@@ -13,3 +13,195 @@ progress {
   width: 100%;
   accent-color: var(--brand);
 }
+.daily-overview {
+  margin-bottom: 14px;
+  padding: 18px;
+  border-radius: 24px;
+  background: linear-gradient(130deg, #003058, #1f596c);
+  color: white;
+}
+.daily-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.daily-top .kicker {
+  margin: 0;
+  color: #c2dce7;
+  font-size: 9px;
+}
+.daily-weather {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 5px 9px;
+  border-radius: 11px;
+  background: #ffffff1c;
+  color: white;
+  font-size: 12px;
+}
+.daily-weather ion-icon {
+  font-size: 18px;
+}
+.daily-label {
+  margin: 16px 0 5px;
+  color: #cfdee5;
+  font-size: 12px;
+}
+.daily-overview h2 {
+  margin: 0;
+  color: white;
+  font-size: 27px;
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+}
+.daily-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+.daily-metrics strong {
+  display: block;
+  color: white;
+  font-size: 21px;
+  letter-spacing: -0.035em;
+}
+.daily-metrics strong small {
+  font-size: 12px;
+}
+.daily-metrics span {
+  display: block;
+  margin-top: 5px;
+  color: #d3e1e8;
+  font-size: 10px;
+}
+.daily-progress {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 22px;
+  font-size: 10px;
+  color: #d3e1e8;
+}
+.daily-overview progress {
+  display: block;
+  height: 5px;
+  margin: 8px 0 18px;
+  accent-color: #ffdc7b;
+  border: 0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.daily-overview progress::-webkit-progress-bar {
+  background: #ffffff2e;
+}
+.daily-overview progress::-webkit-progress-value {
+  background: #ffdc7b;
+  border-radius: 5px;
+}
+.continue-walk {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 16px;
+  padding: 10px;
+  background: #ffdc7b;
+  color: #143b52;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.continue-walk span {
+  margin-left: auto;
+}
+.plan-conflict-banner {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid #f0d88e;
+  border-radius: 17px;
+  background: #fff3d5;
+  color: #805a12;
+  text-align: left;
+  font-size: 12px;
+}
+.plan-conflict-banner strong {
+  flex: 1;
+}
+.plan-conflict-banner ion-icon {
+  flex: none;
+  font-size: 19px;
+}
+.daily-lodging {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+  padding: 15px;
+  margin-bottom: 22px;
+}
+.daily-lodging > div {
+  flex: 1;
+  min-width: 0;
+}
+.daily-lodging .kicker {
+  margin: 0 0 7px;
+  font-size: 8px;
+}
+.daily-lodging h3 {
+  margin: 0;
+  font-size: 14px;
+}
+.daily-lodging p:not(.kicker) {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.daily-lodging button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 8px 0 0;
+  font-size: 12px;
+}
+.tools-heading {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+.tools-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.tools-grid .row-card {
+  position: relative;
+  flex-direction: column;
+  align-items: start;
+  gap: 9px;
+  padding: 14px;
+  min-height: 110px;
+}
+.tools-grid .row-card > :nth-child(2) {
+  flex: none;
+}
+.tools-grid .row-card > :last-child {
+  position: absolute;
+  top: 18px;
+  right: 12px;
+  color: var(--muted);
+}
+.tools-grid .row-card strong {
+  font-size: 12px;
+}
+.tools-grid .row-card small {
+  font-size: 10px;
+}

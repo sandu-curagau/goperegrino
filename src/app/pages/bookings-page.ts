@@ -22,6 +22,12 @@ import { Sheet } from '../demo/sheet';
         <div class="page-stack">
           @for (entry of bookings(); track entry.booking.code) {
             <article class="surface booking-summary">
+              @if (conflictFor(entry.booking.code)) {
+                <div class="booking-plan-warning">
+                  <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon
+                  >{{ locale.t('planConflictsTitle') }}
+                </div>
+              }
               <button
                 class="row-card booking-card"
                 type="button"
@@ -120,6 +126,20 @@ import { Sheet } from '../demo/sheet';
           </form>
         } @else {
           <div class="sheet-stack">
+            @if (conflictFor(entry.booking.code); as conflict) {
+              <div class="booking-plan-warning">
+                <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+                <span
+                  ><strong>{{ locale.t('planConflictsTitle') }}</strong
+                  ><br />
+                  @if (conflict.stop; as stop) {
+                    {{ locale.t('plannedArrival') }}: {{ locale.date(stop.date) }} · {{ stop.to }}
+                  } @else {
+                    {{ locale.t('stopRemoved') }}
+                  }
+                </span>
+              </div>
+            }
             <span class="tag" [class.gold]="entry.booking.status === 'confirmed'">
               {{
                 locale.t(entry.booking.status === 'confirmed' ? 'bookingDone' : 'bookingCancelled')
@@ -215,6 +235,21 @@ import { Sheet } from '../demo/sheet';
     }
   `,
   styles: `
+    .booking-plan-warning {
+      display: flex;
+      align-items: start;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #fff3d5;
+      color: #805a12;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .booking-plan-warning ion-icon {
+      flex: none;
+      font-size: 18px;
+    }
     .booking-distance {
       color: var(--brand);
       font-weight: 750;
@@ -311,7 +346,13 @@ export class BookingsPage {
       .queryParamMap.pipe(takeUntilDestroyed())
       .subscribe((params) => {
         this.routeFilter.set(params.get('route') ?? '');
+        const code = params.get('booking');
+        if (code) this.open(code);
       });
+  }
+
+  protected conflictFor(code: string) {
+    return this.store.bookingPlanConflicts().find((conflict) => conflict.booking.code === code);
   }
 
   protected open(code: string, review = false): void {

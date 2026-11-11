@@ -70,6 +70,7 @@ export interface Notice {
 }
 
 export interface Reservation {
+  walkId?: string;
   code: string;
   lodgingId: string;
   arrival: string;

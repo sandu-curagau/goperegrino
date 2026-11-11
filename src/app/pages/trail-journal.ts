@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
@@ -112,6 +112,9 @@ export class TrailJournal {
   );
 
   constructor() {
+    effect(() => {
+      if (!this.premium()) this.editor.set(null);
+    });
     inject(ActivatedRoute)
       .queryParamMap.pipe(takeUntilDestroyed())
       .subscribe((params) => {
@@ -162,6 +165,10 @@ export class TrailJournal {
   }
 
   protected edit(entry: JournalEntry): void {
+    if (!this.premium()) {
+      this.showPremium();
+      return;
+    }
     this.editor.set(entry);
     this.draft.set(entry.note);
     this.photos.set(entry.photos);
@@ -205,7 +212,7 @@ export class TrailJournal {
 
   protected save(): void {
     const entry = this.editor();
-    if (!entry || this.loadingPhoto()) return;
+    if (!entry || this.loadingPhoto() || !this.premium()) return;
     const saved = this.store.saveJournalEntry({
       ...entry,
       note: this.draft().trim(),

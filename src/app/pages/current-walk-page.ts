@@ -1,16 +1,20 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale, Message } from '../demo/locale';
-import { kmBetween } from '../demo/models';
+import { kmBetween, lodgingPoint } from '../demo/models';
+import { walkReservations } from '../demo/booking-plan';
+import { walkingTime } from '../demo/walking-time';
 import { Sheet } from '../demo/sheet';
 import { loadOfflinePack } from './offline-map';
+import { fetchStageWeather, sampleWeather } from './stage-weather';
+import { StageForecast } from './stage-forecast';
 
 type Section = 'journal' | 'packing' | 'breaks' | 'download';
 type Action = Section | 'credencial' | 'writeReviews';
 const sections: { id: Action; icon: string; premium: boolean }[] = [
-  { id: 'journal', icon: 'book-outline', premium: true },
+  { id: 'journal', icon: 'book-outline', premium: false },
   { id: 'credencial', icon: 'ribbon-outline', premium: false },
   { id: 'breaks', icon: 'cafe-outline', premium: true },
   { id: 'writeReviews', icon: 'star-outline', premium: false },
@@ -19,7 +23,7 @@ const sections: { id: Action; icon: string; premium: boolean }[] = [
 ];
 
 @Component({
-  imports: [IonContent, IonIcon, Sheet],
+  imports: [IonContent, IonIcon, Sheet, StageForecast],
   templateUrl: './current-walk-page.html',
   styleUrl: './current-walk-page.scss',
 })
@@ -39,6 +43,68 @@ export class CurrentWalkPage {
   protected readonly section = signal<Section | null>(null);
   protected readonly notice = signal<Message | null>(null);
   protected readonly downloading = signal(false);
+  protected readonly weatherOpen = signal(false);
+  protected readonly weather = signal(sampleWeather(1));
+  protected readonly eta = computed(() => walkingTime(this.store.walkingDayRemaining()));
+  protected readonly dayProgress = computed(() => {
+    const previous = this.store.walkingPlan()[this.store.walkingDayIndex() - 1];
+    return Math.max(
+      0,
+      Math.min(
+        this.store.walkingDay()?.km ?? 0,
+        this.store.state().distance - (previous?.distance ?? 0),
+      ),
+    );
+  });
+  protected readonly stay = computed(() => {
+    const route = this.store.route();
+    const day = this.store.walkingDay();
+    if (!route || !day) return undefined;
+    return walkReservations(
+      route,
+      this.store.walkingPlan(),
+      this.store.state().reservations,
+      this.store.lodgings(),
+      this.store.state().walkId,
+    ).find(
+      ({ booking, place }) =>
+        booking.arrival <= day.date &&
+        booking.departure > day.date &&
+        kmBetween(day.position, lodgingPoint(place)) <= 5,
+    );
+  });
+
+  constructor() {
+    effect((onCleanup) => {
+      const day = this.store.walkingDay();
+      const offline = this.store.offline();
+      if (!day) return;
+      this.weather.set(sampleWeather(day.stageId));
+      if (offline) return;
+      const controller = new AbortController();
+      onCleanup(() => controller.abort());
+      void fetchStageWeather(day.position, controller.signal)
+        .then((weather) => {
+          if (weather && !controller.signal.aborted) this.weather.set(weather);
+        })
+        .catch(() => {});
+    });
+  }
+
+  protected continueWalk(): void {
+    this.store.openWalkingMap();
+  }
+
+  protected findStay(): void {
+    const day = this.store.walkingDay();
+    if (day && !this.store.offline()) this.store.showStayStop(day.stopId);
+  }
+
+  protected viewReservation(code: string): void {
+    void this.router.navigate(['/reservas'], {
+      queryParams: { route: this.store.route()?.id, booking: code },
+    });
+  }
 
   protected readonly downloaded = computed(() => this.store.state().offlineDownloaded);
   protected readonly pauseSpots = computed(() => {

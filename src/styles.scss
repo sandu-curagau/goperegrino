@@ -437,6 +437,19 @@ ion-content {
   flex: none;
   font-size: 13px;
 }
+.next-turn-pin {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 3px solid white;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #173d473d;
+  background: #ffdc7b;
+  color: #143b52;
+  font-size: 18px;
+  pointer-events: none;
+}
 .stay-hub-pin {
   max-width: 136px;
   min-height: 28px;

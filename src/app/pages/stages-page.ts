@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
-import { dayOptions } from '../demo/itinerary';
+import { dayOptions, itinerary } from '../demo/itinerary';
+import { bookingConflicts } from '../demo/booking-plan';
 import { Locale } from '../demo/locale';
 import { dateInput } from '../demo/models';
 import { Sheet } from '../demo/sheet';
@@ -57,28 +58,73 @@ import { Sheet } from '../demo/sheet';
           </ol>
 
           @if (editing()) {
-            <app-sheet [title]="locale.t('personalize')" (closed)="editing.set(false)">
-              <form
-                class="sheet-stack"
-                (submit)="$event.preventDefault(); save(date.value, +days.value)"
-              >
-                <label class="field"
-                  >{{ locale.t('departure') }}
-                  <input #date type="date" [value]="store.state().date" required />
-                </label>
-                <label class="field"
-                  >{{ locale.t('walkingDays') }}
-                  <select #days [value]="plan().length">
-                    @for (day of dayOptions(route); track day) {
-                      <option [value]="day" [selected]="day === plan().length">
-                        {{ day }}
-                      </option>
-                    }
-                  </select>
-                </label>
-                <p class="muted">{{ locale.t('dayLimit') }}</p>
-                <button class="primary" type="submit">{{ locale.t('save') }}</button>
-              </form>
+            <app-sheet
+              [title]="locale.t(reviewing() ? 'reviewPlanChanges' : 'personalize')"
+              (closed)="editing.set(false)"
+            >
+              @if (reviewing()) {
+                <div class="sheet-stack">
+                  <p class="plan-warning">
+                    <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon
+                    >{{ locale.t('planConflictIntro') }}
+                  </p>
+                  @for (conflict of conflicts(); track conflict.booking.code) {
+                    <article class="surface conflict-card">
+                      <strong>{{ conflict.place.name }}</strong>
+                      <dl>
+                        <div>
+                          <dt>{{ locale.t('bookedDates') }}</dt>
+                          <dd>
+                            {{ locale.date(conflict.booking.arrival) }} –
+                            {{ locale.date(conflict.booking.departure) }}
+                          </dd>
+                        </div>
+                        @if (conflict.stop; as stop) {
+                          <div>
+                            <dt>{{ locale.t('plannedArrival') }}</dt>
+                            <dd>{{ locale.date(stop.date) }} · {{ stop.to }}</dd>
+                          </div>
+                        }
+                      </dl>
+                      @if (!conflict.stop) {
+                        <p>{{ locale.t('stopRemoved') }}</p>
+                      }
+                    </article>
+                  }
+                  <p class="muted">{{ locale.t('bookingDatesRemain') }}</p>
+                  <button class="primary" type="button" (click)="applyPlan()">
+                    {{ locale.t('applyPlan') }}
+                  </button>
+                  <button class="secondary" type="button" (click)="reviewing.set(false)">
+                    {{ locale.t('back') }}
+                  </button>
+                </div>
+              } @else {
+                <form class="sheet-stack" (submit)="$event.preventDefault(); save()">
+                  <label class="field"
+                    >{{ locale.t('departure') }}
+                    <input
+                      #date
+                      type="date"
+                      [value]="draftDate()"
+                      (change)="draftDate.set(date.value)"
+                      required
+                    />
+                  </label>
+                  <label class="field"
+                    >{{ locale.t('walkingDays') }}
+                    <select #days [value]="draftDays()" (change)="draftDays.set(+days.value)">
+                      @for (day of dayOptions(route); track day) {
+                        <option [value]="day" [selected]="day === draftDays()">
+                          {{ day }}
+                        </option>
+                      }
+                    </select>
+                  </label>
+                  <p class="muted">{{ locale.t('dayLimit') }}</p>
+                  <button class="primary" type="submit">{{ locale.t('save') }}</button>
+                </form>
+              }
             </app-sheet>
           }
         }
@@ -147,23 +193,89 @@ import { Sheet } from '../demo/sheet';
     .stage-stays ion-icon:last-child {
       font-size: 14px;
     }
+    .plan-warning {
+      display: flex;
+      align-items: start;
+      gap: 10px;
+      margin: 0;
+      color: #805a12;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .plan-warning ion-icon {
+      flex: none;
+      font-size: 22px;
+    }
+    .conflict-card {
+      padding: 14px;
+    }
+    .conflict-card strong {
+      font-size: 14px;
+    }
+    .conflict-card dl {
+      margin: 12px 0 0;
+      font-size: 12px;
+    }
+    .conflict-card dl > div + div {
+      margin-top: 10px;
+    }
+    .conflict-card dt {
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+    .conflict-card dd {
+      margin: 0;
+      font-weight: 600;
+    }
+    .conflict-card p {
+      margin: 12px 0 0;
+      font-size: 12px;
+      color: #805a12;
+      line-height: 1.5;
+    }
   `,
 })
 export class StagesPage {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   protected readonly editing = signal(false);
+  protected readonly reviewing = signal(false);
+  protected readonly draftDate = signal('');
+  protected readonly draftDays = signal(1);
   protected readonly dayOptions = dayOptions;
   protected readonly plan = this.store.walkingPlan;
+  protected readonly conflicts = computed(() => {
+    const route = this.store.route();
+    return route && this.draftDate()
+      ? bookingConflicts(
+          route,
+          itinerary(route, this.draftDays(), this.draftDate()),
+          this.store.state().reservations,
+          this.store.lodgings(),
+          this.store.state().walkId,
+          this.plan(),
+        )
+      : [];
+  });
 
   protected edit(): void {
-    if (this.store.premium()) this.editing.set(true);
-    else this.store.premiumOpen.set(true);
+    if (this.store.premium()) {
+      this.draftDate.set(this.store.state().date);
+      this.draftDays.set(this.plan().length);
+      this.reviewing.set(false);
+      this.editing.set(true);
+    } else this.store.premiumOpen.set(true);
   }
 
-  protected save(date: string, days: number): void {
+  protected save(): void {
     if (!this.store.premium()) return;
-    this.store.patch({ date: date || dateInput(), days });
+    if (this.conflicts().length) this.reviewing.set(true);
+    else this.applyPlan();
+  }
+
+  protected applyPlan(): void {
+    if (!this.store.premium()) return;
+    this.store.updateWalkingPlan(this.draftDate() || dateInput(), this.draftDays());
     this.editing.set(false);
   }
 }

@@ -2,6 +2,8 @@ import { computed, DestroyRef, effect, inject, Injectable, signal } from '@angul
 import { Router } from '@angular/router';
 import { itinerary } from './itinerary';
 import { joinStages } from './trail-geometry';
+import { bookingConflicts, walkReservations } from './booking-plan';
+import { walkingTrack, trackDistance, walkingInstruction } from './walking-guidance';
 import {
   Camino,
   PaymentCard,
@@ -171,6 +173,19 @@ export class DemoStore {
     Math.max(0, (this.walkingDay()?.distance ?? 0) - this.state().distance),
   );
   readonly mapStayStop = signal<number | null>(null);
+  readonly mapViewRequest = signal<'walking' | null>(null);
+  readonly bookingPlanConflicts = computed(() => {
+    const route = this.route();
+    return route
+      ? bookingConflicts(
+          route,
+          this.walkingPlan(),
+          this.state().reservations,
+          this.lodgings(),
+          this.state().walkId,
+        )
+      : [];
+  });
   readonly stageIndex = computed(() => {
     let end = 0;
     const stages = this.route()?.stages ?? [];
@@ -206,6 +221,16 @@ export class DemoStore {
       distances.push(distances[index - 1] + kmBetween(line[index - 1], line[index]));
     }
     return { line, distances };
+  });
+  private readonly navigationTrack = computed(() => walkingTrack(this.geometry()));
+  readonly navigation = computed(() => {
+    const route = this.route();
+    const track = this.navigationTrack();
+    return walkingInstruction(
+      track,
+      route ? trackDistance(route, track, this.state().distance) : 0,
+      route ? trackDistance(route, track, this.walkingDay()?.distance ?? route.km) : 0,
+    );
   });
   readonly progress = computed(() => {
     const { line, distances } = this.stageGeometry();
@@ -307,6 +332,38 @@ export class DemoStore {
     this.stored.update((state) => ({ ...state, ...update }));
   }
 
+  updateWalkingPlan(date: string, days: number): void {
+    const route = this.route();
+    if (!route) return;
+    const ids = new Set(
+      walkReservations(
+        route,
+        this.walkingPlan(),
+        this.state().reservations,
+        this.lodgings(),
+        this.state().walkId,
+      ).map(({ booking }) => booking.code),
+    );
+    this.patch({
+      date,
+      days,
+      reservations: this.state().reservations.map((booking) =>
+        ids.has(booking.code) && !booking.walkId
+          ? { ...booking, walkId: this.state().walkId }
+          : booking,
+      ),
+    });
+  }
+
+  openWalkingMap(): void {
+    void this.router.navigateByUrl('/mapa').then((opened) => {
+      if (opened) {
+        this.mapViewRequest.set('walking');
+        if (!this.completed()) this.playing.set(true);
+      }
+    });
+  }
+
   chooseRoute(id: string, started = true): void {
     const route = this.routes().find((item) => item.id === id);
     if (!route) return;
@@ -403,6 +460,7 @@ export class DemoStore {
     this.cameraRevision.update((revision) => revision + 1);
     this.mapLodging.set(null);
     this.mapStayStop.set(null);
+    this.mapViewRequest.set(null);
     this.premiumOpen.set(false);
     this.stored.set(freshState());
     this.journalEntries.set([]);

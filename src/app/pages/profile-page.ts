@@ -120,10 +120,6 @@ export class ProfilePage {
   }
 
   protected history(): void {
-    if (!this.store.premium()) {
-      this.store.premiumOpen.set(true);
-      return;
-    }
     void this.router.navigateByUrl('/diario');
   }
 

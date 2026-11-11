@@ -21,6 +21,7 @@ import { fetchStageWeather, sampleWeather, StageWeather } from './stage-weather'
 import { StageForecast } from './stage-forecast';
 import { LodgingSearch, LodgingSearchSheet } from './lodging-search';
 import { PublicProfile } from './public-profile';
+import { walkingTime } from '../demo/walking-time';
 
 type MapSheet = 'sos' | 'warnings' | 'lodgings' | 'detail' | 'comments' | 'weather' | 'profile';
 
@@ -37,7 +38,12 @@ type MapSheet = 'sos' | 'warnings' | 'lodgings' | 'detail' | 'comments' | 'weath
   ],
   providers: [TrailCommentFeed, LodgingSearch],
   templateUrl: './map-page.html',
-  styleUrls: ['./map-page.scss', './map-view-switch.scss', './map-arrival.scss'],
+  styleUrls: [
+    './map-page.scss',
+    './map-view-switch.scss',
+    './map-arrival.scss',
+    './walking-navigation.scss',
+  ],
 })
 export class MapPage {
   protected readonly store = inject(DemoStore);
@@ -61,6 +67,19 @@ export class MapPage {
   protected readonly recenter = signal(0);
   protected readonly walkingView = signal(false);
   protected readonly following = signal(true);
+  protected readonly eta = computed(() => walkingTime(this.store.walkingDayRemaining()));
+  protected readonly navigationTitle = computed<Message>(
+    () =>
+      (
+        ({
+          left: 'turnLeft',
+          right: 'turnRight',
+          sharp: 'sharpTurn',
+          straight: 'continueStraight',
+          finish: 'arrivalAhead',
+        }) as const
+      )[this.store.navigation().kind],
+  );
   protected readonly mapLoaded = signal<boolean | undefined>(undefined);
   protected readonly copied = signal(false);
   protected readonly link = signal('');
@@ -115,6 +134,12 @@ export class MapPage {
   private readonly weatherCache = new Map<string, { data: StageWeather; expires: number }>();
 
   constructor() {
+    effect(() => {
+      if (this.store.mapViewRequest() === 'walking') {
+        untracked(() => this.setWalkingView(true));
+        this.store.mapViewRequest.set(null);
+      }
+    });
     effect(() => {
       this.stageKey();
       this.warningDismissed.set(false);
@@ -237,6 +262,18 @@ export class MapPage {
   protected openCommentProfile(id: string): void {
     this.popupProfileId.set(id);
     this.openSheet.set('profile');
+  }
+
+  protected navigationDistance(metres: number): string {
+    return metres < 8
+      ? this.locale.t('now')
+      : metres < 1000
+        ? this.locale.number(Math.max(10, Math.round(metres / 10) * 10)) + ' m'
+        : this.locale.number(metres / 1000, 1) + ' km';
+  }
+
+  protected toggleWalking(): void {
+    this.store.playing.update((playing) => !playing);
   }
 
   protected selectComment(comment: MapComment, center = false): void {

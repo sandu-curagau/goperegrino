@@ -122,6 +122,7 @@ export class LodgingFlow {
     if (!name || !this.paymentCard() || this.booking() || this.store.offline()) return;
     const { type, rooms, total } = this.price();
     const booking: Reservation = {
+      walkId: this.store.state().walkId,
       code: 'GP-' + crypto.randomUUID().slice(0, 8).toUpperCase(),
       lodgingId: this.lodging().id,
       arrival: this.arrival(),

@@ -183,6 +183,8 @@ export class TrailMap {
   readonly activePin = input<Lodging>();
   readonly comments = input<MapComment[]>([]);
   readonly activeComment = input<MapComment>();
+  readonly navigationPoint = input<Point>();
+  readonly navigationRotation = input(0);
   readonly selected = output<string>();
   readonly hubSelected = output<number>();
   readonly commentSelected = output<MapComment>();
@@ -216,6 +218,21 @@ export class TrailMap {
   private readonly lodgingData = computed(() => pinFeatures(this.pins()));
 
   constructor() {
+    effect((onCleanup) => {
+      const point = this.navigationPoint();
+      const rotation = this.navigationRotation();
+      const map = this.map;
+      if (!this.ready() || !point || !map) return;
+      const element = document.createElement('span');
+      element.className = 'next-turn-pin';
+      element.setAttribute('aria-hidden', 'true');
+      const arrow = document.createElement('ion-icon');
+      arrow.setAttribute('name', 'arrow-up-outline');
+      arrow.style.transform = `rotate(${rotation}deg)`;
+      element.append(arrow);
+      const marker = new Marker({ element }).setLngLat(point).addTo(map);
+      onCleanup(() => marker.remove());
+    });
     afterNextRender(() => this.mount());
     inject(DestroyRef).onDestroy(() => {
       clearTimeout(this.failedTimer);

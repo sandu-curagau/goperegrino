@@ -163,7 +163,7 @@ export class PremiumPass {
     'planner',
     'extraAlerts',
     'advancedFilters',
-    'journal',
+    'journalPremium',
     'breaks',
     'packing',
     'adFree',

@@ -13,12 +13,7 @@
       <strong>{{ locale.t('journal') }}</strong>
     </header>
 
-    @if (!premium()) {
-      <section class="journal-empty surface">
-        <h1>{{ locale.t('journal') }}</h1>
-        <button class="primary" type="button" (click)="showPremium()">GoPeregrino Premium</button>
-      </section>
-    } @else if (walk(); as current) {
+    @if (walk(); as current) {
       @if (editor(); as entry) {
         <form class="sheet-stack editor surface" (submit)="$event.preventDefault(); save()">
           <div>
@@ -98,9 +93,15 @@
         </section>
         @if (current.active) {
           <button class="primary new-entry" type="button" (click)="addEntry()">
-            <ion-icon name="book-outline" aria-hidden="true"></ion-icon
+            <ion-icon
+              [name]="premium() ? 'book-outline' : 'lock-closed-outline'"
+              aria-hidden="true"
+            ></ion-icon
             >{{ locale.t('addJournalEntry') }}
           </button>
+        }
+        @if (!premium()) {
+          <p class="muted journal-access">{{ locale.t('journalReadAccess') }}</p>
         }
         @if (feedback(); as status) {
           <p class="muted" role="status">{{ locale.t(status) }}</p>
@@ -119,6 +120,9 @@
                   </h2>
                   @if (!current.sample) {
                     <button class="text-button" type="button" (click)="edit(entry)">
+                      @if (!premium()) {
+                        <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
+                      }
                       {{ locale.t('editJournalEntry') }}
                     </button>
                   }

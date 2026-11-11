@@ -1,0 +1,90 @@
+.navigation-card {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 14px;
+  background: #003058;
+  color: white;
+  box-shadow: 0 5px 22px #163e4c30;
+  pointer-events: auto;
+}
+.navigation-symbol {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 48px;
+  background: #ffdc7b;
+  border-radius: 14px;
+  color: #143b52;
+  font-size: 30px;
+}
+.navigation-copy {
+  min-width: 0;
+}
+.navigation-copy .kicker {
+  color: #ffdc7b;
+  font-size: 13px;
+  letter-spacing: 0;
+  margin: 0 0 4px;
+  text-transform: none;
+}
+.navigation-copy h1 {
+  margin: 0;
+  color: white;
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+.navigation-copy > p:last-child {
+  margin: 7px 0 0;
+  color: #d3e1e8;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.navigation-weather {
+  align-self: start;
+  min-height: 34px;
+  padding: 5px 7px;
+  background: #ffffff20;
+  color: white;
+  font-size: 11px;
+}
+.navigation-weather ion-icon {
+  font-size: 16px;
+}
+.navigation-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  border-top: 1px solid #ffffff27;
+  padding-top: 9px;
+  color: #d3e1e8;
+  font-size: 11px;
+}
+.navigation-footer button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 5px 9px;
+  border-radius: 10px;
+  background: #ffffff18;
+  color: white;
+  font-size: 11px;
+}
+.navigation-resume {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  border: 1px solid #ffffff35;
+  border-radius: 11px;
+  background: #ffffff10;
+  color: white;
+  font-size: 12px;
+}
