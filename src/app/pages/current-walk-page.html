@@ -5,7 +5,11 @@
       <h1>{{ locale.t('caminho') }}</h1>
       <p>
         {{ locale.number(store.state().distance, 1) }} / {{ store.route()?.km }} km ·
-        {{ locale.t(store.completed() ? 'trailFinished' : 'walkActive') }}
+        {{
+          locale.t(
+            store.completed() ? 'trailFinished' : store.walkClosed() ? 'walkStopped' : 'walkActive'
+          )
+        }}
       </p>
     </header>
 
@@ -31,9 +35,15 @@
             }
           </button>
         </div>
-        <p class="daily-label">{{ locale.t(store.completed() ? 'trailFinished' : 'nextStop') }}</p>
-        <h2>{{ day.to }}</h2>
-        @if (!store.completed()) {
+        <p class="daily-label">
+          {{
+            locale.t(
+              store.completed() ? 'trailFinished' : store.walkClosed() ? 'walkStopped' : 'nextStop'
+            )
+          }}
+        </p>
+        <h2>{{ store.walkClosed() ? store.route()?.destination : day.to }}</h2>
+        @if (!store.walkClosed()) {
           <div class="daily-metrics">
             <div>
               <strong>{{ locale.number(store.walkingDayRemaining(), 1) }} <small>km</small></strong
@@ -60,9 +70,9 @@
             >{{ locale.t('continueWalking') }}<span aria-hidden="true">→</span>
           </button>
         } @else {
-          <button class="continue-walk" type="button" (click)="open('journal')">
-            <ion-icon name="book-outline" aria-hidden="true"></ion-icon>{{ locale.t('journal')
-            }}<span aria-hidden="true">→</span>
+          <button class="continue-walk" type="button" (click)="anotherWalk()">
+            <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
+            >{{ locale.t('anotherRoute') }}<span aria-hidden="true">→</span>
           </button>
         }
       </section>
@@ -76,7 +86,7 @@
         </button>
       }
 
-      @if (!store.completed()) {
+      @if (!store.walkClosed()) {
         <section class="surface daily-lodging">
           <span class="tile"><ion-icon name="bed-outline" aria-hidden="true"></ion-icon></span>
           <div>
@@ -118,14 +128,26 @@
     <section class="page-stack tools-grid">
       @for (entry of sections; track entry.id) {
         <button class="surface row-card" type="button" (click)="open(entry.id, entry.premium)">
-          <span class="tile"><ion-icon [name]="entry.icon" aria-hidden="true"></ion-icon></span>
+          <span class="tile"
+            ><ion-icon
+              [name]="entry.id === 'download' && downloaded() ? 'checkmark-outline' : entry.icon"
+              aria-hidden="true"
+            ></ion-icon
+          ></span>
           <span
-            ><strong>{{ locale.t(entry.id) }}</strong>
-            @if (entry.id === 'download' && downloaded()) {
-              <small>{{ locale.t('downloadDone') }}</small>
+            ><strong>{{
+              locale.t(
+                entry.id === 'download' ? (downloaded() ? 'offlineMap' : 'downloadMap') : entry.id
+              )
+            }}</strong>
+            @if (entry.id === 'download' && downloaded() && store.premium()) {
+              <small>{{ locale.t('offlineReady') }}</small>
             }
             @if (entry.id === 'breaks') {
               <small>{{ locale.t('breaksHelp') }}</small>
+            }
+            @if (entry.id === 'packing' && store.premium()) {
+              <small>{{ locale.t('packCount', { count: packed(), total: items.length }) }}</small>
             }
           </span>
           @if (entry.premium && !store.premium()) {
@@ -136,6 +158,16 @@
         </button>
       }
     </section>
+    @if (!store.walkClosed()) {
+      <div class="walk-management">
+        <button class="secondary wide" type="button" (click)="anotherWalk()">
+          {{ locale.t('anotherRoute') }}
+        </button>
+        <button class="text-button end-walk" type="button" (click)="open('stopWalk')">
+          {{ locale.t('stopWalk') }}
+        </button>
+      </div>
+    }
   </main>
 </ion-content>
 
@@ -146,44 +178,126 @@
 }
 
 @if (section(); as active) {
-  <app-sheet [title]="locale.t(active)" (closed)="close()">
+  <app-sheet [title]="locale.t(active === 'download' ? 'offlineMap' : active)" (closed)="close()">
     @switch (active) {
       @case ('packing') {
         <div class="sheet-stack">
-          @for (item of items; track item) {
-            <label class="detail-line">
-              <strong>{{ locale.t(item) }}</strong>
-              <input
-                #entry
-                type="checkbox"
-                [checked]="store.state().pack.includes(item)"
-                (change)="pack(item, entry.checked)"
-              />
-            </label>
+          <div class="surface packing-progress">
+            <strong>{{ locale.t('packCount', { count: packed(), total: items.length }) }}</strong
+            ><progress
+              [value]="packed()"
+              [max]="items.length"
+              [attr.aria-label]="locale.t('packing')"
+            ></progress>
+          </div>
+          @for (group of packingGroups; track group.title) {
+            <fieldset class="packing-group">
+              <legend>{{ locale.t(group.title) }}</legend>
+              @for (item of group.items; track item) {
+                <label class="packing-item" [class.packed]="store.state().pack.includes(item)">
+                  <input
+                    #entry
+                    type="checkbox"
+                    [checked]="store.state().pack.includes(item)"
+                    (change)="pack(item, entry.checked)"
+                  />
+                  <strong>{{ locale.t(item) }}</strong>
+                </label>
+              }
+            </fieldset>
           }
         </div>
       }
       @case ('breaks') {
         <div class="sheet-stack">
           <p class="muted">{{ locale.t('breaksDistance') }}</p>
-          @for (spot of pauseSpots(); track spot.id) {
-            <div class="row-card surface">
+          <div class="nearby-filters">
+            <label class="field"
+              >{{ locale.t('nearbyCategory')
+              }}<select
+                #category
+                [value]="nearbyFilter()"
+                (change)="nearbyFilter.set($any(category.value)); nearbyLimit.set(12)"
+              >
+                <option value="all">{{ locale.t('nearbyAll') }}</option>
+                @for (kind of nearbyKinds; track kind) {
+                  <option [value]="kind">
+                    {{ locale.t(kind === 'water' ? 'waterFountain' : kind) }}
+                  </option>
+                }
+              </select></label
+            >
+            <label class="field"
+              >{{ locale.t('commentRadius')
+              }}<select
+                #radius
+                [value]="nearbyRadius()"
+                (change)="nearbyRadius.set(+radius.value); nearbyLimit.set(12)"
+              >
+                @for (km of [2, 5, 10]; track km) {
+                  <option [value]="km" [selected]="nearbyRadius() === km">{{ km }} km</option>
+                }
+              </select></label
+            >
+          </div>
+          @for (spot of nearbyServices().slice(0, nearbyLimit()); track spot.id) {
+            <button
+              class="row-card surface nearby-result"
+              type="button"
+              [disabled]="store.offline() && !store.premium()"
+              (click)="showNearbyPoint(spot)"
+              [attr.aria-label]="
+                locale.t(spot.kind === 'water' ? 'waterFountain' : spot.kind) +
+                ' · ' +
+                spot.location +
+                ' · ' +
+                locale.t('showOnMap')
+              "
+            >
               <span class="tile"
-                ><ion-icon
-                  [name]="spot.kind === 'water' ? 'water-outline' : 'cafe-outline'"
-                  aria-hidden="true"
-                ></ion-icon
+                ><ion-icon [name]="nearbyIcons[spot.kind]" aria-hidden="true"></ion-icon
               ></span>
               <span
-                ><strong
-                  >{{ locale.t(spot.kind === 'water' ? 'water' : 'cafe') }} ·
-                  {{ spot.location }}</strong
-                ><small>{{ locale.number(spot.km, 1) }} km</small></span
+                ><strong>{{ locale.t(spot.kind === 'water' ? 'waterFountain' : spot.kind) }}</strong
+                ><small>{{ spot.location }}</small></span
               >
-            </div>
+              <span class="nearby-distance"
+                >{{
+                  spot.km < 1
+                    ? locale.number(spot.km * 1000) + ' m'
+                    : locale.number(spot.km, 1) + ' km'
+                }}
+                <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon
+              ></span>
+            </button>
           } @empty {
             <p>{{ locale.t('noBreaks') }}</p>
           }
+          @if (nearbyServices().length > nearbyLimit()) {
+            <button class="secondary" type="button" (click)="nearbyLimit.update(increaseLimit)">
+              {{ locale.t('nearbyMore') }}
+            </button>
+          }
+        </div>
+      }
+      @case ('stopWalk') {
+        <div class="sheet-stack">
+          <p>{{ locale.t('stopWalkCopy') }}</p>
+          <button class="primary" type="button" (click)="stopWalk()">
+            {{ locale.t('stopWalk') }}</button
+          ><button class="secondary" type="button" (click)="close()">
+            {{ locale.t('cancel') }}
+          </button>
+        </div>
+      }
+      @case ('anotherRoute') {
+        <div class="sheet-stack">
+          <p>{{ locale.t('anotherWalkCopy') }}</p>
+          <button class="primary" type="button" (click)="planAnother()">
+            {{ locale.t('anotherRoute') }}</button
+          ><button class="secondary" type="button" (click)="close()">
+            {{ locale.t('cancel') }}
+          </button>
         </div>
       }
       @case ('download') {
@@ -203,7 +317,7 @@
               @if (store.offline()) {
                 <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
               }
-              {{ locale.t('download') }}
+              {{ locale.t('downloadMap') }}
             </button>
             @if (store.offline()) {
               <p class="muted">{{ locale.t('connectionRequired') }}</p>

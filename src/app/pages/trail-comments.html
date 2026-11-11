@@ -116,7 +116,21 @@
             <span class="comment-distance"
               >{{ comment.location }} · {{ distance(comment.metres) }}</span
             >
-            <p>{{ comment.message }}</p>
+            @let translated = translation.view(comment);
+            <p>{{ translated.message }}</p>
+            @if (translated.visible) {
+              <button
+                class="comment-translation"
+                type="button"
+                [disabled]="translated.disabled"
+                (click)="translation.toggle(comment)"
+              >
+                {{ locale.t(translated.action) }}
+              </button>
+            }
+            @if (translated.error; as error) {
+              <small class="comment-translation-status" role="status">{{ locale.t(error) }}</small>
+            }
             <button
               class="comment-locate"
               type="button"

@@ -34,8 +34,24 @@
   font-size: 11px;
   font-weight: 750;
 }
-.map-view-switch button[aria-pressed='true'],
-.resume-following {
+.map-view-switch button[aria-pressed='true'] {
   background: #003058;
   color: #fff;
+}
+.map-actions .resume-following {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: auto;
+  max-width: min(190px, 65vw);
+  padding: 7px 11px;
+  background: #003058;
+  color: white;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+.resume-following ion-icon {
+  flex: none;
+  font-size: 18px;
 }

@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale, Message } from '../demo/locale';
-import { lodgingPoint, Point } from '../demo/models';
+import { lodgingPoint, Point, type Waypoint } from '../demo/models';
 import { Sheet } from '../demo/sheet';
 import { TrailMap } from './trail-map';
 import { LodgingFlow } from './lodging-flow';
@@ -21,6 +21,7 @@ import { fetchStageWeather, sampleWeather, StageWeather } from './stage-weather'
 import { StageForecast } from './stage-forecast';
 import { LodgingSearch, LodgingSearchSheet } from './lodging-search';
 import { PublicProfile } from './public-profile';
+import { CommentTranslation } from './comment-translation';
 import { walkingTime } from '../demo/walking-time';
 
 type MapSheet = 'sos' | 'warnings' | 'lodgings' | 'detail' | 'comments' | 'weather' | 'profile';
@@ -36,7 +37,7 @@ type MapSheet = 'sos' | 'warnings' | 'lodgings' | 'detail' | 'comments' | 'weath
     LodgingSearchSheet,
     PublicProfile,
   ],
-  providers: [TrailCommentFeed, LodgingSearch],
+  providers: [TrailCommentFeed, LodgingSearch, CommentTranslation],
   templateUrl: './map-page.html',
   styleUrls: [
     './map-page.scss',
@@ -100,6 +101,7 @@ export class MapPage {
     return [...pins.slice(0, this.feed.mapLimit - 1), active];
   });
   protected readonly target = signal<Point | undefined>(undefined);
+  protected readonly nearbyPoint = signal<Waypoint | undefined>(undefined);
   protected readonly fitPoints = signal<Point[]>([]);
   protected readonly fitTop = signal(220);
   private readonly planOverview = signal(false);
@@ -134,6 +136,21 @@ export class MapPage {
   private readonly weatherCache = new Map<string, { data: StageWeather; expires: number }>();
 
   constructor() {
+    effect(() => {
+      if (this.store.walkClosed()) this.walkingView.set(false);
+    });
+    effect(() => {
+      const point = this.store.mapNearbyPoint();
+      if (!point) return;
+      untracked(() => {
+        this.clearSelection();
+        this.walkingView.set(false);
+        this.nearbyPoint.set(point);
+        this.target.set(point.coordinates);
+        this.openSheet.set(null);
+      });
+      this.store.mapNearbyPoint.set(null);
+    });
     effect(() => {
       if (this.store.mapViewRequest() === 'walking') {
         untracked(() => this.setWalkingView(true));
@@ -214,6 +231,7 @@ export class MapPage {
   }
 
   protected clearSelection(): void {
+    this.nearbyPoint.set(undefined);
     this.selectedId.set(null);
     this.plannedArrival.set(undefined);
     this.selectedCommentId.set(null);
@@ -270,10 +288,6 @@ export class MapPage {
       : metres < 1000
         ? this.locale.number(Math.max(10, Math.round(metres / 10) * 10)) + ' m'
         : this.locale.number(metres / 1000, 1) + ' km';
-  }
-
-  protected toggleWalking(): void {
-    this.store.playing.update((playing) => !playing);
   }
 
   protected selectComment(comment: MapComment, center = false): void {

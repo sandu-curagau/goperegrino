@@ -19,7 +19,12 @@ import { Sheet } from '../demo/sheet';
             <p>{{ locale.t('planCopy', { name: route.destination }) }}</p>
           </header>
 
-          <button class="secondary wide" type="button" (click)="edit()">
+          <button
+            class="secondary wide"
+            type="button"
+            [disabled]="store.walkClosed()"
+            (click)="edit()"
+          >
             <ion-icon
               [name]="store.premium() ? 'options-outline' : 'lock-closed-outline'"
               aria-hidden="true"

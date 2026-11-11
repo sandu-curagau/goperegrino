@@ -66,6 +66,8 @@ export class Locale {
     return text.replace(/\{(\w+)\}/g, (_, name: string) => String(values[name] ?? ''));
   };
 
+  original = (key: Message): string => portuguese[key];
+
   number = (value: number, digits = 0): string =>
     new Intl.NumberFormat(this.tag(), { maximumFractionDigits: digits }).format(value);
 

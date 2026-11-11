@@ -64,27 +64,3 @@
   color: #d3e1e8;
   font-size: 11px;
 }
-.navigation-footer button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 32px;
-  padding: 5px 9px;
-  border-radius: 10px;
-  background: #ffffff18;
-  color: white;
-  font-size: 11px;
-}
-.navigation-resume {
-  display: flex;
-  grid-column: 1 / -1;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  min-height: 38px;
-  border: 1px solid #ffffff35;
-  border-radius: 11px;
-  background: #ffffff10;
-  color: white;
-  font-size: 12px;
-}

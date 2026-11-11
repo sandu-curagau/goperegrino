@@ -16,6 +16,7 @@ import { kmBetween, Point, TrailComment } from '../demo/models';
 import { communityPilgrims, PilgrimProfiles } from '../demo/pilgrim-profiles';
 import { PilgrimAvatar } from './pilgrim-avatar';
 import { PublicProfile } from './public-profile';
+import { CommentTranslation, type TranslatableComment } from './comment-translation';
 
 const pageSize = 10;
 const tips = [
@@ -33,11 +34,20 @@ const tips = [
   ['Sofia', 'trailTip12', 7, 810],
 ] as const;
 
-export type MapComment = Pick<TrailComment, 'id' | 'position' | 'message' | 'location'> & {
-  author: string;
-  authorId: string;
-  score: number;
+const translatedTipOriginals: Partial<Record<(typeof tips)[number][1], string>> = {
+  trailTip2: 'Las piedras resbalaban después de la lluvia. Los bastones vinieron bien.',
+  trailTip3: 'The yellow arrow is easy to miss. It helps to slow down here.',
+  trailTip4: 'Hay un banco a la sombra. Aquí hice la primera pausa de la mañana.',
+  trailTip8: 'I had to tighten my laces before this part.',
+  trailTip10: 'Me encontré con otros dos peregrinos y caminamos juntos hasta la siguiente parada.',
 };
+
+export type MapComment = Pick<TrailComment, 'position' | 'location'> &
+  TranslatableComment & {
+    author: string;
+    authorId: string;
+    score: number;
+  };
 
 @Injectable()
 export class TrailCommentFeed {
@@ -91,6 +101,7 @@ export class TrailCommentFeed {
             author: pilgrim[1],
             authorId: pilgrim[0],
             message: this.locale.t(message),
+            original: translatedTipOriginals[message] ?? this.locale.original(message),
             createdAt: new Date(Date.UTC(2025, 8, 1 + index)).toISOString(),
             votes,
           };
@@ -109,6 +120,7 @@ export class TrailCommentFeed {
       .filter((item) => item.routeId === routeId)
       .map((item) => ({
         ...item,
+        language: item.language ?? 'pt',
         author: this.store.state().profile.name,
         authorId: 'self',
         votes: 0,
@@ -150,6 +162,7 @@ export class TrailCommentFeed {
   styleUrl: './trail-comments.scss',
 })
 export class TrailComments {
+  protected readonly translation = inject(CommentTranslation);
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   protected readonly feed = inject(TrailCommentFeed);
@@ -225,6 +238,7 @@ export class TrailComments {
       position,
       location: this.store.completed() ? stage.to : stage.from + ' → ' + stage.to,
       message,
+      language: this.store.state().language,
     });
     this.feed.position.set(position);
     this.draft.set('');

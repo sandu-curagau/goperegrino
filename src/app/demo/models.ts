@@ -55,7 +55,7 @@ export interface Waypoint {
   id: string;
   routeId: string;
   stageId: number;
-  kind: 'stamp' | 'water' | 'cafe' | 'pharmacy' | 'church';
+  kind: 'stamp' | 'water' | 'cafe' | 'pharmacy' | 'church' | 'market' | 'toilet' | 'picnic';
   location: string;
   coordinates: Point;
 }
@@ -118,6 +118,7 @@ export interface WalkRecord {
   date: string;
   days: number;
   distance: number;
+  status?: 'stopped' | 'completed';
 }
 
 export interface JournalEntry {
@@ -138,6 +139,7 @@ export interface TrailComment {
   location: string;
   message: string;
   createdAt: string;
+  language?: string;
 }
 
 export interface TrailLine {

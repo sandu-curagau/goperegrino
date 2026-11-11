@@ -24,6 +24,7 @@
             [activePin]="selected()"
             [comments]="commentPins()"
             [activeComment]="activeComment()"
+            [nearbyPoint]="nearbyPoint()"
             [navigationPoint]="
               walkingView() && !store.completed() ? store.navigation().position : undefined
             "
@@ -54,7 +55,7 @@
 
       @if (store.walkingDay(); as stage) {
         <div #mapTop class="map-top">
-          @if (walkingView() && !store.completed()) {
+          @if (walkingView() && !store.walkClosed()) {
             <section class="navigation-card surface">
               <span class="navigation-symbol"
                 ><ion-icon
@@ -90,20 +91,7 @@
                   >{{ locale.number(store.walkingDayRemaining(), 1) }} km ·
                   {{ locale.t('walkingTime', eta()) }}</span
                 >
-                <button type="button" (click)="toggleWalking()">
-                  <ion-icon
-                    [name]="store.playing() ? 'pause-outline' : 'play-outline'"
-                    aria-hidden="true"
-                  ></ion-icon
-                  >{{ locale.t(store.playing() ? 'pause' : 'walk') }}
-                </button>
               </div>
-              @if (!following()) {
-                <button class="navigation-resume" type="button" (click)="centerWalker()">
-                  <ion-icon name="locate-outline" aria-hidden="true"></ion-icon
-                  >{{ locale.t('resumeFollowing') }}
-                </button>
-              }
             </section>
           } @else {
             <section class="stage-card surface">
@@ -118,6 +106,8 @@
                   <h1>
                     @if (store.completed()) {
                       {{ locale.t('trailFinished') }}
+                    } @else if (store.walkClosed()) {
+                      {{ locale.t('walkStopped') }}
                     } @else {
                       {{ stage.from }} <span aria-hidden="true">→</span> {{ stage.to }}
                     }
@@ -239,7 +229,12 @@
           >
             <ion-icon name="map-outline" aria-hidden="true"></ion-icon>{{ locale.t('mapView') }}
           </button>
-          <button type="button" [attr.aria-pressed]="walkingView()" (click)="setWalkingView(true)">
+          <button
+            type="button"
+            [disabled]="store.walkClosed()"
+            [attr.aria-pressed]="walkingView()"
+            (click)="setWalkingView(true)"
+          >
             <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
             >{{ locale.t('walkingView') }}
           </button>
@@ -260,6 +255,9 @@
             (click)="centerWalker()"
           >
             <ion-icon name="locate-outline" aria-hidden="true"></ion-icon>
+            @if (walkingView() && !following()) {
+              <span>{{ locale.t('resumeFollowing') }}</span>
+            }
           </button>
         }
         <button class="sos" type="button" (click)="sos()">SOS</button>

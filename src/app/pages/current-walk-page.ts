@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale, Message } from '../demo/locale';
-import { kmBetween, lodgingPoint } from '../demo/models';
+import { kmBetween, lodgingPoint, type Waypoint } from '../demo/models';
 import { walkReservations } from '../demo/booking-plan';
 import { walkingTime } from '../demo/walking-time';
 import { Sheet } from '../demo/sheet';
@@ -11,7 +11,7 @@ import { loadOfflinePack } from './offline-map';
 import { fetchStageWeather, sampleWeather } from './stage-weather';
 import { StageForecast } from './stage-forecast';
 
-type Section = 'journal' | 'packing' | 'breaks' | 'download';
+type Section = 'journal' | 'packing' | 'breaks' | 'download' | 'stopWalk' | 'anotherRoute';
 type Action = Section | 'credencial' | 'writeReviews';
 const sections: { id: Action; icon: string; premium: boolean }[] = [
   { id: 'journal', icon: 'book-outline', premium: false },
@@ -22,24 +22,59 @@ const sections: { id: Action; icon: string; premium: boolean }[] = [
   { id: 'download', icon: 'download-outline', premium: true },
 ];
 
+const packingGroups = [
+  { title: 'packClothing', items: ['packShoes', 'packSocks', 'packRain', 'packHat', 'packLayers'] },
+  {
+    title: 'packCare',
+    items: ['packWater', 'packFood', 'packKit', 'packBlisters', 'packSunscreen', 'packToiletries'],
+  },
+  {
+    title: 'packTravel',
+    items: [
+      'packPassport',
+      'packId',
+      'packCash',
+      'packBattery',
+      'packCharger',
+      'packLight',
+      'packCover',
+      'packTowel',
+      'packLiner',
+    ],
+  },
+] as const satisfies readonly { title: Message; items: readonly Message[] }[];
+
+const nearbyIcons = {
+  water: 'water-outline',
+  cafe: 'cafe-outline',
+  pharmacy: 'shield-checkmark-outline',
+  market: 'bag-outline',
+  toilet: 'information-circle-outline',
+  picnic: 'location-outline',
+} as const;
+type NearbyKind = keyof typeof nearbyIcons;
+
 @Component({
   imports: [IonContent, IonIcon, Sheet, StageForecast],
   templateUrl: './current-walk-page.html',
-  styleUrl: './current-walk-page.scss',
+  styleUrls: ['./current-walk-page.scss', './walk-tools.scss'],
 })
 export class CurrentWalkPage {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   private readonly router = inject(Router);
   protected readonly sections = sections;
-  protected readonly items: Message[] = [
-    'packWater',
-    'packShoes',
-    'packRain',
-    'packKit',
-    'packPassport',
-    'packBattery',
-  ];
+  protected readonly packingGroups = packingGroups;
+  protected readonly items = packingGroups.flatMap(({ items }) => [...items]);
+  protected readonly packed = computed(
+    () => this.items.filter((item) => this.store.state().pack.includes(item)).length,
+  );
+  protected readonly nearbyIcons = nearbyIcons;
+  protected readonly nearbyKinds = Object.keys(nearbyIcons) as NearbyKind[];
+  protected readonly nearbyFilter = signal<NearbyKind | 'all'>('all');
+  protected readonly nearbyRadius = signal(5);
+  protected readonly nearbyLimit = signal(12);
+  protected readonly increaseLimit = (limit: number) => limit + 12;
   protected readonly section = signal<Section | null>(null);
   protected readonly notice = signal<Message | null>(null);
   protected readonly downloading = signal(false);
@@ -107,16 +142,22 @@ export class CurrentWalkPage {
   }
 
   protected readonly downloaded = computed(() => this.store.state().offlineDownloaded);
-  protected readonly pauseSpots = computed(() => {
+  protected readonly nearbyServices = computed(() => {
     const position = this.store.progress().position;
-    if (!position) return [];
+    const routeId = this.store.route()?.id;
+    if (!position || !routeId) return [];
+    const kind = this.nearbyFilter();
     return this.store
-      .nearbyPoints()
-      .filter((point) => point.kind === 'water' || point.kind === 'cafe')
+      .points()
+      .filter(
+        (point): point is Waypoint & { kind: NearbyKind } =>
+          point.routeId === routeId &&
+          point.kind in nearbyIcons &&
+          (kind === 'all' || point.kind === kind),
+      )
       .map((point) => ({ ...point, km: kmBetween(position, point.coordinates) }))
-      .filter((point) => point.km <= 5)
-      .sort((a, b) => a.km - b.km)
-      .slice(0, 4);
+      .filter((point) => point.km <= this.nearbyRadius())
+      .sort((a, b) => a.km - b.km);
   });
   protected open(section: Action, premium = false): void {
     if (premium && !this.store.premium()) {
@@ -136,7 +177,31 @@ export class CurrentWalkPage {
       return;
     }
     this.notice.set(null);
+    if (section === 'breaks') this.nearbyLimit.set(12);
     this.section.set(section);
+  }
+
+  protected anotherWalk(): void {
+    if (!this.store.walkClosed()) {
+      this.section.set('anotherRoute');
+      return;
+    }
+    this.planAnother();
+  }
+
+  protected planAnother(): void {
+    this.close();
+    this.store.planningAnother.set(true);
+  }
+
+  protected stopWalk(): void {
+    this.store.stopWalk();
+    this.close();
+  }
+
+  protected showNearbyPoint(point: Waypoint): void {
+    this.close();
+    this.store.showNearbyPoint(point);
   }
 
   protected close(): void {

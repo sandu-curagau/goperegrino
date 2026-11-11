@@ -86,11 +86,13 @@ export class TrailJournal {
         (walk.days ? itinerary(route, walk.days, walk.date) : []).map((day) => [day.date, day]),
       );
       const status: Message =
-        walk.distance >= route.km
+        walk.status === 'completed' || walk.distance >= route.km
           ? 'trailFinished'
-          : walk.id === active?.id
-            ? 'walkActive'
-            : 'walkArchived';
+          : walk.status === 'stopped'
+            ? 'walkStopped'
+            : walk.id === active?.id
+              ? 'walkActive'
+              : 'walkArchived';
       return [
         {
           ...walk,
@@ -98,7 +100,12 @@ export class TrailJournal {
           entries,
           status,
           sample,
-          active: walk.id === active?.id,
+          active: walk.id === active?.id && !this.store.state().walkStopped,
+          attempt: sample
+            ? 0
+            : walks
+                .slice(walks.indexOf(walk))
+                .filter((other) => other.id !== sampleId && other.routeId === walk.routeId).length,
           cover: entries.find((entry) => entry.photos.length)?.photos[0],
           timeline,
           notesCount: entries.filter((entry) => !!entry.note).length,

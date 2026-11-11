@@ -82,6 +82,8 @@
               {{ locale.t(current.status) }}
               @if (current.sample) {
                 · {{ locale.t('journalSample') }}
+              } @else {
+                · {{ locale.t('walkAttempt', { count: current.attempt }) }}
               }
             </p>
             <h1>{{ current.route.name }}</h1>
@@ -166,11 +168,14 @@
                 >{{ locale.t(item.status) }}
                 @if (item.sample) {
                   · {{ locale.t('journalSample') }}
+                } @else {
+                  · {{ locale.t('walkAttempt', { count: item.attempt }) }}
                 }
               </span>
               <strong>{{ item.route.name }}</strong>
               <span class="muted"
-                >{{ fullDate(item.date) }} · {{ locale.number(item.distance, 1) }} km</span
+                >{{ fullDate(item.date) }} · {{ locale.number(item.distance, 1) }} /
+                {{ item.route.km }} km</span
               >
               <span class="history-details">
                 {{ locale.t('noteCount', { count: item.notesCount }) }} ·

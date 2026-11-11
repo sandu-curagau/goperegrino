@@ -23,9 +23,10 @@ import {
 import type { Feature, FeatureCollection, LineString, Point as GeoPoint } from 'geojson';
 import { DemoStore } from '../demo/demo-store';
 import { Locale } from '../demo/locale';
-import { kmBetween, lodgingPoint, Lodging, Point } from '../demo/models';
+import { kmBetween, lodgingPoint, Lodging, Point, type Waypoint } from '../demo/models';
 import { offlineStyle, offlineTile } from './offline-map';
 import type { MapComment } from './trail-comments';
+import { CommentTranslation } from './comment-translation';
 import type { PlannedStop } from './lodging-search';
 
 type LodgingProperties = { id: string; partner: boolean };
@@ -169,6 +170,7 @@ function lodgingIcon(): ImageData {
 })
 export class TrailMap {
   protected readonly locale = inject(Locale);
+  private readonly translation = inject(CommentTranslation);
   private readonly store = inject(DemoStore);
   private readonly canvas = viewChild.required<ElementRef<HTMLDivElement>>('canvas');
   protected readonly ready = signal(false);
@@ -183,6 +185,7 @@ export class TrailMap {
   readonly activePin = input<Lodging>();
   readonly comments = input<MapComment[]>([]);
   readonly activeComment = input<MapComment>();
+  readonly nearbyPoint = input<Waypoint>();
   readonly navigationPoint = input<Point>();
   readonly navigationRotation = input(0);
   readonly selected = output<string>();
@@ -218,6 +221,45 @@ export class TrailMap {
   private readonly lodgingData = computed(() => pinFeatures(this.pins()));
 
   constructor() {
+    effect((onCleanup) => {
+      const point = this.nearbyPoint();
+      const map = this.map;
+      if (!this.ready() || !point || !map) return;
+      const content = document.createElement('div');
+      content.className = 'pin-summary comment-pin-summary';
+      const title = document.createElement('strong');
+      title.textContent = this.locale.t(
+        point.kind === 'water'
+          ? 'waterFountain'
+          : point.kind === 'stamp'
+            ? 'credencial'
+            : point.kind,
+      );
+      const place = document.createElement('p');
+      place.textContent = point.location;
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'pin-close';
+      close.textContent = '×';
+      close.setAttribute('aria-label', this.locale.t('close'));
+      close.onclick = () => this.clearSelection.emit();
+      content.append(title, place, close);
+      const marker = new Marker({ color: '#003058' }).setLngLat(point.coordinates).addTo(map);
+      const popup = new Popup({
+        closeButton: false,
+        closeOnClick: false,
+        focusAfterOpen: false,
+        offset: 26,
+        anchor: 'top',
+      })
+        .setLngLat(point.coordinates)
+        .setDOMContent(content)
+        .addTo(map);
+      onCleanup(() => {
+        popup.remove();
+        marker.remove();
+      });
+    });
     effect((onCleanup) => {
       const point = this.navigationPoint();
       const rotation = this.navigationRotation();
@@ -562,7 +604,8 @@ export class TrailMap {
     author.append(profileArrow);
     author.addEventListener('click', () => this.profileSelected.emit(comment.authorId));
     const text = document.createElement('p');
-    text.textContent = comment.message;
+    const translated = this.translation.view(comment);
+    text.textContent = translated.message;
     const close = document.createElement('button');
     close.type = 'button';
     close.className = 'pin-close';
@@ -570,6 +613,21 @@ export class TrailMap {
     close.setAttribute('aria-label', this.locale.t('close'));
     close.addEventListener('click', () => this.clearSelection.emit());
     content.append(location, author, text, close);
+    if (translated.visible) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'comment-popup-translation';
+      button.textContent = this.locale.t(translated.action);
+      button.disabled = translated.disabled;
+      button.addEventListener('click', () => void this.translation.toggle(comment));
+      content.append(button);
+    }
+    if (translated.error) {
+      const status = document.createElement('small');
+      status.setAttribute('role', 'status');
+      status.textContent = this.locale.t(translated.error);
+      content.append(status);
+    }
     return new Popup({
       closeButton: false,
       closeOnClick: false,
@@ -724,7 +782,8 @@ export class TrailMap {
         this.selected.emit(id);
         return;
       }
-      if (this.activePin() || this.activeComment()) this.clearSelection.emit();
+      if (this.activePin() || this.activeComment() || this.nearbyPoint())
+        this.clearSelection.emit();
       if (feature?.geometry.type !== 'Point') return;
       const center = feature.geometry.coordinates as Point;
       try {

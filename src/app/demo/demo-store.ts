@@ -46,6 +46,7 @@ interface DemoState {
   distance: number;
   walkId: string;
   walkHistory: WalkRecord[];
+  walkStopped: boolean;
   trailComments: TrailComment[];
   likedTrailComments: string[];
   premium: 0 | 7 | 30;
@@ -81,6 +82,7 @@ function freshState(): DemoState {
     distance: 0,
     walkId: '',
     walkHistory: [],
+    walkStopped: false,
     trailComments: [],
     likedTrailComments: [],
     premium: 0,
@@ -134,8 +136,17 @@ export class DemoStore {
   readonly state = this.stored.asReadonly();
   readonly journal = this.journalEntries.asReadonly();
   readonly activeWalk = computed<WalkRecord | null>(() => {
-    const { started, walkId, routeId, date, days, distance } = this.state();
-    return started ? { id: walkId, routeId, date, days, distance } : null;
+    const { started, walkId, routeId, date, days, distance, walkStopped } = this.state();
+    return started
+      ? {
+          id: walkId,
+          routeId,
+          date,
+          days,
+          distance,
+          status: this.completed() ? 'completed' : walkStopped ? 'stopped' : undefined,
+        }
+      : null;
   });
   private readonly connected = signal(navigator.onLine);
   readonly offline = computed(() => this.state().offline || !this.connected());
@@ -154,6 +165,7 @@ export class DemoStore {
   readonly planningAnother = signal(false);
   readonly cameraRevision = signal(0);
   readonly mapLodging = signal<string | null>(null);
+  readonly mapNearbyPoint = signal<Waypoint | null>(null);
   readonly premiumOpen = signal(false);
 
   readonly route = computed(() => this.routes().find((item) => item.id === this.state().routeId));
@@ -204,6 +216,7 @@ export class DemoStore {
   );
   readonly remaining = computed(() => Math.max(0, (this.route()?.km ?? 0) - this.state().distance));
   readonly completed = computed(() => !!this.route() && this.started() && this.remaining() === 0);
+  readonly walkClosed = computed(() => this.state().walkStopped || this.completed());
   readonly stageRemaining = computed(() =>
     Math.max(0, this.stageStart() + (this.stage()?.km ?? 0) - this.state().distance),
   );
@@ -253,7 +266,7 @@ export class DemoStore {
   readonly warnings = computed(() => {
     const route = this.route();
     const stage = this.stage();
-    if (!route || !stage || this.completed()) return [];
+    if (!route || !stage || this.walkClosed()) return [];
     return this.notices().filter((item) => item.routeId === route.id && item.stageId === stage.id);
   });
 
@@ -357,10 +370,7 @@ export class DemoStore {
 
   openWalkingMap(): void {
     void this.router.navigateByUrl('/mapa').then((opened) => {
-      if (opened) {
-        this.mapViewRequest.set('walking');
-        if (!this.completed()) this.playing.set(true);
-      }
+      if (opened) this.mapViewRequest.set('walking');
     });
   }
 
@@ -371,19 +381,25 @@ export class DemoStore {
     this.arrival.set(null);
     this.completionOpen.set(false);
     const current = this.activeWalk();
-    const archive =
-      current &&
-      (current.distance > 0 || this.journal().some((entry) => entry.walkId === current.id));
+    const archive = current ? { ...current, status: current.status ?? ('stopped' as const) } : null;
     this.patch({
       routeId: id,
       distance: 0,
       days: route.stages.length,
       started,
       walkId: started ? crypto.randomUUID() : '',
+      walkStopped: false,
       pack: [],
-      walkHistory: archive ? [current, ...this.state().walkHistory] : this.state().walkHistory,
+      walkHistory: archive ? [archive, ...this.state().walkHistory] : this.state().walkHistory,
     });
     this.cameraRevision.update((revision) => revision + 1);
+  }
+
+  stopWalk(): void {
+    if (!this.started() || this.walkClosed()) return;
+    this.playing.set(false);
+    this.arrival.set(null);
+    this.patch({ walkStopped: true });
   }
 
   saveJournalEntry(entry: JournalEntry): boolean {
@@ -410,7 +426,7 @@ export class DemoStore {
 
   move(distance: number, announce = true): void {
     const route = this.route();
-    if (!route || !Number.isFinite(distance)) return;
+    if (!route || !Number.isFinite(distance) || this.walkClosed()) return;
     const before = this.walkingDayIndex();
     const next = Math.min(route.km, Math.max(0, distance));
     const atEnd = next === route.km && this.state().distance < route.km;
@@ -431,7 +447,7 @@ export class DemoStore {
 
   jumpTo(index: number): void {
     const plan = this.walkingPlan();
-    if (!plan[index]) return;
+    if (!plan[index] || this.walkClosed()) return;
     this.move(plan[index - 1]?.distance ?? 0, false);
     this.arrival.set(index ? plan[index].from : null);
     this.cameraRevision.update((revision) => revision + 1);
@@ -451,6 +467,12 @@ export class DemoStore {
     });
   }
 
+  showNearbyPoint(point: Waypoint): void {
+    void this.router.navigateByUrl('/mapa').then((opened) => {
+      if (opened) this.mapNearbyPoint.set(point);
+    });
+  }
+
   reset(): void {
     this.playing.set(false);
     this.speed.set(1);
@@ -459,6 +481,7 @@ export class DemoStore {
     this.planningAnother.set(false);
     this.cameraRevision.update((revision) => revision + 1);
     this.mapLodging.set(null);
+    this.mapNearbyPoint.set(null);
     this.mapStayStop.set(null);
     this.mapViewRequest.set(null);
     this.premiumOpen.set(false);

@@ -421,7 +421,8 @@ ion-content {
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
-.comment-popup-author {
+.comment-popup-author,
+.comment-popup-translation {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -432,6 +433,9 @@ ion-content {
   font-size: 13px;
   font-weight: 700;
   text-align: left;
+}
+.comment-popup-translation {
+  font-size: 11px;
 }
 .comment-popup-author ion-icon {
   flex: none;

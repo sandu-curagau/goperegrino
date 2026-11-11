@@ -33,6 +33,7 @@ import { Locale } from './locale';
           <input
             #range
             type="range"
+            [disabled]="store.walkClosed()"
             min="0"
             [max]="route.km"
             step="0.1"
@@ -47,6 +48,7 @@ import { Locale } from './locale';
             @for (stage of store.walkingPlan(); track stage.day; let index = $index) {
               <button
                 type="button"
+                [disabled]="store.walkClosed()"
                 [class.active]="store.walkingDayIndex() === index"
                 [attr.aria-pressed]="store.walkingDayIndex() === index"
                 [attr.aria-label]="locale.t('jump') + ' ' + stage.day + ' · ' + stage.from"
@@ -58,7 +60,7 @@ import { Locale } from './locale';
           </div>
         </div>
         <div class="transport">
-          <button type="button" class="play" (click)="toggleWalk()">
+          <button type="button" class="play" [disabled]="store.walkClosed()" (click)="toggleWalk()">
             <ion-icon
               [name]="store.playing() ? 'pause-outline' : 'play-outline'"
               aria-hidden="true"
@@ -123,7 +125,7 @@ export class DemoControls {
 
   protected toggleWalk(): void {
     if (!this.store.started()) this.changeRoute(this.store.state().routeId);
-    if (!this.store.remaining()) this.store.move(0, false);
+    if (this.store.walkClosed()) return;
     this.store.playing.update((playing) => !playing);
   }
 

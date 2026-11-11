@@ -280,26 +280,51 @@ const accommodations = pathways.flatMap((route) =>
   ),
 );
 
+const nearbyKinds = ['water', 'cafe', 'market', 'toilet', 'pharmacy', 'picnic'];
 const points = pathways.flatMap((route) => [
   ...route.stages.flatMap((stage) =>
-    ['stamp', 'water', 'cafe', 'pharmacy', 'church'].map((kind, index) => ({
-      id: `${route.id}-${stage.id}-${kind}`,
-      routeId: route.id,
-      stageId: stage.id,
-      kind,
-      location: stage.to,
-      coordinates: [stage.end[0] + (index - 2) * 0.001, stage.end[1] + index * 0.0005],
-    })),
+    ['stamp', 'water', 'cafe', 'pharmacy', 'church', 'market', 'toilet', 'picnic'].map(
+      (kind, index) => ({
+        id: `${route.id}-${stage.id}-${kind}`,
+        routeId: route.id,
+        stageId: stage.id,
+        kind,
+        location: stage.to,
+        coordinates:
+          lodgingLocations[stage.end.join(',')]?.[
+            index % (lodgingLocations[stage.end.join(',')]?.length || 1)
+          ] ?? stage.end,
+      }),
+    ),
   ),
-  ...['stamp', 'church'].map((kind, index) => ({
+  ...['stamp', 'church', ...nearbyKinds].map((kind, index) => ({
     id: `${route.id}-0-${kind}`,
     routeId: route.id,
     stageId: 0,
     kind,
     location: route.stages[0].from,
     coordinates:
-      lodgingLocations[route.stages[0].start.join(',')]?.[index] ?? route.stages[0].start,
+      lodgingLocations[route.stages[0].start.join(',')]?.[
+        index % (lodgingLocations[route.stages[0].start.join(',')]?.length || 1)
+      ] ?? route.stages[0].start,
   })),
+  ...route.stages.flatMap((stage) =>
+    (intermediateLodgings[route.id]?.[stage.id] ?? []).flatMap(({ key, town, positions }, index) =>
+      (index % 3 === 0
+        ? ['water', 'cafe', 'toilet']
+        : index % 3 === 1
+          ? ['water', 'market', 'picnic']
+          : ['cafe', 'water']
+      ).map((kind, slot) => ({
+        id: `${route.id}-${stage.id}-${key}-${kind}`,
+        routeId: route.id,
+        stageId: stage.id,
+        kind,
+        location: town,
+        coordinates: positions[slot % positions.length],
+      })),
+    ),
+  ),
 ]);
 
 const warnings = [
