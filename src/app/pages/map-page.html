@@ -25,6 +25,7 @@
             [activePin]="selected()"
             [comments]="commentPins()"
             [activeComment]="activeComment()"
+            [places]="placePins()"
             [nearbyPoint]="nearbyPoint()"
             [navigationPoint]="
               walkingView() && !store.completed() ? store.navigation().position : undefined
@@ -33,6 +34,7 @@
             (selected)="selectLodging($event)"
             (hubSelected)="showStayStop($event)"
             (commentSelected)="selectComment($event)"
+            (placeSelected)="selectPlace($event)"
             (profileSelected)="openCommentProfile($event)"
             (openComments)="openComments()"
             (clearSelection)="clearSelection()"
@@ -192,6 +194,18 @@
                 <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon
                 >{{ locale.t('comments') }}
               </button>
+              <button
+                class="explore-button places-button"
+                type="button"
+                [class.layer-active]="activePlaceKinds().length > 0"
+                aria-haspopup="dialog"
+                [attr.aria-expanded]="openSheet() === 'places'"
+                [disabled]="!displayMap() || mapLoaded() === false"
+                (click)="openPlaces()"
+              >
+                <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+                {{ locale.t('mapOther') }}
+              </button>
             </div>
             @if (store.warnings().length && !warningDismissed() && !selected()) {
               <div class="stage-warning" role="status">
@@ -339,6 +353,55 @@
   }
 </main>
 
+@if (openSheet() === 'places') {
+  <app-sheet [title]="locale.t('trailPlaces')" (closed)="openSheet.set(null)">
+    <div class="sheet-stack">
+      <p class="muted">{{ locale.t('trailPlacesHelp') }}</p>
+      <div class="place-filter-controls">
+        <button
+          class="text-button"
+          type="button"
+          [disabled]="draftPlaceKinds().length === placeKinds.length"
+          (click)="draftPlaceKinds.set(placeKinds)"
+        >
+          {{ locale.t('showAllPlaces') }}
+        </button>
+        <button
+          class="text-button"
+          type="button"
+          [disabled]="!draftPlaceKinds().length"
+          (click)="draftPlaceKinds.set([])"
+        >
+          {{ locale.t('hideAllPlaces') }}
+        </button>
+      </div>
+      <div class="place-filters" role="group" [attr.aria-label]="locale.t('nearbyCategory')">
+        @for (kind of placeKinds; track kind) {
+          <button
+            class="surface place-filter"
+            type="button"
+            [attr.aria-pressed]="draftPlaceKinds().includes(kind)"
+            (click)="togglePlaceKind(kind)"
+          >
+            <span class="place-symbol" [style.--place-color]="trailPlaces[kind].color">
+              <ion-icon [icon]="trailPlaces[kind].icon" aria-hidden="true"></ion-icon>
+            </span>
+            <span>{{ locale.t(trailPlaces[kind].label) }}</span>
+            @if (draftPlaceKinds().includes(kind)) {
+              <ion-icon class="place-check" name="checkmark-outline" aria-hidden="true"></ion-icon>
+            }
+          </button>
+        }
+      </div>
+      <div class="place-filter-footer">
+        <button class="primary wide" type="button" (click)="applyPlaceKinds()">
+          {{ locale.t('apply') }}
+        </button>
+        <p class="muted place-demo">{{ locale.t('trailPlacesDemo') }}</p>
+      </div>
+    </div>
+  </app-sheet>
+}
 @if (openSheet() === 'detail' && selected(); as item) {
   <app-lodging-flow
     [lodging]="item"

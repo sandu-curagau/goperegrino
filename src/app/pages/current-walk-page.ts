@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale, Message } from '../demo/locale';
-import { kmBetween, lodgingPoint, type Waypoint } from '../demo/models';
+import { kmBetween, lodgingPoint, type TrailPlaceKind, type Waypoint } from '../demo/models';
+import { mapPlaceKind, trailPlaceKinds, trailPlaces } from './trail-places';
 import { walkReservations } from '../demo/booking-plan';
 import { walkingTime } from '../demo/walking-time';
 import { Sheet } from '../demo/sheet';
@@ -13,10 +14,10 @@ import { StageForecast } from './stage-forecast';
 
 type Section =
   'journal' | 'packing' | 'breaks' | 'download' | 'stopWalk' | 'anotherRoute' | 'resumeWalk';
-type Action = Section | 'credencial' | 'writeReviews';
+type Action = Section | 'stampLog' | 'writeReviews';
 const sections: { id: Action; icon: string; premium: boolean }[] = [
   { id: 'journal', icon: 'book-outline', premium: false },
-  { id: 'credencial', icon: 'ribbon-outline', premium: false },
+  { id: 'stampLog', icon: 'ribbon-outline', premium: false },
   { id: 'breaks', icon: 'cafe-outline', premium: true },
   { id: 'writeReviews', icon: 'star-outline', premium: false },
   { id: 'packing', icon: 'bag-outline', premium: true },
@@ -45,16 +46,6 @@ const packingGroups = [
   },
 ] as const satisfies readonly { title: Message; items: readonly Message[] }[];
 
-const nearbyIcons = {
-  water: 'water-outline',
-  cafe: 'cafe-outline',
-  pharmacy: 'shield-checkmark-outline',
-  market: 'bag-outline',
-  toilet: 'information-circle-outline',
-  picnic: 'location-outline',
-} as const;
-type NearbyKind = keyof typeof nearbyIcons;
-
 @Component({
   imports: [IonContent, IonIcon, Sheet, StageForecast],
   templateUrl: './current-walk-page.html',
@@ -68,18 +59,16 @@ export class CurrentWalkPage {
   protected readonly availableSections = computed(() =>
     this.store.walkInProgress()
       ? sections
-      : sections.filter(
-          ({ id }) => id === 'journal' || id === 'credencial' || id === 'writeReviews',
-        ),
+      : sections.filter(({ id }) => id === 'journal' || id === 'stampLog' || id === 'writeReviews'),
   );
   protected readonly packingGroups = packingGroups;
   protected readonly items = packingGroups.flatMap(({ items }) => [...items]);
   protected readonly packed = computed(
     () => this.items.filter((item) => this.store.state().pack.includes(item)).length,
   );
-  protected readonly nearbyIcons = nearbyIcons;
-  protected readonly nearbyKinds = Object.keys(nearbyIcons) as NearbyKind[];
-  protected readonly nearbyFilter = signal<NearbyKind | 'all'>('all');
+  protected readonly trailPlaces = trailPlaces;
+  protected readonly nearbyKinds = trailPlaceKinds;
+  protected readonly nearbyFilter = signal<TrailPlaceKind | 'all'>('all');
   protected readonly nearbyRadius = signal(5);
   protected readonly nearbyLimit = signal(12);
   protected readonly increaseLimit = (limit: number) => limit + 12;
@@ -161,12 +150,13 @@ export class CurrentWalkPage {
     return this.store
       .points()
       .filter(
-        (point): point is Waypoint & { kind: NearbyKind } =>
-          point.routeId === routeId &&
-          point.kind in nearbyIcons &&
-          (kind === 'all' || point.kind === kind),
+        (point) => point.routeId === routeId && (kind === 'all' || mapPlaceKind(point) === kind),
       )
-      .map((point) => ({ ...point, km: kmBetween(position, point.coordinates) }))
+      .map((point) => ({
+        ...point,
+        mapKind: mapPlaceKind(point),
+        km: kmBetween(position, point.coordinates),
+      }))
       .filter((point) => point.km <= this.nearbyRadius())
       .sort((a, b) => a.km - b.km);
   });
@@ -179,7 +169,7 @@ export class CurrentWalkPage {
       void this.router.navigateByUrl('/diario?walk=current');
       return;
     }
-    if (section === 'credencial') {
+    if (section === 'stampLog') {
       this.credential();
       return;
     }

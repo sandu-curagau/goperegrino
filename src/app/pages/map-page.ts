@@ -11,7 +11,7 @@ import {
 import { IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale, Message } from '../demo/locale';
-import { lodgingPoint, Point, type Waypoint } from '../demo/models';
+import { lodgingPoint, Point, type TrailPlaceKind, type Waypoint } from '../demo/models';
 import { Sheet } from '../demo/sheet';
 import { TrailMap } from './trail-map';
 import { LodgingFlow } from './lodging-flow';
@@ -22,8 +22,10 @@ import { LodgingSearch, LodgingSearchSheet } from './lodging-search';
 import { PublicProfile } from './public-profile';
 import { CommentTranslation } from './comment-translation';
 import { walkingTime } from '../demo/walking-time';
+import { mapPlaceKind, trailPlaceKinds, trailPlaces } from './trail-places';
 
-type MapSheet = 'sos' | 'warnings' | 'lodgings' | 'detail' | 'comments' | 'weather' | 'profile';
+type MapSheet =
+  'sos' | 'warnings' | 'lodgings' | 'detail' | 'comments' | 'weather' | 'profile' | 'places';
 
 @Component({
   imports: [
@@ -43,6 +45,7 @@ type MapSheet = 'sos' | 'warnings' | 'lodgings' | 'detail' | 'comments' | 'weath
     './map-view-switch.scss',
     './map-arrival.scss',
     './walking-navigation.scss',
+    './map-places.scss',
   ],
 })
 export class MapPage {
@@ -101,6 +104,18 @@ export class MapPage {
   });
   protected readonly target = signal<Point | undefined>(undefined);
   protected readonly nearbyPoint = signal<Waypoint | undefined>(undefined);
+  protected readonly placeKinds = trailPlaceKinds;
+  protected readonly trailPlaces = trailPlaces;
+  protected readonly draftPlaceKinds = signal<TrailPlaceKind[]>([]);
+  protected readonly activePlaceKinds = computed(() => this.store.state().mapPlaceKinds);
+  protected readonly placePins = computed(() => {
+    const kinds = this.activePlaceKinds();
+    const route = this.store.route();
+    if (!kinds.length || !route) return [];
+    return this.store
+      .points()
+      .filter((point) => point.routeId === route.id && kinds.includes(mapPlaceKind(point)));
+  });
   protected readonly fitPoints = signal<Point[]>([]);
   protected readonly fitTop = signal(220);
   private readonly planOverview = signal(false);
@@ -141,12 +156,7 @@ export class MapPage {
     effect(() => {
       const point = this.store.mapNearbyPoint();
       if (!point) return;
-      untracked(() => {
-        this.clearSelection();
-        this.nearbyPoint.set(point);
-        this.target.set(point.coordinates);
-        this.openSheet.set(null);
-      });
+      untracked(() => this.selectPlace(point, true));
       this.store.mapNearbyPoint.set(null);
     });
     effect(() => {
@@ -234,6 +244,33 @@ export class MapPage {
     this.selectedCommentId.set(null);
     this.focusedComment.set(undefined);
     this.target.set(undefined);
+  }
+
+  protected openPlaces(): void {
+    this.draftPlaceKinds.set(this.activePlaceKinds());
+    this.openSheet.set('places');
+  }
+
+  protected togglePlaceKind(kind: TrailPlaceKind): void {
+    this.draftPlaceKinds.update((kinds) =>
+      kinds.includes(kind) ? kinds.filter((entry) => entry !== kind) : [...kinds, kind],
+    );
+  }
+
+  protected applyPlaceKinds(): void {
+    const kinds = this.draftPlaceKinds();
+    const selected = this.nearbyPoint();
+    if (selected && !kinds.includes(mapPlaceKind(selected))) this.clearSelection();
+    this.store.patch({ mapPlaceKinds: kinds });
+    this.openSheet.set(null);
+  }
+
+  protected selectPlace(point: Waypoint, center = false): void {
+    this.clearSelection();
+    this.nearbyPoint.set(point);
+    if (center) this.target.set([...point.coordinates]);
+    this.store.arrival.set(null);
+    this.openSheet.set(null);
   }
 
   protected showStays(nearby = false): void {

@@ -1,10 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
+import { trashOutline } from 'ionicons/icons';
 import { DemoStore } from '../demo/demo-store';
 import { Locale } from '../demo/locale';
 import { dateInput, kmBetween, Stamp, Waypoint } from '../demo/models';
 import { Sheet } from '../demo/sheet';
+import { mapPlaceKind } from './trail-places';
 
 @Component({
   imports: [IonContent, IonIcon, Sheet],
@@ -17,7 +19,7 @@ import { Sheet } from '../demo/sheet';
             >{{ locale.t('caminho') }}
           </button>
           <p class="kicker">{{ store.route()?.name }}</p>
-          <h1>{{ locale.t('credencial') }}</h1>
+          <h1>{{ locale.t('stampLog') }}</h1>
           <p>{{ locale.t('stampCopy') }}</p>
         </header>
 
@@ -33,12 +35,25 @@ import { Sheet } from '../demo/sheet';
           </div>
         </section>
 
-        <button class="primary wide stamp-action" type="button" (click)="showSpots.set(true)">
-          <ion-icon name="location-outline" aria-hidden="true"></ion-icon
-          >{{ locale.t('stampSpots') }}
-        </button>
-        @if (stamped(); as name) {
-          <p class="stamp-status" role="status">{{ locale.t('stampSavedAt', { name }) }}</p>
+        <div class="stamp-actions">
+          <button class="primary wide" type="button" (click)="showSpots.set(true)">
+            <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+            {{ locale.t('stampSpots') }}
+          </button>
+          @if (store.walkInProgress() && credentialShop(); as point) {
+            <button
+              class="secondary wide"
+              type="button"
+              [disabled]="!canViewMap()"
+              (click)="showOnMap(point)"
+            >
+              <ion-icon name="book-outline" aria-hidden="true"></ion-icon>
+              {{ locale.t('whereToBuyCredential') }}
+            </button>
+          }
+        </div>
+        @if (status(); as message) {
+          <p class="stamp-status" role="status">{{ message }}</p>
         }
 
         @for (group of groups(); track group.date) {
@@ -50,9 +65,17 @@ import { Sheet } from '../demo/sheet';
                   ><ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon
                 ></span>
                 <span
-                  ><strong>{{ stamp.name }}</strong
+                  ><strong>{{ stampName(stamp) }}</strong
                   ><small>{{ time(stamp.date) }}</small></span
                 >
+                <button
+                  class="icon-button stamp-remove"
+                  type="button"
+                  [attr.aria-label]="locale.t('deleteStampAt', { name: stampName(stamp) })"
+                  (click)="deletePending.set(stamp)"
+                >
+                  <ion-icon [icon]="trashIcon" aria-hidden="true"></ion-icon>
+                </button>
               </div>
             }
           </div>
@@ -71,6 +94,18 @@ import { Sheet } from '../demo/sheet';
               >{{ locale.t('pilgrimOffice') }}</a
             >
           </aside>
+        } @else if (store.route()?.destination === 'Fátima') {
+          <aside class="surface passport-help">
+            <strong>{{ locale.t('whereToBuyCredential') }}</strong>
+            <p>
+              <a
+                href="https://www.fatima.pt/pt/pages/via-pacis-peregrinacao-a-pe-a-fatima"
+                target="_blank"
+                rel="noopener"
+                >Santuário de Fátima</a
+              >
+            </p>
+          </aside>
         }
       </main>
     </ion-content>
@@ -87,20 +122,47 @@ import { Sheet } from '../demo/sheet';
                   locale.t('distanceAway', { km: locale.number(spot.distance, 1) })
                 }}</small>
               </div>
-              @if (recordedPoints().has(spot.id)) {
-                <span class="tag">{{ locale.t('stampAdded') }}</span>
-              } @else {
-                <button
-                  class="secondary"
-                  type="button"
-                  [attr.aria-label]="locale.t('stampAt', { name: spotName(spot) })"
-                  (click)="stamp(spot)"
-                >
-                  {{ locale.t('recordStamp') }}
-                </button>
-              }
+              <div class="spot-actions">
+                @if (store.walkInProgress()) {
+                  <button
+                    class="text-button"
+                    type="button"
+                    [disabled]="!canViewMap()"
+                    (click)="showOnMap(spot)"
+                  >
+                    {{ locale.t('showOnMap') }}
+                  </button>
+                }
+                @if (recordedPoints().has(spot.id)) {
+                  <span class="tag">{{ locale.t('stampAdded') }}</span>
+                } @else {
+                  <button
+                    class="secondary"
+                    type="button"
+                    [attr.aria-label]="locale.t('stampAt', { name: spotName(spot) })"
+                    (click)="stamp(spot)"
+                  >
+                    {{ locale.t('recordStamp') }}
+                  </button>
+                }
+              </div>
             </div>
           }
+        </div>
+      </app-sheet>
+    }
+    @if (deletePending(); as stamp) {
+      <app-sheet [title]="locale.t('deleteStamp')" (closed)="deletePending.set(null)">
+        <div class="sheet-stack">
+          <p>{{ locale.t('deleteStampQuestion', { name: stampName(stamp) }) }}</p>
+          <div class="form-grid">
+            <button class="secondary" type="button" (click)="deletePending.set(null)">
+              {{ locale.t('cancel') }}
+            </button>
+            <button class="primary delete-stamp" type="button" (click)="removeStamp(stamp)">
+              {{ locale.t('deleteStamp') }}
+            </button>
+          </div>
         </div>
       </app-sheet>
     }
@@ -128,8 +190,20 @@ import { Sheet } from '../demo/sheet';
       color: #ffdc74;
       font-size: 37px;
     }
-    .stamp-action {
+    .stamp-actions {
+      display: grid;
+      gap: 8px;
       margin: 11px 0;
+    }
+    .stamp-remove {
+      color: var(--muted);
+    }
+    .stamp-remove:hover,
+    .stamp-remove:focus-visible {
+      color: var(--danger);
+    }
+    .delete-stamp {
+      background: var(--danger-fill);
     }
     .stamp-status {
       color: var(--link);
@@ -152,10 +226,14 @@ import { Sheet } from '../demo/sheet';
       color: var(--link);
     }
     .stamp-spot {
+      display: grid;
+      gap: 6px;
+    }
+    .spot-actions {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+      gap: 5px;
     }
     .stamp-spot small {
       display: block;
@@ -172,8 +250,13 @@ export class PassportPage {
   protected back(): void {
     void this.router.navigateByUrl('/caminho');
   }
-  protected readonly stamped = signal('');
+  protected readonly status = signal('');
+  protected readonly trashIcon = trashOutline;
   protected readonly showSpots = signal(false);
+  protected readonly deletePending = signal<Stamp | null>(null);
+  protected readonly canViewMap = computed(
+    () => this.store.walkInProgress() && (!this.store.offline() || !!this.store.premium()),
+  );
   protected readonly stamps = computed(() =>
     this.store
       .state()
@@ -214,6 +297,37 @@ export class PassportPage {
       .sort((a, b) => a.distance - b.distance)
       .slice(0, 6);
   });
+  protected readonly credentialShop = computed(() => {
+    const position = this.store.progress().position;
+    const route = this.store.route();
+    if (!position || !route) return undefined;
+    return this.store
+      .points()
+      .filter((point) => point.routeId === route.id && point.kind === 'credentialShop')
+      .map((point) => ({ point, distance: kmBetween(position, point.coordinates) }))
+      .sort((a, b) => a.distance - b.distance)[0]?.point;
+  });
+
+  protected showOnMap(point: Waypoint): void {
+    if (!this.canViewMap()) return;
+    const kinds = this.store.state().mapPlaceKinds;
+    const kind = mapPlaceKind(point);
+    if (!kinds.includes(kind)) this.store.patch({ mapPlaceKinds: [...kinds, kind] });
+    this.showSpots.set(false);
+    this.store.showNearbyPoint(point);
+  }
+
+  protected stampName(stamp: Stamp): string {
+    const point = this.store.points().find((item) => item.id === stamp.pointId);
+    return point ? this.spotName(point) : stamp.name;
+  }
+
+  protected removeStamp(stamp: Stamp): void {
+    if (!this.stamps().some((item) => item.id === stamp.id)) return;
+    this.store.patch({ stamps: this.store.state().stamps.filter((item) => item.id !== stamp.id) });
+    this.deletePending.set(null);
+    this.status.set(this.locale.t('stampDeleted'));
+  }
 
   protected spotName(point: Waypoint): string {
     return this.locale.t(point.kind === 'church' ? 'churchStampAt' : 'stampPointAt', {
@@ -241,7 +355,7 @@ export class PassportPage {
       date: new Date().toISOString(),
     };
     this.store.patch({ stamps: [stamp, ...state.stamps] });
-    this.stamped.set(name);
+    this.status.set(this.locale.t('stampSavedAt', { name }));
     this.showSpots.set(false);
   }
 }

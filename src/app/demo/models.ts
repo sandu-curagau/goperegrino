@@ -51,11 +51,27 @@ export interface Lodging {
   whatsapp?: string;
 }
 
+export type TrailPlaceKind =
+  | 'stamp'
+  | 'credentialShop'
+  | 'postOffice'
+  | 'wellness'
+  | 'monument'
+  | 'restaurant'
+  | 'market'
+  | 'souvenir'
+  | 'transit'
+  | 'pharmacy'
+  | 'water'
+  | 'cafe'
+  | 'toilet'
+  | 'picnic';
+
 export interface Waypoint {
   id: string;
   routeId: string;
   stageId: number;
-  kind: 'stamp' | 'water' | 'cafe' | 'pharmacy' | 'church' | 'market' | 'toilet' | 'picnic';
+  kind: TrailPlaceKind | 'church';
   location: string;
   coordinates: Point;
 }

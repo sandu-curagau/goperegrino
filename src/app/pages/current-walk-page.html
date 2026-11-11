@@ -239,7 +239,7 @@
                 <option value="all">{{ locale.t('nearbyAll') }}</option>
                 @for (kind of nearbyKinds; track kind) {
                   <option [value]="kind">
-                    {{ locale.t(kind === 'water' ? 'waterFountain' : kind) }}
+                    {{ locale.t(trailPlaces[kind].label) }}
                   </option>
                 }
               </select></label
@@ -264,7 +264,7 @@
               [disabled]="store.offline() && !store.premium()"
               (click)="showNearbyPoint(spot)"
               [attr.aria-label]="
-                locale.t(spot.kind === 'water' ? 'waterFountain' : spot.kind) +
+                locale.t(trailPlaces[spot.mapKind].label) +
                 ' · ' +
                 spot.location +
                 ' · ' +
@@ -272,10 +272,10 @@
               "
             >
               <span class="tile"
-                ><ion-icon [name]="nearbyIcons[spot.kind]" aria-hidden="true"></ion-icon
+                ><ion-icon [icon]="trailPlaces[spot.mapKind].icon" aria-hidden="true"></ion-icon
               ></span>
               <span
-                ><strong>{{ locale.t(spot.kind === 'water' ? 'waterFountain' : spot.kind) }}</strong
+                ><strong>{{ locale.t(trailPlaces[spot.mapKind].label) }}</strong
                 ><small>{{ spot.location }}</small></span
               >
               <span class="nearby-distance"

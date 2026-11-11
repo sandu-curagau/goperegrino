@@ -25,10 +25,7 @@ import { Sheet } from '../demo/sheet';
             [disabled]="store.walkClosed()"
             (click)="edit()"
           >
-            <ion-icon
-              [name]="store.premium() ? 'options-outline' : 'lock-closed-outline'"
-              aria-hidden="true"
-            ></ion-icon>
+            <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
             {{ locale.t('personalize') }}
           </button>
           <ol class="itinerary">
@@ -264,22 +261,19 @@ export class StagesPage {
   });
 
   protected edit(): void {
-    if (this.store.premium()) {
-      this.draftDate.set(this.store.state().date);
-      this.draftDays.set(this.plan().length);
-      this.reviewing.set(false);
-      this.editing.set(true);
-    } else this.store.premiumOpen.set(true);
+    this.draftDate.set(this.store.state().date);
+    this.draftDays.set(this.plan().length);
+    this.reviewing.set(false);
+    this.editing.set(true);
   }
 
   protected save(): void {
-    if (!this.store.premium()) return;
     if (this.conflicts().length) this.reviewing.set(true);
     else this.applyPlan();
   }
 
   protected applyPlan(): void {
-    if (!this.store.premium()) return;
+    if (this.store.walkClosed()) return;
     this.store.updateWalkingPlan(this.draftDate() || dateInput(), this.draftDays());
     this.editing.set(false);
   }

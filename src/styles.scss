@@ -395,6 +395,22 @@ ion-content {
 .selected-stay-pin.partner {
   background: var(--gold);
 }
+.selected-place-pin {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: var(--place-color);
+  box-shadow: 0 0 0 2px var(--place-color);
+  pointer-events: none;
+}
+.selected-place-pin img {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1);
+}
 .layer-toggle {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;

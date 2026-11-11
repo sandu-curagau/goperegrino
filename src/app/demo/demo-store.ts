@@ -17,6 +17,7 @@ import {
   Stamp,
   TrailLine,
   TrailComment,
+  TrailPlaceKind,
   WalkRecord,
   Waypoint,
   kmBetween,
@@ -40,6 +41,7 @@ interface DemoState {
   profile: PilgrimProfile;
   language: Language;
   theme: 'system' | 'light' | 'dark';
+  mapPlaceKinds: TrailPlaceKind[];
   routeId: string;
   started: boolean;
   date: string;
@@ -78,6 +80,7 @@ function freshState(): DemoState {
     },
     language: 'pt',
     theme: 'system',
+    mapPlaceKinds: [],
     routeId: 'central',
     started: false,
     date: dateInput(),

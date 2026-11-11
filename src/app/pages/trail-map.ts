@@ -9,6 +9,7 @@ import {
   input,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import {
@@ -28,6 +29,7 @@ import { offlineStyle, offlineTile } from './offline-map';
 import type { MapComment } from './trail-comments';
 import { CommentTranslation } from './comment-translation';
 import type { PlannedStop } from './lodging-search';
+import { mapPlaceKind, trailPlaceKinds, trailPlaces } from './trail-places';
 
 type LodgingProperties = { id: string; partner: boolean };
 const liberty = 'https://tiles.openfreemap.org/styles/liberty';
@@ -39,6 +41,8 @@ const roadShields = new Set([
 const stroke = { 'line-cap': 'round', 'line-join': 'round' } as const;
 const flatCamera = { bearing: 0, pitch: 0, padding: { top: 0, bottom: 0, left: 0, right: 0 } };
 const radians = Math.PI / 180;
+const placePinLayers = ['trail-place-pin', 'trail-place-clusters'];
+const lodgingPinLayers = ['lodging-pin', 'lodging-clusters'];
 let protocolRegistered = false;
 
 function headingTo(from: Point, to: Point): number {
@@ -68,6 +72,42 @@ function pinFeatures(lodgings: Lodging[]): FeatureCollection<GeoPoint, LodgingPr
       geometry: { type: 'Point', coordinates: lodgingPoint(item) },
     })),
   };
+}
+
+function placeFeatures(places: Waypoint[]): FeatureCollection<GeoPoint> {
+  return {
+    type: 'FeatureCollection',
+    features: places.map((point) => {
+      const kind = mapPlaceKind(point);
+      return {
+        type: 'Feature',
+        properties: { id: point.id, kind, color: trailPlaces[kind].color },
+        geometry: { type: 'Point', coordinates: point.coordinates },
+      };
+    }),
+  };
+}
+
+async function loadPlaceIcons(): Promise<[string, ImageData][]> {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 32;
+  const context = canvas.getContext('2d');
+  if (!context) return [];
+  const icons = await Promise.allSettled(
+    trailPlaceKinds.map(async (kind): Promise<[string, ImageData]> => {
+      const image = new Image();
+      image.src = trailPlaces[kind].icon;
+      await image.decode();
+      context.clearRect(0, 0, 32, 32);
+      context.globalCompositeOperation = 'source-over';
+      context.drawImage(image, 0, 0, 32, 32);
+      context.globalCompositeOperation = 'source-in';
+      context.fillStyle = '#fff';
+      context.fillRect(0, 0, 32, 32);
+      return ['map-place-' + kind, context.getImageData(0, 0, 32, 32)];
+    }),
+  );
+  return icons.flatMap((entry) => (entry.status === 'fulfilled' ? [entry.value] : []));
 }
 
 function lodgingIcon(): ImageData {
@@ -147,12 +187,14 @@ export class TrailMap {
   readonly activePin = input<Lodging>();
   readonly comments = input<MapComment[]>([]);
   readonly activeComment = input<MapComment>();
+  readonly places = input<Waypoint[]>([]);
   readonly nearbyPoint = input<Waypoint>();
   readonly navigationPoint = input<Point>();
   readonly navigationRotation = input(0);
   readonly selected = output<string>();
   readonly hubSelected = output<number>();
   readonly commentSelected = output<MapComment>();
+  readonly placeSelected = output<Waypoint>();
   readonly profileSelected = output<string>();
   readonly openComments = output<void>();
   readonly clearSelection = output<void>();
@@ -181,6 +223,11 @@ export class TrailMap {
     ]),
   );
   private readonly lodgingData = computed(() => pinFeatures(this.pins()));
+  private readonly placeData = computed(() => placeFeatures(this.places()));
+  private readonly placesById = computed(
+    () => new Map(this.places().map((point) => [point.id, point])),
+  );
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
     effect(() => {
@@ -191,32 +238,46 @@ export class TrailMap {
       const point = this.nearbyPoint();
       const map = this.map;
       if (!this.ready() || !point || !map) return;
+      this.setFollowing(false);
+      const place = trailPlaces[mapPlaceKind(point)];
       const content = document.createElement('div');
-      content.className = 'pin-summary comment-pin-summary';
+      content.className = 'pin-summary';
+      const kind = document.createElement('span');
+      kind.className = 'kicker';
+      kind.textContent = this.locale.t(point.kind === 'church' ? 'church' : place.label);
       const title = document.createElement('strong');
-      title.textContent = this.locale.t(
-        point.kind === 'water'
-          ? 'waterFountain'
-          : point.kind === 'stamp'
-            ? 'credencial'
-            : point.kind,
-      );
-      const place = document.createElement('p');
-      place.textContent = point.location;
+      title.textContent = point.location;
       const close = document.createElement('button');
       close.type = 'button';
       close.className = 'pin-close';
       close.textContent = '×';
       close.setAttribute('aria-label', this.locale.t('close'));
       close.onclick = () => this.clearSelection.emit();
-      content.append(title, place, close);
-      const marker = new Marker({ color: '#003058' }).setLngLat(point.coordinates).addTo(map);
+      content.append(kind, title, close);
+      const position = untracked(() => this.store.progress().position);
+      if (position) {
+        const distance = document.createElement('span');
+        const km = kmBetween(position, point.coordinates);
+        const label =
+          km < 1 ? this.locale.number(km * 1000) + ' m' : this.locale.number(km, 1) + ' km';
+        distance.textContent = this.locale.t('placeDistance', { distance: label });
+        content.append(distance);
+      }
+      const pin = document.createElement('span');
+      pin.className = 'selected-place-pin';
+      pin.style.setProperty('--place-color', place.color);
+      pin.setAttribute('aria-hidden', 'true');
+      const icon = document.createElement('img');
+      icon.src = place.icon;
+      icon.alt = '';
+      pin.append(icon);
+      const marker = new Marker({ element: pin }).setLngLat(point.coordinates).addTo(map);
       const popup = new Popup({
         closeButton: false,
         closeOnClick: false,
         focusAfterOpen: false,
-        offset: 26,
-        anchor: this.walkingView() ? 'bottom' : 'top',
+        offset: 22,
+        anchor: this.target() ? (this.walkingView() ? 'bottom' : 'top') : undefined,
       })
         .setLngLat(point.coordinates)
         .setDOMContent(content)
@@ -241,8 +302,8 @@ export class TrailMap {
       const marker = new Marker({ element }).setLngLat(point).addTo(map);
       onCleanup(() => marker.remove());
     });
-    afterNextRender(() => this.mount());
-    inject(DestroyRef).onDestroy(() => {
+    afterNextRender(() => void this.mount());
+    this.destroyRef.onDestroy(() => {
       clearTimeout(this.failedTimer);
       this.resize?.disconnect();
       this.map?.remove();
@@ -259,6 +320,10 @@ export class TrailMap {
     effect(() => {
       const pins = this.lodgingData();
       if (this.ready()) void this.map?.getSource<GeoJSONSource>('lodgings')?.setData(pins);
+    });
+    effect(() => {
+      const places = this.placeData();
+      if (this.ready()) void this.map?.getSource<GeoJSONSource>('trail-places')?.setData(places);
     });
     effect(() => {
       const offline = this.offline();
@@ -443,7 +508,9 @@ export class TrailMap {
     this.failedTimer = setTimeout(() => this.mapReady.emit(false), 10000);
   }
 
-  private mount(): void {
+  private async mount(): Promise<void> {
+    const icons = await loadPlaceIcons();
+    if (this.destroyRef.destroyed) return;
     const canvas = this.canvas().nativeElement;
     const position = this.store.progress().position ?? [-8.611, 41.1428];
     setWorkerUrl(new URL('maplibre/maplibre-gl-worker.mjs', document.baseURI).href);
@@ -498,7 +565,7 @@ export class TrailMap {
       this.armLoadingTimeout();
       map.on('style.load', () => {
         clearTimeout(this.failedTimer);
-        this.addLayers(map);
+        this.addLayers(map, icons);
         this.ready.set(true);
         this.mapReady.emit(true);
       });
@@ -665,10 +732,17 @@ export class TrailMap {
     });
   }
 
-  private addLayers(map: LibreMap): void {
+  private addLayers(map: LibreMap, icons: [string, ImageData][]): void {
     map.addImage('stay-bed', lodgingIcon(), { pixelRatio: 2 });
     map.addSource('trail', { type: 'geojson', data: this.line() });
     map.addSource('walked', { type: 'geojson', data: this.walked() });
+    map.addSource('trail-places', {
+      type: 'geojson',
+      data: this.placeData(),
+      cluster: true,
+      clusterRadius: 27,
+      clusterMaxZoom: 15,
+    });
     map.addSource('lodgings', {
       type: 'geojson',
       data: this.lodgingData(),
@@ -698,6 +772,7 @@ export class TrailMap {
       layout: stroke,
       paint: { 'line-color': '#f2a602', 'line-width': 5 },
     });
+    this.addPlaceLayers(map, icons);
     map.addLayer({
       id: 'lodging-clusters',
       type: 'circle',
@@ -735,7 +810,47 @@ export class TrailMap {
     });
   }
 
+  private addPlaceLayers(map: LibreMap, icons: [string, ImageData][]): void {
+    for (const [name, icon] of icons) map.addImage(name, icon, { pixelRatio: 2 });
+    map.addLayer({
+      id: 'trail-place-clusters',
+      type: 'circle',
+      source: 'trail-places',
+      filter: ['has', 'point_count'],
+      paint: {
+        'circle-color': '#246759',
+        'circle-radius': 15,
+        'circle-stroke-width': 3,
+        'circle-stroke-color': '#fff',
+      },
+    });
+    map.addLayer({
+      id: 'trail-place-pin',
+      type: 'circle',
+      source: 'trail-places',
+      filter: ['!', ['has', 'point_count']],
+      paint: {
+        'circle-color': ['get', 'color'],
+        'circle-radius': 11,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#fff',
+      },
+    });
+    map.addLayer({
+      id: 'trail-place-icons',
+      type: 'symbol',
+      source: 'trail-places',
+      layout: {
+        'icon-image': ['image', ['concat', 'map-place-', ['coalesce', ['get', 'kind'], 'picnic']]],
+        'icon-size': 0.85,
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true,
+      },
+    });
+  }
+
   private bindPinEvents(map: LibreMap): void {
+    const layers = [...lodgingPinLayers, ...placePinLayers];
     map.on('click', async (event) => {
       const target = event.originalEvent.target;
       if (
@@ -744,12 +859,13 @@ export class TrailMap {
           target.closest('.maplibregl-popup, .comment-map-pin, .stay-hub-pin'))
       )
         return;
-      const [feature] = map.queryRenderedFeatures(event.point, {
-        layers: ['lodging-pin', 'lodging-clusters'],
-      });
+      const [feature] = map.queryRenderedFeatures(event.point, { layers });
       const id = feature?.properties?.['id'];
       if (typeof id === 'string') {
-        this.selected.emit(id);
+        if (feature.source === 'trail-places') {
+          const place = this.placesById().get(id);
+          if (place) this.placeSelected.emit(place);
+        } else this.selected.emit(id);
         return;
       }
       if (this.activePin() || this.activeComment() || this.nearbyPoint())
@@ -758,7 +874,7 @@ export class TrailMap {
       const center = feature.geometry.coordinates as Point;
       try {
         const zoom = await map
-          .getSource<GeoJSONSource>('lodgings')
+          .getSource<GeoJSONSource>(feature.source)
           ?.getClusterExpansionZoom(feature.properties?.['cluster_id']);
         if (zoom !== undefined) {
           this.setFollowing(false);
@@ -768,13 +884,7 @@ export class TrailMap {
         // The source may have changed while the cluster request was running.
       }
     });
-    for (const layer of ['lodging-pin', 'lodging-clusters']) {
-      map.on('mouseenter', layer, () => {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-      map.on('mouseleave', layer, () => {
-        map.getCanvas().style.cursor = '';
-      });
-    }
+    map.on('mouseenter', layers, () => (map.getCanvas().style.cursor = 'pointer'));
+    map.on('mouseleave', layers, () => (map.getCanvas().style.cursor = ''));
   }
 }

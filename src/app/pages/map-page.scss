@@ -111,11 +111,11 @@
 }
 .map-toolbar {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1fr);
   gap: 4px;
-  align-items: center;
+  align-items: stretch;
   margin: 8px auto 0;
-  max-width: 320px;
+  max-width: 366px;
   padding: 4px;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -126,16 +126,18 @@
   min-height: 42px;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   border-radius: 11px;
   padding-inline: 5px;
   background: var(--tint);
   color: var(--link);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 750;
+  overflow-wrap: anywhere;
 }
 .explore-button ion-icon {
-  font-size: 17px;
+  flex: none;
+  font-size: 15px;
 }
 .explore-button.layer-active {
   background: var(--purple-wash);

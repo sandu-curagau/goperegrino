@@ -160,7 +160,6 @@ export class PremiumPass {
   protected readonly plans = plans;
   protected readonly features: Message[] = [
     'offlineMaps',
-    'planner',
     'extraAlerts',
     'advancedFilters',
     'journalPremium',

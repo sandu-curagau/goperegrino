@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { locatePlaces } from './localizar-pontos.mjs';
 
 const data = new URL('../public/data/', import.meta.url);
 const lodgingLocations = JSON.parse(
@@ -280,11 +281,59 @@ const accommodations = pathways.flatMap((route) =>
   ),
 );
 
-const nearbyKinds = ['water', 'cafe', 'market', 'toilet', 'pharmacy', 'picnic'];
-const points = pathways.flatMap((route) => [
-  ...route.stages.flatMap((stage) =>
-    ['stamp', 'water', 'cafe', 'pharmacy', 'church', 'market', 'toilet', 'picnic'].map(
-      (kind, index) => ({
+const nearbyKinds = [
+  'water',
+  'cafe',
+  'market',
+  'toilet',
+  'pharmacy',
+  'picnic',
+  'monument',
+  'restaurant',
+  'souvenir',
+  'transit',
+];
+const serviceTowns = new Set([
+  'Parque das Nações',
+  'Vila Franca de Xira',
+  'Santarém',
+  'Fátima',
+  'Espinho',
+  'Águeda',
+  'Coimbra',
+  'Pombal',
+  'Barcelos',
+  'Ponte de Lima',
+  'Valença/Tui',
+  'O Porriño',
+  'Pontevedra',
+  'Padrón',
+  'Póvoa de Varzim',
+  'Esposende',
+  'Viana do Castelo',
+  'Caminha',
+  'Vigo',
+  'Santiago',
+]);
+const points = await locatePlaces(
+  new URL('offline/trilhos.bin', data),
+  pathways.flatMap((route) => [
+    ...route.stages.flatMap((stage) =>
+      [
+        'stamp',
+        'water',
+        'cafe',
+        'pharmacy',
+        'church',
+        'market',
+        'toilet',
+        'picnic',
+        'monument',
+        'restaurant',
+        'souvenir',
+        'transit',
+        ...(serviceTowns.has(stage.to) ? ['postOffice', 'credentialShop', 'wellness'] : []),
+      ].map((kind, index) => ({
         id: `${route.id}-${stage.id}-${kind}`,
         routeId: route.id,
         stageId: stage.id,
@@ -294,38 +343,42 @@ const points = pathways.flatMap((route) => [
           lodgingLocations[stage.end.join(',')]?.[
             index % (lodgingLocations[stage.end.join(',')]?.length || 1)
           ] ?? stage.end,
-      }),
-    ),
-  ),
-  ...['stamp', 'church', ...nearbyKinds].map((kind, index) => ({
-    id: `${route.id}-0-${kind}`,
-    routeId: route.id,
-    stageId: 0,
-    kind,
-    location: route.stages[0].from,
-    coordinates:
-      lodgingLocations[route.stages[0].start.join(',')]?.[
-        index % (lodgingLocations[route.stages[0].start.join(',')]?.length || 1)
-      ] ?? route.stages[0].start,
-  })),
-  ...route.stages.flatMap((stage) =>
-    (intermediateLodgings[route.id]?.[stage.id] ?? []).flatMap(({ key, town, positions }, index) =>
-      (index % 3 === 0
-        ? ['water', 'cafe', 'toilet']
-        : index % 3 === 1
-          ? ['water', 'market', 'picnic']
-          : ['cafe', 'water']
-      ).map((kind, slot) => ({
-        id: `${route.id}-${stage.id}-${key}-${kind}`,
-        routeId: route.id,
-        stageId: stage.id,
-        kind,
-        location: town,
-        coordinates: positions[slot % positions.length],
       })),
     ),
-  ),
-]);
+    ...['stamp', 'church', ...nearbyKinds, 'postOffice', 'credentialShop', 'wellness'].map(
+      (kind, index) => ({
+        id: `${route.id}-0-${kind}`,
+        routeId: route.id,
+        stageId: 0,
+        kind,
+        location: route.stages[0].from,
+        coordinates:
+          lodgingLocations[route.stages[0].start.join(',')]?.[
+            index % (lodgingLocations[route.stages[0].start.join(',')]?.length || 1)
+          ] ?? route.stages[0].start,
+      }),
+    ),
+    ...route.stages.flatMap((stage) =>
+      (intermediateLodgings[route.id]?.[stage.id] ?? []).flatMap(
+        ({ key, town, positions }, index) =>
+          (index % 3 === 0
+            ? ['water', 'cafe', 'toilet', 'restaurant', 'stamp']
+            : index % 3 === 1
+              ? ['water', 'market', 'picnic', 'transit']
+              : ['cafe', 'water']
+          ).map((kind, slot) => ({
+            id: `${route.id}-${stage.id}-${key}-${kind}`,
+            routeId: route.id,
+            stageId: stage.id,
+            kind,
+            location: town,
+            coordinates: positions[slot % positions.length],
+          })),
+      ),
+    ),
+  ]),
+  accommodations,
+);
 
 const warnings = [
   {
