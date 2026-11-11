@@ -14,7 +14,7 @@ import {
   trailSignOutline,
   waterOutline,
 } from 'ionicons/icons';
-import type { Message } from '../demo/locale';
+import type { Locale, Message } from '../demo/locale';
 import type { TrailPlaceKind, Waypoint } from '../demo/models';
 
 export const trailPlaces = {
@@ -38,4 +38,10 @@ export const trailPlaceKinds = Object.keys(trailPlaces) as TrailPlaceKind[];
 
 export function mapPlaceKind(point: Waypoint): TrailPlaceKind {
   return point.kind === 'church' ? 'stamp' : point.kind;
+}
+
+export function placeLocation(point: Waypoint, locale: Locale): string {
+  if (point.routeKm === undefined) return point.location;
+  const kilometre = locale.t('placeRouteKm', { km: locale.number(point.routeKm, 1) });
+  return point.location + ' · ' + kilometre;
 }

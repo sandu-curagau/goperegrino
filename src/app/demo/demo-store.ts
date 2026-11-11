@@ -54,6 +54,7 @@ interface DemoState {
   trailComments: TrailComment[];
   likedTrailComments: string[];
   premium: 0 | 7 | 30;
+  premiumPurchased: boolean;
   offline: boolean;
   offlineDownloaded: boolean;
   reservations: Reservation[];
@@ -80,7 +81,7 @@ function freshState(): DemoState {
     },
     language: 'pt',
     theme: 'system',
-    mapPlaceKinds: [],
+    mapPlaceKinds: ['water', 'cafe', 'restaurant', 'market', 'picnic'],
     routeId: 'central',
     started: false,
     date: dateInput(),
@@ -93,6 +94,7 @@ function freshState(): DemoState {
     trailComments: [],
     likedTrailComments: [],
     premium: 0,
+    premiumPurchased: false,
     offline: false,
     offlineDownloaded: false,
     reservations: [],
@@ -113,6 +115,8 @@ function readState(): DemoState {
   try {
     const stored = localStorage.getItem(storageKey);
     const state: DemoState = stored ? { ...freshState(), ...JSON.parse(stored) } : freshState();
+    // Existing Premium holders have already used their first-purchase eligibility.
+    if (state.premium) state.premiumPurchased = true;
     if (state.started && !state.walkId) state.walkId = 'legacy-' + state.routeId;
     const attempts = new Map<string, number>();
     state.walkHistory = [...state.walkHistory]

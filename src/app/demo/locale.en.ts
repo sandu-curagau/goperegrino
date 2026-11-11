@@ -1,4 +1,7 @@
 export const translations = {
+  premiumWelcomeTitle: 'Welcome to the trail',
+  premiumWelcomeCopy: '20% off your first Premium purchase.',
+  premiumRegularPrice: 'Regular price',
   theme: 'Theme',
   themeLight: 'Light',
   themeDark: 'Dark',
@@ -47,6 +50,7 @@ export const translations = {
   market: 'Supermarket',
   souvenir: 'Souvenir shop',
   transit: 'Public transport',
+  placeRouteKm: 'trail km {km}',
   placeDistance: '{distance} in a straight line',
   toilet: 'Toilet',
   picnic: 'Picnic area',

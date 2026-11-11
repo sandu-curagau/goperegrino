@@ -1,6 +1,9 @@
 import type { Message } from './locale';
 
 export const translations = {
+  premiumWelcomeTitle: '순례길에 오신 것을 환영합니다',
+  premiumWelcomeCopy: '첫 Premium 구매 시 20% 할인.',
+  premiumRegularPrice: '정상 가격',
   theme: '테마',
   themeLight: '라이트',
   themeDark: '다크',
@@ -47,6 +50,7 @@ export const translations = {
   market: '슈퍼마켓',
   souvenir: '기념품점',
   transit: '대중교통',
+  placeRouteKm: '경로 {km}km',
   placeDistance: '직선거리 {distance}',
   toilet: '화장실',
   picnic: '피크닉 구역',

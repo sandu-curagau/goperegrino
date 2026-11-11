@@ -1,6 +1,9 @@
 import type { Message } from './locale';
 
 export const translations = {
+  premiumWelcomeTitle: 'Bienvenue sur le chemin',
+  premiumWelcomeCopy: '20 % de réduction sur votre premier achat Premium.',
+  premiumRegularPrice: 'Prix habituel',
   theme: 'Thème',
   themeLight: 'Clair',
   themeDark: 'Sombre',
@@ -49,6 +52,7 @@ export const translations = {
   market: 'Supermarché',
   souvenir: 'Boutique de souvenirs',
   transit: 'Transports en commun',
+  placeRouteKm: 'km {km} du parcours',
   placeDistance: 'À {distance} à vol d’oiseau',
   toilet: 'Toilettes',
   picnic: 'Aire de pique-nique',

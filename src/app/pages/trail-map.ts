@@ -29,7 +29,7 @@ import { offlineStyle, offlineTile } from './offline-map';
 import type { MapComment } from './trail-comments';
 import { CommentTranslation } from './comment-translation';
 import type { PlannedStop } from './lodging-search';
-import { mapPlaceKind, trailPlaceKinds, trailPlaces } from './trail-places';
+import { mapPlaceKind, placeLocation, trailPlaceKinds, trailPlaces } from './trail-places';
 
 type LodgingProperties = { id: string; partner: boolean };
 const liberty = 'https://tiles.openfreemap.org/styles/liberty';
@@ -246,7 +246,7 @@ export class TrailMap {
       kind.className = 'kicker';
       kind.textContent = this.locale.t(point.kind === 'church' ? 'church' : place.label);
       const title = document.createElement('strong');
-      title.textContent = point.location;
+      title.textContent = placeLocation(point, this.locale);
       const close = document.createElement('button');
       close.type = 'button';
       close.className = 'pin-close';
@@ -819,7 +819,17 @@ export class TrailMap {
       filter: ['has', 'point_count'],
       paint: {
         'circle-color': '#246759',
-        'circle-radius': 15,
+        'circle-radius': [
+          'interpolate',
+          ['linear'],
+          ['get', 'point_count'],
+          2,
+          13,
+          25,
+          16,
+          150,
+          19,
+        ],
         'circle-stroke-width': 3,
         'circle-stroke-color': '#fff',
       },
@@ -840,12 +850,27 @@ export class TrailMap {
       id: 'trail-place-icons',
       type: 'symbol',
       source: 'trail-places',
+      filter: ['!', ['has', 'point_count']],
       layout: {
-        'icon-image': ['image', ['concat', 'map-place-', ['coalesce', ['get', 'kind'], 'picnic']]],
+        'icon-image': ['image', ['concat', 'map-place-', ['get', 'kind']]],
         'icon-size': 0.85,
         'icon-allow-overlap': true,
         'icon-ignore-placement': true,
       },
+    });
+    map.addLayer({
+      id: 'trail-place-count',
+      type: 'symbol',
+      source: 'trail-places',
+      filter: ['has', 'point_count'],
+      layout: {
+        'text-field': ['to-string', ['get', 'point_count_abbreviated']],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': 12,
+        'text-allow-overlap': true,
+        'text-ignore-placement': true,
+      },
+      paint: { 'text-color': '#fff' },
     });
   }
 

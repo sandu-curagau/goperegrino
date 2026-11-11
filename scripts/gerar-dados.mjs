@@ -151,6 +151,7 @@ function projectStop(point, line) {
   return { ...nearest, fraction: travelled ? nearest.distance / travelled : 0 };
 }
 
+const trailStages = [];
 // Slower plans stop at existing lodging locations, projected onto the walking route.
 for (const route of pathways) {
   let geometry;
@@ -165,6 +166,7 @@ for (const route of pathways) {
   for (const stage of route.stages) {
     const line = geometry?.features.find((feature) => feature.properties.stageId === stage.id)
       ?.geometry.coordinates ?? [stage.start, stage.end];
+    trailStages.push({ ...stage, line, routeId: route.id, startKm: distance });
     const candidates = (intermediateLodgings[route.id]?.[stage.id] ?? [])
       .filter((stop) => !stop.town.includes('–'))
       .map((stop, index) => ({ ...stop, index, ...projectStop(stop.positions[0], line) }))
@@ -222,6 +224,40 @@ const intermediateNames = [
   'Casa da Ponte',
 ];
 const facilities = ['wifi', 'laundry', 'pets', 'kitchen', 'breakfast'];
+function accommodation({
+  id,
+  routeId,
+  stageId,
+  town,
+  position,
+  seed,
+  partner,
+  intermediate,
+  name,
+}) {
+  const [longitude, latitude] = position;
+  return {
+    id,
+    routeId,
+    stageId,
+    ...(intermediate ? { intermediate: true } : {}),
+    name,
+    location: {
+      coordinates: { latitude, longitude },
+      address: `${town} · Morada de demonstração`,
+    },
+    price: 18 + ((seed * 11 + stageId * 7) % 65),
+    currency: 'EUR',
+    review_score: Number((8 + (((seed + 3) * stageId) % 18) / 10).toFixed(1)),
+    review_count: 21 + ((stageId * 33 + seed * 29) % 340),
+    photos: [1, 2, 3].map((photo) => `https://picsum.photos/seed/${id}-${photo}/640/420`),
+    facilities: facilities.filter((_, feature) => feature === 0 || (seed + feature) % 3 !== 0),
+    cancellation: 'Cancelamento gratuito até 48 horas antes da chegada.',
+    partner,
+    source: partner ? 'parceiro' : 'booking',
+    ...(partner ? { phone: '000 000 000', whatsapp: '000 000 000' } : {}),
+  };
+}
 const accommodations = pathways.flatMap((route) =>
   [
     ...route.stages.map((stage) => ({
@@ -245,38 +281,25 @@ const accommodations = pathways.flatMap((route) =>
       })),
     ),
   ].flatMap((stop) =>
-    stop.positions.map(([longitude, latitude], index) => {
+    stop.positions.map((position, index) => {
       const group = stop.group ?? 0;
       const prefix = group ? `${route.id}-${stop.id}-via-${stop.key}` : `${route.id}-${stop.id}`;
       const id = `${prefix}-${index + 1}`;
       const seed = index + group * 3;
       const partner = group ? index === 1 && group % 3 === 0 : index % 5 === 0;
-      return {
+      return accommodation({
         id,
         routeId: route.id,
         stageId: stop.id,
-        ...(group ? { intermediate: true } : {}),
+        town: stop.town,
+        position,
+        seed,
+        partner,
+        intermediate: !!group,
         name: group
           ? intermediateNames[(seed + stop.id) % intermediateNames.length]
           : accommodationNames[index],
-        location: {
-          coordinates: {
-            latitude,
-            longitude,
-          },
-          address: `${stop.town} · Morada de demonstração`,
-        },
-        price: 18 + ((seed * 11 + stop.id * 7) % 65),
-        currency: 'EUR',
-        review_score: Number((8 + (((seed + 3) * stop.id) % 18) / 10).toFixed(1)),
-        review_count: 21 + ((stop.id * 33 + seed * 29) % 340),
-        photos: [1, 2, 3].map((photo) => `https://picsum.photos/seed/${id}-${photo}/640/420`),
-        facilities: facilities.filter((_, feature) => feature === 0 || (seed + feature) % 3 !== 0),
-        cancellation: 'Cancelamento gratuito até 48 horas antes da chegada.',
-        partner,
-        source: partner ? 'parceiro' : 'booking',
-        ...(partner ? { phone: '000 000 000', whatsapp: '000 000 000' } : {}),
-      };
+      });
     }),
   ),
 );
@@ -315,7 +338,7 @@ const serviceTowns = new Set([
   'Vigo',
   'Santiago',
 ]);
-const points = await locatePlaces(
+const { points, newLodgingStops } = await locatePlaces(
   new URL('offline/trilhos.bin', data),
   pathways.flatMap((route) => [
     ...route.stages.flatMap((stage) =>
@@ -378,7 +401,19 @@ const points = await locatePlaces(
     ),
   ]),
   accommodations,
+  trailStages,
 );
+for (const stop of newLodgingStops) {
+  accommodations.push(
+    accommodation({
+      ...stop,
+      id: `${stop.routeId}-${stop.stageId}-${stop.key}-stay`,
+      intermediate: true,
+      name: intermediateNames[stop.seed % intermediateNames.length],
+      partner: stop.seed % 8 === 0,
+    }),
+  );
+}
 
 const warnings = [
   {

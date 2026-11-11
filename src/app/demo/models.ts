@@ -74,6 +74,7 @@ export interface Waypoint {
   kind: TrailPlaceKind | 'church';
   location: string;
   coordinates: Point;
+  routeKm?: number;
 }
 
 export interface Notice {

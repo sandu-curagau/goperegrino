@@ -1,6 +1,9 @@
 import type { Message } from './locale';
 
 export const chinese = {
+  premiumWelcomeTitle: '欢迎踏上朝圣之路',
+  premiumWelcomeCopy: '首次购买 Premium 可享八折优惠。',
+  premiumRegularPrice: '常规价格',
   theme: '主题',
   themeLight: '浅色',
   themeDark: '深色',
@@ -45,6 +48,7 @@ export const chinese = {
   market: '超市',
   souvenir: '纪念品商店',
   transit: '公共交通',
+  placeRouteKm: '路线第 {km} 公里',
   placeDistance: '直线距离 {distance}',
   toilet: '洗手间',
   picnic: '野餐区',

@@ -6,7 +6,7 @@ import { DemoStore } from '../demo/demo-store';
 import { Locale } from '../demo/locale';
 import { dateInput, kmBetween, Stamp, Waypoint } from '../demo/models';
 import { Sheet } from '../demo/sheet';
-import { mapPlaceKind } from './trail-places';
+import { mapPlaceKind, placeLocation } from './trail-places';
 
 @Component({
   imports: [IonContent, IonIcon, Sheet],
@@ -331,7 +331,7 @@ export class PassportPage {
 
   protected spotName(point: Waypoint): string {
     return this.locale.t(point.kind === 'church' ? 'churchStampAt' : 'stampPointAt', {
-      name: point.location,
+      name: placeLocation(point, this.locale),
     });
   }
 

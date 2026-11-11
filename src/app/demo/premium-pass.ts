@@ -1,13 +1,14 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
 import { DemoStore } from './demo-store';
 import { Locale, Message } from './locale';
 import { Sheet } from './sheet';
 
 const plans = [
-  { days: 7, price: 2.99, label: 'days7' },
-  { days: 30, price: 4.99, label: 'days30' },
+  { days: 7, cents: 299, label: 'days7' },
+  { days: 30, cents: 499, label: 'days30' },
 ] as const;
+const welcomeDiscount = 20;
 
 @Component({
   selector: 'app-premium-pass',
@@ -31,6 +32,18 @@ const plans = [
       </div>
 
       @if (!store.premium()) {
+        @if (firstPurchase()) {
+          <div class="welcome-offer">
+            <span class="offer-symbol">
+              <ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon>
+            </span>
+            <div>
+              <strong>{{ locale.t('premiumWelcomeTitle') }}</strong>
+              <p>{{ locale.t('premiumWelcomeCopy') }}</p>
+            </div>
+            <span class="offer-discount">−{{ welcomeDiscount }}%</span>
+          </div>
+        }
         <fieldset class="passes">
           <legend class="sr-only">Premium</legend>
           @for (plan of plans; track plan.days) {
@@ -42,7 +55,13 @@ const plans = [
                 (change)="selected.set(plan.days)"
               />
               <span class="kicker">{{ locale.t(plan.label) }}</span>
-              <strong>{{ locale.money(plan.price) }}</strong>
+              @if (firstPurchase()) {
+                <span class="regular-price">
+                  <span class="sr-only">{{ locale.t('premiumRegularPrice') }}</span>
+                  <s>{{ locale.money(plan.cents / 100) }}</s>
+                </span>
+              }
+              <strong>{{ locale.money(price(plan.cents)) }}</strong>
             </label>
           }
         </fieldset>
@@ -60,7 +79,7 @@ const plans = [
           @if (store.offline()) {
             <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
           }
-          {{ locale.t('buy') }}
+          {{ locale.t('buy') }} · {{ locale.money(selectedPrice()) }}
           @if (!store.offline()) {
             <span aria-hidden="true">→</span>
           }
@@ -93,6 +112,43 @@ const plans = [
     }
     .premium-intro p:last-child {
       margin: 0;
+      font-size: 12px;
+    }
+    .welcome-offer {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid var(--gold-line);
+      border-radius: 16px;
+      background: var(--gold-wash);
+      color: var(--gold-ink);
+    }
+    .offer-symbol {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      font-size: 23px;
+    }
+    .welcome-offer strong {
+      font-size: 13px;
+    }
+    .welcome-offer p {
+      margin: 4px 0 0;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+    .offer-discount {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+    .regular-price {
+      margin-top: 3px;
+      color: var(--muted);
       font-size: 12px;
     }
     .passes {
@@ -158,6 +214,11 @@ export class PremiumPass {
     this.store.premium() || (this.store.state().days <= 7 ? 7 : 30),
   );
   protected readonly plans = plans;
+  protected readonly welcomeDiscount = welcomeDiscount;
+  protected readonly firstPurchase = computed(() => !this.store.state().premiumPurchased);
+  protected readonly selectedPrice = computed(() =>
+    this.price(plans.find((plan) => plan.days === this.selected())!.cents),
+  );
   protected readonly features: Message[] = [
     'offlineMaps',
     'extraAlerts',
@@ -170,7 +231,11 @@ export class PremiumPass {
 
   protected buy(): void {
     if (this.store.premium() || this.store.offline()) return;
-    this.store.patch({ premium: this.selected() });
+    this.store.patch({ premium: this.selected(), premiumPurchased: true });
     this.store.premiumOpen.set(false);
+  }
+
+  protected price(cents: number): number {
+    return Math.round(cents * (this.firstPurchase() ? 1 - welcomeDiscount / 100 : 1)) / 100;
   }
 }

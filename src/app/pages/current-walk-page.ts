@@ -4,7 +4,7 @@ import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale, Message } from '../demo/locale';
 import { kmBetween, lodgingPoint, type TrailPlaceKind, type Waypoint } from '../demo/models';
-import { mapPlaceKind, trailPlaceKinds, trailPlaces } from './trail-places';
+import { mapPlaceKind, placeLocation, trailPlaceKinds, trailPlaces } from './trail-places';
 import { walkReservations } from '../demo/booking-plan';
 import { walkingTime } from '../demo/walking-time';
 import { Sheet } from '../demo/sheet';
@@ -67,6 +67,7 @@ export class CurrentWalkPage {
     () => this.items.filter((item) => this.store.state().pack.includes(item)).length,
   );
   protected readonly trailPlaces = trailPlaces;
+  protected readonly placeLocation = placeLocation;
   protected readonly nearbyKinds = trailPlaceKinds;
   protected readonly nearbyFilter = signal<TrailPlaceKind | 'all'>('all');
   protected readonly nearbyRadius = signal(5);

@@ -266,7 +266,7 @@
               [attr.aria-label]="
                 locale.t(trailPlaces[spot.mapKind].label) +
                 ' · ' +
-                spot.location +
+                placeLocation(spot, locale) +
                 ' · ' +
                 locale.t('showOnMap')
               "
@@ -276,7 +276,7 @@
               ></span>
               <span
                 ><strong>{{ locale.t(trailPlaces[spot.mapKind].label) }}</strong
-                ><small>{{ spot.location }}</small></span
+                ><small>{{ placeLocation(spot, locale) }}</small></span
               >
               <span class="nearby-distance"
                 >{{
