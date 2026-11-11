@@ -75,6 +75,12 @@ export interface Waypoint {
   location: string;
   coordinates: Point;
   routeKm?: number;
+  name?: string;
+  heritage?: 'chapel' | 'bridge';
+  photos?: string[];
+  hours?: { open: string; close: string; days: 'daily' | 'weekdays' | 'monSat' };
+  priceFrom?: number;
+  visitMinutes?: number;
 }
 
 export interface Notice {

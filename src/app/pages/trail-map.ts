@@ -29,7 +29,13 @@ import { offlineStyle, offlineTile } from './offline-map';
 import type { MapComment } from './trail-comments';
 import { CommentTranslation } from './comment-translation';
 import type { PlannedStop } from './lodging-search';
-import { mapPlaceKind, placeLocation, trailPlaceKinds, trailPlaces } from './trail-places';
+import {
+  mapPlaceKind,
+  placeLocation,
+  placeTitle,
+  trailPlaceKinds,
+  trailPlaces,
+} from './trail-places';
 
 type LodgingProperties = { id: string; partner: boolean };
 const liberty = 'https://tiles.openfreemap.org/styles/liberty';
@@ -41,7 +47,7 @@ const roadShields = new Set([
 const stroke = { 'line-cap': 'round', 'line-join': 'round' } as const;
 const flatCamera = { bearing: 0, pitch: 0, padding: { top: 0, bottom: 0, left: 0, right: 0 } };
 const radians = Math.PI / 180;
-const placePinLayers = ['trail-place-pin', 'trail-place-clusters'];
+const placePinLayers = ['trail-place-pin', 'trail-place-clusters', 'trail-place-labels'];
 const lodgingPinLayers = ['lodging-pin', 'lodging-clusters'];
 let protocolRegistered = false;
 
@@ -81,7 +87,7 @@ function placeFeatures(places: Waypoint[]): FeatureCollection<GeoPoint> {
       const kind = mapPlaceKind(point);
       return {
         type: 'Feature',
-        properties: { id: point.id, kind, color: trailPlaces[kind].color },
+        properties: { id: point.id, kind, name: point.name ?? '', color: trailPlaces[kind].color },
         geometry: { type: 'Point', coordinates: point.coordinates },
       };
     }),
@@ -195,6 +201,7 @@ export class TrailMap {
   readonly hubSelected = output<number>();
   readonly commentSelected = output<MapComment>();
   readonly placeSelected = output<Waypoint>();
+  readonly openPlaceDetails = output<void>();
   readonly profileSelected = output<string>();
   readonly openComments = output<void>();
   readonly clearSelection = output<void>();
@@ -241,19 +248,30 @@ export class TrailMap {
       this.setFollowing(false);
       const place = trailPlaces[mapPlaceKind(point)];
       const content = document.createElement('div');
-      content.className = 'pin-summary';
+      content.className = 'pin-summary place-pin-summary';
       const kind = document.createElement('span');
       kind.className = 'kicker';
       kind.textContent = this.locale.t(point.kind === 'church' ? 'church' : place.label);
       const title = document.createElement('strong');
-      title.textContent = placeLocation(point, this.locale);
+      title.textContent = placeTitle(point, this.locale);
+      const location = document.createElement('span');
+      location.className = 'muted';
+      location.textContent = placeLocation(point, this.locale);
       const close = document.createElement('button');
       close.type = 'button';
       close.className = 'pin-close';
       close.textContent = '×';
       close.setAttribute('aria-label', this.locale.t('close'));
       close.onclick = () => this.clearSelection.emit();
-      content.append(kind, title, close);
+      content.append(kind, title, location, close);
+      if (point.photos?.length) {
+        const photo = document.createElement('img');
+        photo.className = 'place-pin-photo';
+        photo.src = point.photos[0];
+        photo.alt = this.locale.t('photo');
+        photo.addEventListener('error', () => photo.remove(), { once: true });
+        content.append(photo);
+      }
       const position = untracked(() => this.store.progress().position);
       if (position) {
         const distance = document.createElement('span');
@@ -263,6 +281,12 @@ export class TrailMap {
         distance.textContent = this.locale.t('placeDistance', { distance: label });
         content.append(distance);
       }
+      const details = document.createElement('button');
+      details.type = 'button';
+      details.className = 'primary';
+      details.textContent = this.locale.t('placeViewDetails');
+      details.addEventListener('click', () => this.openPlaceDetails.emit());
+      content.append(details);
       const pin = document.createElement('span');
       pin.className = 'selected-place-pin';
       pin.style.setProperty('--place-color', place.color);
@@ -871,6 +895,28 @@ export class TrailMap {
         'text-ignore-placement': true,
       },
       paint: { 'text-color': '#fff' },
+    });
+    map.addLayer({
+      id: 'trail-place-labels',
+      type: 'symbol',
+      source: 'trail-places',
+      minzoom: 16.25,
+      filter: ['!', ['has', 'point_count']],
+      layout: {
+        'text-field': ['get', 'name'],
+        'text-font': ['Noto Sans Regular'],
+        'text-size': 11,
+        'text-offset': [0, 1.5],
+        'text-anchor': 'top',
+        'text-max-width': 9,
+        'text-optional': true,
+        'text-padding': 5,
+      },
+      paint: {
+        'text-color': '#243e4a',
+        'text-halo-color': '#fff',
+        'text-halo-width': 1.5,
+      },
     });
   }
 

@@ -330,6 +330,7 @@ export class PassportPage {
   }
 
   protected spotName(point: Waypoint): string {
+    if (point.name) return point.name;
     return this.locale.t(point.kind === 'church' ? 'churchStampAt' : 'stampPointAt', {
       name: placeLocation(point, this.locale),
     });

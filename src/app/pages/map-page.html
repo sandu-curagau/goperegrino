@@ -35,6 +35,7 @@
             (hubSelected)="showStayStop($event)"
             (commentSelected)="selectComment($event)"
             (placeSelected)="selectPlace($event)"
+            (openPlaceDetails)="openSheet.set('placeDetail')"
             (profileSelected)="openCommentProfile($event)"
             (openComments)="openComments()"
             (clearSelection)="clearSelection()"
@@ -353,6 +354,9 @@
   }
 </main>
 
+@if (openSheet() === 'placeDetail' && nearbyPoint(); as point) {
+  <app-place-details [point]="point" (closed)="openSheet.set(null)" />
+}
 @if (openSheet() === 'places') {
   <app-sheet [title]="locale.t('trailPlaces')" (closed)="openSheet.set(null)">
     <div class="sheet-stack">

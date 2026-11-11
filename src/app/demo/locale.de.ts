@@ -1,6 +1,46 @@
 import type { Message } from './locale';
 
 export const translations = {
+  placeViewDetails: 'Details ansehen',
+  placeHours: 'Öffnungszeiten',
+  placeDaily: 'Täglich',
+  placeWeekdays: 'Montag bis Freitag',
+  placeMonSat: 'Montag bis Samstag',
+  placeFromPrice: 'Ab {price}',
+  placeVisit: 'Besuchsdauer',
+  placeVisitTime: '{minutes} Min.',
+  placeDetailDemo: 'Fiktive Namen und Angaben für diese Demo.',
+  placeStampDescription:
+    'Eine Anlaufstelle, an der du einen Stempel für deinen Pilgerpass erhältst und kurz rasten kannst.',
+  placeCredentialDescription:
+    'Eine Pilgeranlaufstelle mit Pilgerpässen aus Papier und Informationen zur Vorbereitung des Weges.',
+  placePostDescription:
+    'Eine Postfiliale zum Versenden von Postkarten, Briefen und kleinen Paketen während deiner Reise.',
+  placeChapelDescription:
+    'Eine kleine Steinkapelle am Weg mit einem ruhigen Vorplatz für einen kurzen Besuch.',
+  placeBridgeDescription:
+    'Eine steinerne Bogenbrücke über den Bach. Ein Ort, um die Landschaft zu genießen und Fotos zu machen.',
+  placeChurchDescription:
+    'Eine örtliche Kirche mit einem ruhigen Raum und einer Stempelstelle für Pilger.',
+  placeRestaurantDescription:
+    'Hausmannskost, regionale Gerichte und vollständige Mahlzeiten für neue Energie unterwegs.',
+  placeWellnessDescription:
+    'Ein Ruhebereich mit Bein- und Fußmassagen, Entspannungsbehandlungen und Saunagängen.',
+  placeMarketDescription:
+    'Ein Supermarkt mit Obst, Brot, Wasser und wichtigen Vorräten für die nächste Etappe.',
+  placeSouvenirDescription:
+    'Ein Geschäft mit lokalem Kunsthandwerk, kleinen Souvenirs und Erinnerungen an den Weg.',
+  placeTransitDescription:
+    'Eine Haltestelle, um den nächsten Ort zu erreichen oder zum Ausgangspunkt zurückzukehren.',
+  placePharmacyDescription:
+    'Eine Apotheke mit Erste-Hilfe-Artikeln, Fußpflege und pharmazeutischer Beratung.',
+  placeWaterDescription:
+    'Ein öffentlicher Brunnen für eine Pause und zum Nachfüllen. Prüfe vor Ort den Trinkwasserhinweis.',
+  placeCafeDescription:
+    'Ein gemütliches Café mit Frühstück, Gebäck und kleinen Mahlzeiten für eine Pause am Weg.',
+  placeToiletDescription: 'Toiletten für Menschen, die diesen Abschnitt des Weges passieren.',
+  placePicnicDescription:
+    'Ein Picknickplatz mit Tischen und Schatten zum Essen, Ausruhen und Planen der nächsten Etappe.',
   premiumWelcomeTitle: 'Willkommen auf dem Weg',
   premiumWelcomeCopy: '20 % Rabatt auf deinen ersten Premium-Kauf.',
   premiumRegularPrice: 'Regulärer Preis',

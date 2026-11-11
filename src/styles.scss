@@ -373,6 +373,16 @@ ion-content {
   min-height: 40px;
   margin-top: 4px;
 }
+.place-pin-summary .place-pin-photo {
+  width: 100%;
+  height: 74px;
+  margin-block: 3px;
+  border-radius: 9px;
+  object-fit: cover;
+}
+.place-pin-summary > .muted {
+  font-size: 10px;
+}
 .pin-close {
   position: absolute;
   right: 3px;

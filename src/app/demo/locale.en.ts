@@ -1,4 +1,44 @@
 export const translations = {
+  placeViewDetails: 'View details',
+  placeHours: 'Opening hours',
+  placeDaily: 'Every day',
+  placeWeekdays: 'Monday to Friday',
+  placeMonSat: 'Monday to Saturday',
+  placeFromPrice: 'From {price}',
+  placeVisit: 'Suggested visit',
+  placeVisitTime: '{minutes} min',
+  placeDetailDemo: 'Fictional names and information for this demo.',
+  placeStampDescription:
+    'A pilgrim welcome point where you can request a stamp for your credential and take a short break.',
+  placeCredentialDescription:
+    'A pilgrim support desk with paper credentials and information to help you prepare for the trail.',
+  placePostDescription:
+    'A post office for sending postcards, letters and small parcels during your trip.',
+  placeChapelDescription:
+    'A small stone chapel beside the trail, with a peaceful courtyard for a short visit.',
+  placeBridgeDescription:
+    'A stone bridge with arches over the stream. A spot to enjoy the scenery and take photographs.',
+  placeChurchDescription:
+    'A local church offering a quiet space and a credential stamp point for pilgrims.',
+  placeRestaurantDescription:
+    'Home cooking, regional dishes and full meals to restore your energy along the trail.',
+  placeWellnessDescription:
+    'A restful space offering leg and foot massages, relaxation treatments and sauna sessions.',
+  placeMarketDescription:
+    'A neighbourhood supermarket with fruit, bread, water and essentials for your next stage.',
+  placeSouvenirDescription:
+    'A shop with local crafts, small souvenirs and keepsakes from the trail.',
+  placeTransitDescription:
+    'A public transport stop for reaching the next town or returning to your starting point.',
+  placePharmacyDescription:
+    'A local pharmacy with first-aid supplies, foot-care products and advice from a pharmacist.',
+  placeWaterDescription:
+    'A public fountain for a break and a refill. Check the drinking-water sign on site.',
+  placeCafeDescription:
+    'A welcoming café serving breakfast, pastries and light meals for a break along the trail.',
+  placeToiletDescription: 'Toilets for people passing through this part of the trail.',
+  placePicnicDescription:
+    'A picnic area with tables and shade to eat, rest and prepare for the next stage.',
   premiumWelcomeTitle: 'Welcome to the trail',
   premiumWelcomeCopy: '20% off your first Premium purchase.',
   premiumRegularPrice: 'Regular price',

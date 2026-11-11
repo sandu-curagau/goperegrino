@@ -1,6 +1,46 @@
 import type { Message } from './locale';
 
 export const translations = {
+  placeViewDetails: 'Vedi dettagli',
+  placeHours: 'Orari',
+  placeDaily: 'Tutti i giorni',
+  placeWeekdays: 'Dal lunedì al venerdì',
+  placeMonSat: 'Dal lunedì al sabato',
+  placeFromPrice: 'Da {price}',
+  placeVisit: 'Durata della visita',
+  placeVisitTime: '{minutes} min',
+  placeDetailDemo: 'Nomi e informazioni fittizi per questa dimostrazione.',
+  placeStampDescription:
+    'Punto di accoglienza dove chiedere un timbro per la credenziale e fare una breve pausa.',
+  placeCredentialDescription:
+    'Sportello per pellegrini con credenziali cartacee e informazioni per preparare il cammino.',
+  placePostDescription:
+    'Ufficio postale per spedire cartoline, lettere e piccoli pacchi durante il viaggio.',
+  placeChapelDescription:
+    'Piccola cappella in pietra vicino al cammino, con un sagrato tranquillo per una breve visita.',
+  placeBridgeDescription:
+    'Ponte in pietra con archi sul ruscello. Un luogo per ammirare il paesaggio e scattare fotografie.',
+  placeChurchDescription:
+    'Chiesa locale con uno spazio di raccoglimento e un punto timbri per i pellegrini.',
+  placeRestaurantDescription:
+    'Cucina casalinga, piatti regionali e pasti completi per recuperare energie lungo il cammino.',
+  placeWellnessDescription:
+    'Spazio di riposo con massaggi a gambe e piedi, trattamenti rilassanti e sessioni di sauna.',
+  placeMarketDescription:
+    'Supermercato di quartiere con frutta, pane, acqua e prodotti essenziali per la prossima tappa.',
+  placeSouvenirDescription:
+    'Negozio di artigianato locale, piccoli souvenir e ricordi del cammino.',
+  placeTransitDescription:
+    'Fermata dei trasporti pubblici per raggiungere la prossima località o tornare al punto di partenza.',
+  placePharmacyDescription:
+    'Farmacia di quartiere con primo soccorso, cura dei piedi e consulenza farmaceutica.',
+  placeWaterDescription:
+    'Fontana pubblica per una pausa e per riempire la borraccia. Verifica la presenza di acqua potabile.',
+  placeCafeDescription:
+    'Caffè accogliente con colazioni, dolci e pasti leggeri per una pausa sul cammino.',
+  placeToiletDescription: 'Servizi igienici per chi attraversa questa parte del percorso.',
+  placePicnicDescription:
+    'Area picnic con tavoli e ombra per mangiare, riposare e preparare la prossima tappa.',
   premiumWelcomeTitle: 'Benvenuto sul cammino',
   premiumWelcomeCopy: '20% di sconto sul tuo primo acquisto Premium.',
   premiumRegularPrice: 'Prezzo normale',

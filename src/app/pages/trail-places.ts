@@ -45,3 +45,31 @@ export function placeLocation(point: Waypoint, locale: Locale): string {
   const kilometre = locale.t('placeRouteKm', { km: locale.number(point.routeKm, 1) });
   return point.location + ' · ' + kilometre;
 }
+
+export function placeTitle(point: Waypoint, locale: Locale): string {
+  return point.name ?? locale.t(point.kind === 'church' ? 'church' : trailPlaces[point.kind].label);
+}
+
+const descriptions = {
+  stamp: 'placeStampDescription',
+  credentialShop: 'placeCredentialDescription',
+  postOffice: 'placePostDescription',
+  monument: 'placeChapelDescription',
+  church: 'placeChurchDescription',
+  restaurant: 'placeRestaurantDescription',
+  wellness: 'placeWellnessDescription',
+  market: 'placeMarketDescription',
+  souvenir: 'placeSouvenirDescription',
+  transit: 'placeTransitDescription',
+  pharmacy: 'placePharmacyDescription',
+  water: 'placeWaterDescription',
+  cafe: 'placeCafeDescription',
+  toilet: 'placeToiletDescription',
+  picnic: 'placePicnicDescription',
+} as const satisfies Record<Waypoint['kind'], Message>;
+
+export function placeDescription(point: Waypoint, locale: Locale): string {
+  return locale.t(
+    point.heritage === 'bridge' ? 'placeBridgeDescription' : descriptions[point.kind],
+  );
+}

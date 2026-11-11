@@ -1,6 +1,39 @@
 import type { Message } from './locale';
 
 export const translations = {
+  placeViewDetails: '상세 보기',
+  placeHours: '영업시간',
+  placeDaily: '매일',
+  placeWeekdays: '월요일~금요일',
+  placeMonSat: '월요일~토요일',
+  placeFromPrice: '{price}부터',
+  placeVisit: '권장 방문 시간',
+  placeVisitTime: '{minutes}분',
+  placeDetailDemo: '시연용 가상 이름과 정보입니다.',
+  placeStampDescription: '순례자 여권에 스탬프를 받고 잠시 쉴 수 있는 안내소입니다.',
+  placeCredentialDescription:
+    '종이 순례자 여권과 여정 준비에 필요한 정보를 제공하는 순례자 지원 창구입니다.',
+  placePostDescription: '여행 중 엽서, 편지, 작은 소포를 보낼 수 있는 우체국입니다.',
+  placeChapelDescription:
+    '길가에 있는 작은 석조 예배당으로 조용한 앞마당에서 잠시 쉬어갈 수 있습니다.',
+  placeBridgeDescription:
+    '시냇물을 가로지르는 아치형 돌다리입니다. 풍경을 감상하고 사진을 찍기 좋습니다.',
+  placeChurchDescription: '조용히 머물 수 있는 공간과 순례자 스탬프를 제공하는 지역 교회입니다.',
+  placeRestaurantDescription:
+    '가정식, 지역 요리와 든든한 식사로 여정 중 기력을 보충할 수 있습니다.',
+  placeWellnessDescription: '다리와 발 마사지, 이완 관리와 사우나를 제공하는 휴식 공간입니다.',
+  placeMarketDescription:
+    '과일, 빵, 물과 다음 구간에 필요한 물품을 살 수 있는 동네 슈퍼마켓입니다.',
+  placeSouvenirDescription: '지역 수공예품과 순례길을 기념할 작은 선물을 판매하는 상점입니다.',
+  placeTransitDescription:
+    '다음 마을로 이동하거나 출발점으로 돌아갈 때 이용할 수 있는 대중교통 정류장입니다.',
+  placePharmacyDescription: '응급처치 용품, 발 관리 제품과 약사의 상담을 제공하는 지역 약국입니다.',
+  placeWaterDescription:
+    '잠시 쉬며 물을 보충할 수 있는 공용 분수입니다. 현장에서 음용 가능 표시를 확인하세요.',
+  placeCafeDescription: '아침 식사, 페이스트리와 간단한 식사를 제공하는 편안한 카페입니다.',
+  placeToiletDescription: '이 구간을 지나는 사람들이 이용할 수 있는 화장실입니다.',
+  placePicnicDescription:
+    '테이블과 그늘이 있어 식사와 휴식을 즐기고 다음 구간을 준비할 수 있는 피크닉 공간입니다.',
   premiumWelcomeTitle: '순례길에 오신 것을 환영합니다',
   premiumWelcomeCopy: '첫 Premium 구매 시 20% 할인.',
   premiumRegularPrice: '정상 가격',

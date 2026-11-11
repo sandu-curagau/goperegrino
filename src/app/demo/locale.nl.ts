@@ -1,6 +1,46 @@
 import type { Message } from './locale';
 
 export const translations = {
+  placeViewDetails: 'Details bekijken',
+  placeHours: 'Openingstijden',
+  placeDaily: 'Elke dag',
+  placeWeekdays: 'Maandag tot vrijdag',
+  placeMonSat: 'Maandag tot zaterdag',
+  placeFromPrice: 'Vanaf {price}',
+  placeVisit: 'Bezoektijd',
+  placeVisitTime: '{minutes} min',
+  placeDetailDemo: 'Fictieve namen en informatie voor deze demo.',
+  placeStampDescription:
+    'Een ontvangstpunt waar je een stempel voor je pelgrimspas kunt vragen en even kunt rusten.',
+  placeCredentialDescription:
+    'Een pelgrimsloket met papieren pelgrimspassen en informatie om je tocht voor te bereiden.',
+  placePostDescription:
+    'Een postkantoor om tijdens je reis kaarten, brieven en kleine pakketten te versturen.',
+  placeChapelDescription:
+    'Een kleine stenen kapel langs de route met een rustig voorplein voor een kort bezoek.',
+  placeBridgeDescription:
+    'Een stenen boogbrug over de beek. Een plek om van het landschap te genieten en foto’s te maken.',
+  placeChurchDescription:
+    'Een plaatselijke kerk met ruimte voor bezinning en een stempelpunt voor pelgrims.',
+  placeRestaurantDescription:
+    'Huisgemaakte maaltijden en streekgerechten om onderweg weer energie op te doen.',
+  placeWellnessDescription:
+    'Een rustplek met been- en voetmassages, ontspannende behandelingen en saunasessies.',
+  placeMarketDescription:
+    'Een buurtsupermarkt met fruit, brood, water en benodigdheden voor de volgende etappe.',
+  placeSouvenirDescription:
+    'Een winkel met lokaal handwerk, kleine souvenirs en herinneringen aan de route.',
+  placeTransitDescription:
+    'Een halte voor openbaar vervoer naar de volgende plaats of terug naar het vertrekpunt.',
+  placePharmacyDescription:
+    'Een plaatselijke apotheek met EHBO-artikelen, voetverzorging en farmaceutisch advies.',
+  placeWaterDescription:
+    'Een openbare fontein om uit te rusten en bij te vullen. Controleer ter plaatse of het drinkwater is.',
+  placeCafeDescription:
+    'Een gezellig café met ontbijt, gebak en lichte maaltijden voor een pauze langs de route.',
+  placeToiletDescription: 'Toiletten voor mensen die dit deel van de route passeren.',
+  placePicnicDescription:
+    'Een picknickplek met tafels en schaduw om te eten, uit te rusten en de volgende etappe te plannen.',
   premiumWelcomeTitle: 'Welkom op de route',
   premiumWelcomeCopy: '20% korting op je eerste Premium-aankoop.',
   premiumRegularPrice: 'Normale prijs',

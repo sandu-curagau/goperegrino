@@ -1,0 +1,69 @@
+<app-sheet [title]="title()" (closed)="closed.emit()">
+  @let item = point();
+  <article class="place-details sheet-stack">
+    @if (photos().length) {
+      <div class="place-gallery">
+        <img
+          [src]="photos()[photo()]"
+          [alt]="locale.t('photo')"
+          [hidden]="photoFailed()"
+          (error)="photoFailed.set(true)"
+        />
+        @if (photoFailed()) {
+          <ion-icon [icon]="category().icon" aria-hidden="true"></ion-icon>
+        }
+        @if (photos().length > 1) {
+          <button
+            class="gallery-arrow previous"
+            type="button"
+            (click)="advance(-1)"
+            [attr.aria-label]="locale.t('previousPhoto')"
+          >
+            ‹
+          </button>
+          <button
+            class="gallery-arrow next"
+            type="button"
+            (click)="advance(1)"
+            [attr.aria-label]="locale.t('nextPhoto')"
+          >
+            ›
+          </button>
+          <span class="gallery-count">{{ photo() + 1 }} / {{ photos().length }}</span>
+        }
+      </div>
+      <small class="illustrative-photo">{{ locale.t('photo') }}</small>
+    }
+    <div class="place-heading">
+      <span class="place-category" [style.--place-color]="category().color">
+        <ion-icon [icon]="category().icon" aria-hidden="true"></ion-icon>
+        {{ locale.t(item.kind === 'church' ? 'church' : category().label) }}
+      </span>
+      @if (item.priceFrom) {
+        <strong>{{ locale.t('placeFromPrice', { price: locale.money(item.priceFrom) }) }}</strong>
+      }
+    </div>
+    <div class="place-location">
+      <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+      <div>
+        <strong>{{ location() }}</strong
+        ><small>{{ distance() }}</small>
+      </div>
+    </div>
+    <p class="place-description">{{ description() }}</p>
+    @if (item.hours; as hours) {
+      <div class="surface place-hours">
+        <strong>{{ locale.t('placeHours') }}</strong>
+        <span>{{ locale.t(dayLabels[hours.days]) }}</span>
+        <b>{{ hours.open }} – {{ hours.close }}</b>
+      </div>
+    }
+    @if (item.visitMinutes; as minutes) {
+      <div class="detail-line">
+        <span>{{ locale.t('placeVisit') }}</span>
+        <strong>{{ locale.t('placeVisitTime', { minutes }) }}</strong>
+      </div>
+    }
+    <p class="muted place-demo-note">{{ locale.t('placeDetailDemo') }}</p>
+  </article>
+</app-sheet>

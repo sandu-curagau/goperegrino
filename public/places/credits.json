@@ -1,0 +1,50 @@
+[
+  {
+    "file": "cafe.jpg",
+    "photographer": "Kouji Tsuru",
+    "source": "https://unsplash.com/photos/yWIg4MatCjE",
+    "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "cafe-sunlight.jpg",
+    "photographer": "Julen Rey Azcona",
+    "source": "https://unsplash.com/photos/U_lZQfczRRw",
+    "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "restaurant.jpg",
+    "photographer": "vnwayne fan",
+    "source": "https://unsplash.com/photos/xpzICNSaVUs",
+    "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "massage.jpg",
+    "photographer": "Jakub Klucký",
+    "source": "https://unsplash.com/photos/oAvwAKFiU7Q",
+    "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "sauna.jpg",
+    "photographer": "HUUM",
+    "source": "https://unsplash.com/photos/p8VTUqQLLjM",
+    "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "bridge.jpg",
+    "photographer": "Edgar Pimenta",
+    "source": "https://unsplash.com/photos/Wy6nDA8mXWQ",
+    "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "market.jpg",
+    "photographer": "clement proust",
+    "source": "https://unsplash.com/photos/oxTEjCULfwQ",
+    "license": "https://unsplash.com/license"
+  },
+  {
+    "file": "chapel.jpg",
+    "photographer": "Veronika Wölfelová",
+    "source": "https://unsplash.com/photos/jH7HIUO9UPA",
+    "license": "https://unsplash.com/license"
+  }
+]

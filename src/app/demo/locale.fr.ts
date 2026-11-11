@@ -1,6 +1,46 @@
 import type { Message } from './locale';
 
 export const translations = {
+  placeViewDetails: 'Voir les détails',
+  placeHours: 'Horaires',
+  placeDaily: 'Tous les jours',
+  placeWeekdays: 'Du lundi au vendredi',
+  placeMonSat: 'Du lundi au samedi',
+  placeFromPrice: 'À partir de {price}',
+  placeVisit: 'Durée de visite',
+  placeVisitTime: '{minutes} min',
+  placeDetailDemo: 'Noms et informations fictifs pour cette démonstration.',
+  placeStampDescription:
+    'Lieu d’accueil où demander un tampon pour votre crédencial et faire une courte pause.',
+  placeCredentialDescription:
+    'Point d’aide aux pèlerins proposant des crédenciales en papier et des informations pour préparer le chemin.',
+  placePostDescription:
+    'Bureau de poste pour envoyer cartes postales, lettres et petits colis pendant le voyage.',
+  placeChapelDescription:
+    'Petite chapelle en pierre près du chemin, avec une cour paisible pour une courte visite.',
+  placeBridgeDescription:
+    'Pont en pierre à arches au-dessus du ruisseau. Un endroit pour admirer le paysage et prendre des photos.',
+  placeChurchDescription:
+    'Église locale offrant un espace de recueillement et un point de tamponnage aux pèlerins.',
+  placeRestaurantDescription:
+    'Cuisine familiale, plats régionaux et repas complets pour reprendre des forces en chemin.',
+  placeWellnessDescription:
+    'Espace de repos proposant massages des jambes et des pieds, soins relaxants et séances de sauna.',
+  placeMarketDescription:
+    'Supermarché de proximité avec fruits, pain, eau et produits essentiels pour la prochaine étape.',
+  placeSouvenirDescription:
+    'Boutique d’artisanat local, petits souvenirs et objets rappelant le chemin.',
+  placeTransitDescription:
+    'Arrêt de transports en commun pour rejoindre la prochaine localité ou revenir au départ.',
+  placePharmacyDescription:
+    'Pharmacie de proximité avec premiers secours, soins des pieds et conseil pharmaceutique.',
+  placeWaterDescription:
+    'Fontaine publique pour une pause et un ravitaillement. Vérifiez sur place la mention d’eau potable.',
+  placeCafeDescription:
+    'Café accueillant avec petits-déjeuners, pâtisseries et repas légers pour une pause sur le chemin.',
+  placeToiletDescription: 'Toilettes pour les personnes traversant cette partie du parcours.',
+  placePicnicDescription:
+    'Aire de pique-nique avec tables et ombre pour manger, se reposer et préparer la prochaine étape.',
   premiumWelcomeTitle: 'Bienvenue sur le chemin',
   premiumWelcomeCopy: '20 % de réduction sur votre premier achat Premium.',
   premiumRegularPrice: 'Prix habituel',

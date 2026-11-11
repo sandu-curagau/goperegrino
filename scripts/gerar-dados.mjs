@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { locatePlaces } from './localizar-pontos.mjs';
+import { detailPlaces } from './detalhar-pontos.mjs';
 
 const data = new URL('../public/data/', import.meta.url);
 const lodgingLocations = JSON.parse(
@@ -527,7 +528,7 @@ await mkdir(data, { recursive: true });
 for (const [name, payload] of Object.entries({
   caminhos: pathways,
   alojamentos: accommodations,
-  pontos: points,
+  pontos: detailPlaces(points),
   avisos: warnings,
 })) {
   await writeFile(

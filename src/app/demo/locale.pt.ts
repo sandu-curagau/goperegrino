@@ -1,6 +1,46 @@
 import type { Message } from './locale';
 
 export const translations = {
+  placeViewDetails: 'Ver detalhes',
+  placeHours: 'Horário',
+  placeDaily: 'Todos os dias',
+  placeWeekdays: 'Segunda a sexta',
+  placeMonSat: 'Segunda a sábado',
+  placeFromPrice: 'A partir de {price}',
+  placeVisit: 'Tempo de visita',
+  placeVisitTime: '{minutes} min',
+  placeDetailDemo: 'Nomes e informações fictícios para demonstração.',
+  placeStampDescription:
+    'Espaço de acolhimento onde pode pedir um carimbo para a sua credencial e fazer uma breve pausa.',
+  placeCredentialDescription:
+    'Balcão de apoio ao peregrino com credenciais em papel e informação para preparar o caminho.',
+  placePostDescription:
+    'Estação de Correios para enviar postais, correspondência e pequenas encomendas durante a viagem.',
+  placeChapelDescription:
+    'Pequena capela de pedra junto ao caminho, com um adro tranquilo para uma breve visita.',
+  placeBridgeDescription:
+    'Ponte de pedra com arcos sobre a ribeira. Um local para apreciar a paisagem e tirar fotografias.',
+  placeChurchDescription:
+    'Igreja local com espaço de recolhimento e um ponto de carimbo para os peregrinos.',
+  placeRestaurantDescription:
+    'Cozinha caseira, pratos regionais e refeições completas para recuperar energias ao longo do caminho.',
+  placeWellnessDescription:
+    'Espaço de descanso com massagens de pernas e pés, tratamentos de relaxamento e sessões de sauna.',
+  placeMarketDescription:
+    'Supermercado de proximidade com fruta, pão, água e produtos essenciais para a próxima etapa.',
+  placeSouvenirDescription:
+    'Loja de artesanato, pequenas lembranças e recordações do caminho feitas com materiais locais.',
+  placeTransitDescription:
+    'Ponto de acesso a transportes públicos para chegar à localidade seguinte ou regressar ao ponto de partida.',
+  placePharmacyDescription:
+    'Farmácia de proximidade com produtos de primeiros socorros, cuidados para os pés e aconselhamento farmacêutico.',
+  placeWaterDescription:
+    'Fonte pública para uma pausa e reabastecimento. Confirme a indicação de água potável no local.',
+  placeCafeDescription:
+    'Café acolhedor com pequenos-almoços, pastelaria e refeições ligeiras para uma pausa no caminho.',
+  placeToiletDescription: 'Instalações sanitárias de apoio a quem passa nesta zona do percurso.',
+  placePicnicDescription:
+    'Zona de merendas com mesas e sombra para comer, descansar e organizar a próxima etapa.',
   premiumWelcomeTitle: 'Bem-vindo ao caminho',
   premiumWelcomeCopy: '20% de desconto na sua primeira compra Premium.',
   premiumRegularPrice: 'Preço habitual',

@@ -1,6 +1,46 @@
 import type { Message } from './locale';
 
 export const translations = {
+  placeViewDetails: 'Zobacz szczegóły',
+  placeHours: 'Godziny otwarcia',
+  placeDaily: 'Codziennie',
+  placeWeekdays: 'Od poniedziałku do piątku',
+  placeMonSat: 'Od poniedziałku do soboty',
+  placeFromPrice: 'Od {price}',
+  placeVisit: 'Czas zwiedzania',
+  placeVisitTime: '{minutes} min',
+  placeDetailDemo: 'Fikcyjne nazwy i informacje na potrzeby demonstracji.',
+  placeStampDescription:
+    'Punkt powitalny, w którym można poprosić o pieczątkę do paszportu pielgrzyma i odpocząć.',
+  placeCredentialDescription:
+    'Punkt pomocy pielgrzymom oferujący papierowe paszporty i informacje o przygotowaniu do drogi.',
+  placePostDescription:
+    'Urząd pocztowy, z którego można wysłać pocztówki, listy i małe paczki podczas podróży.',
+  placeChapelDescription:
+    'Mała kamienna kaplica przy szlaku ze spokojnym dziedzińcem na krótką wizytę.',
+  placeBridgeDescription:
+    'Kamienny most łukowy nad strumieniem. Miejsce na podziwianie krajobrazu i fotografowanie.',
+  placeChurchDescription:
+    'Miejscowy kościół z przestrzenią do skupienia i punktem pieczątek dla pielgrzymów.',
+  placeRestaurantDescription:
+    'Domowa kuchnia, dania regionalne i pełne posiłki, które pomagają odzyskać siły na szlaku.',
+  placeWellnessDescription:
+    'Miejsce odpoczynku oferujące masaże nóg i stóp, zabiegi relaksacyjne i sesje w saunie.',
+  placeMarketDescription:
+    'Osiedlowy supermarket z owocami, pieczywem, wodą i zapasami na następny etap.',
+  placeSouvenirDescription:
+    'Sklep z lokalnym rękodziełem, drobnymi upominkami i pamiątkami ze szlaku.',
+  placeTransitDescription:
+    'Przystanek transportu publicznego do następnej miejscowości lub z powrotem do punktu startu.',
+  placePharmacyDescription:
+    'Lokalna apteka ze środkami pierwszej pomocy, pielęgnacją stóp i poradą farmaceutyczną.',
+  placeWaterDescription:
+    'Publiczna fontanna na odpoczynek i uzupełnienie wody. Sprawdź na miejscu oznaczenie wody pitnej.',
+  placeCafeDescription:
+    'Przytulna kawiarnia ze śniadaniami, wypiekami i lekkimi posiłkami na przerwę w drodze.',
+  placeToiletDescription: 'Toalety dla osób przechodzących przez tę część szlaku.',
+  placePicnicDescription:
+    'Miejsce piknikowe ze stołami i cieniem na posiłek, odpoczynek i zaplanowanie następnego etapu.',
   premiumWelcomeTitle: 'Witaj na szlaku',
   premiumWelcomeCopy: '20% zniżki na pierwszy zakup Premium.',
   premiumRegularPrice: 'Cena regularna',

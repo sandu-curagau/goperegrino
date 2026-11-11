@@ -23,9 +23,18 @@ import { PublicProfile } from './public-profile';
 import { CommentTranslation } from './comment-translation';
 import { walkingTime } from '../demo/walking-time';
 import { mapPlaceKind, trailPlaceKinds, trailPlaces } from './trail-places';
+import { PlaceDetails } from './place-details';
 
 type MapSheet =
-  'sos' | 'warnings' | 'lodgings' | 'detail' | 'comments' | 'weather' | 'profile' | 'places';
+  | 'sos'
+  | 'warnings'
+  | 'lodgings'
+  | 'detail'
+  | 'comments'
+  | 'weather'
+  | 'profile'
+  | 'places'
+  | 'placeDetail';
 
 @Component({
   imports: [
@@ -37,6 +46,7 @@ type MapSheet =
     StageForecast,
     LodgingSearchSheet,
     PublicProfile,
+    PlaceDetails,
   ],
   providers: [TrailCommentFeed, LodgingSearch, CommentTranslation],
   templateUrl: './map-page.html',
