@@ -1,6 +1,6 @@
 .download-success,
 .success {
-  color: #176046;
+  color: var(--success);
   font-size: 13px;
   font-weight: 700;
 }
@@ -11,7 +11,7 @@
 }
 progress {
   width: 100%;
-  accent-color: var(--brand);
+  accent-color: var(--link);
 }
 .daily-overview {
   margin-bottom: 14px;
@@ -145,10 +145,10 @@ progress {
   width: 100%;
   margin-bottom: 14px;
   padding: 14px;
-  border: 1px solid #f0d88e;
+  border: 1px solid var(--gold-line);
   border-radius: 17px;
-  background: #fff3d5;
-  color: #805a12;
+  background: var(--gold-wash);
+  color: var(--gold-ink);
   text-align: left;
   font-size: 12px;
 }

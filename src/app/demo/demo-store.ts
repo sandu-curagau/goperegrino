@@ -39,6 +39,7 @@ export type Language = (typeof languages)[number][0];
 interface DemoState {
   profile: PilgrimProfile;
   language: Language;
+  theme: 'system' | 'light' | 'dark';
   routeId: string;
   started: boolean;
   date: string;
@@ -76,6 +77,7 @@ function freshState(): DemoState {
       featuredAchievements: ['finisher', 'distance', 'journal'],
     },
     language: 'pt',
+    theme: 'system',
     routeId: 'central',
     started: false,
     date: dateInput(),

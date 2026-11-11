@@ -28,7 +28,7 @@
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -0.04em;
-  color: var(--brand);
+  color: var(--link);
 }
 .welcome-wordmark span {
   font-weight: 650;
@@ -120,7 +120,7 @@
   height: 54px;
   border-radius: 12px;
   color: var(--route-color);
-  background: color-mix(in srgb, var(--route-color) 11%, white);
+  background: color-mix(in srgb, var(--route-color) 11%, var(--surface));
 }
 .route-art svg {
   width: 48px;
@@ -140,7 +140,7 @@
 }
 .route-arrow {
   padding: 0 4px;
-  color: var(--brand);
+  color: var(--link);
   font-size: 22px;
 }
 .upcoming {

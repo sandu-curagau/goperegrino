@@ -57,6 +57,7 @@ import { Locale } from './demo/locale';
 import { Onboarding } from './demo/onboarding';
 import { DemoControls } from './demo/demo-controls';
 import { PremiumPass } from './demo/premium-pass';
+import { Appearance } from './demo/appearance';
 
 @Component({
   imports: [
@@ -85,6 +86,7 @@ export class App {
   protected readonly creditOpen = signal(false);
 
   constructor() {
+    inject(Appearance);
     effect(() => {
       if (this.store.walkClosed()) this.demoPanel()?.nativeElement.close();
     });

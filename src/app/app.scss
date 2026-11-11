@@ -10,7 +10,7 @@
 
 .phone-screen {
   position: relative;
-  background: #fff;
+  background: var(--surface);
   isolation: isolate;
 }
 
@@ -35,29 +35,29 @@
   padding: 3px 3px 3px 9px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: white;
-  color: var(--brand);
+  background: var(--surface);
+  color: var(--link);
   font-size: 11px;
 }
 .launch-credit button {
   width: 27px;
   height: 27px;
   border-radius: 7px;
-  background: #edf3f5;
-  color: var(--brand);
+  background: var(--tint);
+  color: var(--link);
   font-size: 17px;
 }
 
 ion-tab-bar {
-  --background: #fff;
-  --border: 1px solid #e8edf1;
+  --background: var(--surface);
+  --border: 1px solid var(--line);
   padding: 6px max(6px, env(safe-area-inset-right)) 5px max(6px, env(safe-area-inset-left));
   padding-bottom: calc(5px + var(--ion-safe-area-bottom, 0px));
 }
 
 ion-tab-button {
-  --color: #52677a;
-  --color-selected: var(--ion-color-primary);
+  --color: var(--muted);
+  --color-selected: var(--link);
   --padding-top: 3px;
   --padding-bottom: 4px;
   font-weight: 600;
@@ -82,7 +82,7 @@ ion-label {
 }
 
 .tab-selected .tab-icon {
-  background: #fff0c8;
+  background: var(--gold-wash);
 }
 
 .open-panel,
@@ -115,7 +115,8 @@ ion-label {
   overflow: auto;
   border: 0;
   border-radius: 22px;
-  color: var(--ion-color-primary);
+  color: var(--link);
+  background: var(--paper);
   box-shadow: 0 16px 50px #001a31a6;
 }
 
@@ -149,8 +150,8 @@ ion-label {
 .close-panel {
   flex: none;
   margin-left: auto;
-  color: var(--ion-color-primary);
-  background: #f0f4f7;
+  color: var(--link);
+  background: var(--tint);
 }
 
 .panel-icon {
@@ -160,8 +161,8 @@ ion-label {
   height: 38px;
   place-items: center;
   border-radius: 11px;
-  color: var(--ion-color-primary);
-  background: #fff0c8;
+  color: var(--link);
+  background: var(--gold-wash);
   font-size: 19px;
 }
 
@@ -248,8 +249,8 @@ ion-label {
     padding: 0 23px;
     align-items: center;
     justify-content: space-between;
-    color: #122637;
-    background: #fff;
+    color: var(--ink);
+    background: var(--surface);
     font-size: 13px;
     font-weight: 700;
   }
@@ -295,7 +296,7 @@ ion-label {
     height: 4px;
     margin-inline: auto;
     border-radius: 4px;
-    background: #152636;
+    background: var(--muted);
     pointer-events: none;
   }
 

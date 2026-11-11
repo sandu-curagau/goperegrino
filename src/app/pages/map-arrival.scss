@@ -7,9 +7,9 @@
   padding: 0;
   border-radius: 20px;
   overflow: hidden;
-  background: #fff;
+  background: var(--surface);
   box-shadow: 0 8px 28px #173d472b;
-  color: var(--brand);
+  color: var(--link);
   font-size: 12px;
 }
 .arrival-main {
@@ -30,8 +30,8 @@
   width: 42px;
   height: 42px;
   border-radius: 15px;
-  background: #fff0c8;
-  color: #886313;
+  background: var(--gold-wash);
+  color: var(--gold-ink);
   font-size: 23px;
 }
 .arrival-copy {
@@ -42,7 +42,7 @@
   display: block;
   margin: 0 0 5px;
   font-size: 9px;
-  color: #587268;
+  color: var(--muted);
   letter-spacing: 0.1em;
 }
 .arrival-copy strong {
@@ -59,7 +59,7 @@
   align-items: center;
   gap: 5px;
   margin-top: 8px;
-  color: var(--brand);
+  color: var(--link);
   font-size: 12px;
   font-weight: 650;
 }

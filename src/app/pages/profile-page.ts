@@ -22,6 +22,7 @@ export class ProfilePage {
   protected readonly profiles = inject(PilgrimProfiles);
   private readonly router = inject(Router);
   protected readonly languages = languages;
+  protected readonly themes = ['light', 'dark', 'system'] as const;
   protected readonly section = signal<Section | null>(null);
   protected readonly notice = signal<Message | null>(null);
   protected readonly draftName = signal('');

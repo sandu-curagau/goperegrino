@@ -7,7 +7,7 @@
   position: relative;
   height: 100%;
   overflow: hidden;
-  background: #edf3ec;
+  background: var(--paper);
 }
 
 .map-top {
@@ -41,7 +41,7 @@
 }
 .stage-card {
   padding: 12px;
-  background: #fffffff7;
+  background: var(--surface);
 }
 .stage-head {
   display: flex;
@@ -54,7 +54,7 @@
   font-size: 20px;
 }
 .stage-head h1 span {
-  color: #8d5c00;
+  color: var(--gold-ink);
 }
 .weather {
   display: flex;
@@ -65,8 +65,8 @@
   min-height: 40px;
   padding: 4px 8px;
   border-radius: 10px;
-  background: #fff2ce;
-  color: #463702;
+  background: var(--gold-wash);
+  color: var(--gold-ink);
   font-size: 12px;
 }
 .stage-tools {
@@ -117,9 +117,9 @@
   margin: 8px auto 0;
   max-width: 320px;
   padding: 4px;
-  border: 1px solid #fff;
+  border: 1px solid var(--line);
   border-radius: 16px;
-  background: #f8fbfcf5;
+  background: var(--surface);
 }
 .explore-button {
   display: flex;
@@ -129,8 +129,8 @@
   gap: 6px;
   border-radius: 11px;
   padding-inline: 5px;
-  background: #eaf1f4;
-  color: var(--brand);
+  background: var(--tint);
+  color: var(--link);
   font-size: 12px;
   font-weight: 750;
 }
@@ -138,12 +138,12 @@
   font-size: 17px;
 }
 .explore-button.layer-active {
-  background: #ece7fb;
-  color: #513188;
+  background: var(--purple-wash);
+  color: var(--purple-ink);
 }
 .explore-button:first-child.layer-active {
-  background: #ffefc7;
-  color: #704900;
+  background: var(--gold-wash);
+  color: var(--gold-ink);
 }
 .alert-button {
   position: relative;
@@ -175,7 +175,7 @@
   min-height: 47px;
   padding: 0 9px;
   border-radius: 15px;
-  background: var(--danger);
+  background: var(--danger-fill);
   color: #fff;
   font-weight: 850;
   letter-spacing: 0.035em;
@@ -203,12 +203,12 @@
   height: 54px;
   place-items: center;
   border-radius: 17px;
-  background: #e2eeed;
-  color: var(--brand);
+  background: var(--tint);
+  color: var(--link);
   font-size: 23px;
 }
 .emergency {
-  background: var(--danger);
+  background: var(--danger-fill);
 }
 .notice {
   padding: 12px;
@@ -234,9 +234,9 @@
   align-items: center;
   gap: 7px;
   padding: 0 12px;
-  border-top: 1px solid #dbe8e4;
-  background: #edf5f0;
-  color: #295445;
+  border-top: 1px solid var(--line);
+  background: var(--success-wash);
+  color: var(--success);
   font-size: 11px;
   font-weight: 750;
 }
@@ -245,7 +245,7 @@
 }
 .ad-label {
   margin-left: auto;
-  color: #47675d;
+  color: var(--success);
   font-size: 9px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -270,7 +270,7 @@
   inset: 0;
   display: grid;
   place-items: center;
-  background: #edf3ec;
+  background: var(--paper);
   color: var(--muted);
   font-size: 13px;
 }
@@ -280,10 +280,10 @@
   gap: 7px;
   margin-top: 8px;
   padding: 5px 7px 5px 10px;
-  border: 1px solid #edd69e;
+  border: 1px solid var(--gold-line);
   border-radius: 12px;
-  color: #50370a;
-  background: #fff8e5;
+  color: var(--gold-ink);
+  background: var(--gold-wash);
   font-size: 11px;
   font-weight: 700;
   pointer-events: auto;
@@ -298,11 +298,11 @@
 .stage-warning button {
   min-height: 32px;
   border-radius: 7px;
-  color: var(--brand);
+  color: var(--link);
 }
 .stage-warning-action {
   padding-inline: 7px;
-  background: #ffedbb;
+  background: var(--gold-wash);
   font-weight: 800;
 }
 .stage-warning-close {

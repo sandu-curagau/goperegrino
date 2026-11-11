@@ -132,7 +132,7 @@ import { Sheet } from '../demo/sheet';
       margin: 11px 0;
     }
     .stamp-status {
-      color: var(--brand);
+      color: var(--link);
       font-size: 13px;
     }
     .passport-help,
@@ -149,7 +149,7 @@ import { Sheet } from '../demo/sheet';
       color: var(--muted);
     }
     .passport-help a {
-      color: var(--brand);
+      color: var(--link);
     }
     .stamp-spot {
       display: flex;

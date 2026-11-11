@@ -37,7 +37,7 @@ import { Locale } from './locale';
       margin: 0;
       padding: 0;
       overflow: auto;
-      border: 1px solid #fff;
+      border: 1px solid var(--line);
       border-radius: 24px;
       background: var(--paper);
       color: var(--ink);

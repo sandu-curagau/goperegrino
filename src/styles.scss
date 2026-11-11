@@ -21,8 +21,10 @@
   --ion-color-secondary-tint: #f3af1b;
 }
 :root {
-  color-scheme: light;
+  color-scheme: only light;
   --brand: #003058;
+  --action: #003058;
+  --link: #003058;
   --gold: #f2a602;
   --ink: #132e42;
   --muted: #536978;
@@ -30,6 +32,42 @@
   --paper: #f8faf9;
   --wash: #eef4f3;
   --danger: #a82332;
+  --danger-fill: #a82332;
+  --surface: #fff;
+  --tint: #edf3f5;
+  --kicker: #325e6b;
+  --gold-wash: #ffefc7;
+  --gold-ink: #805a12;
+  --gold-line: #edd69e;
+  --success: #176046;
+  --success-wash: #edf5f0;
+  --purple-wash: #ece7fb;
+  --purple-ink: #513188;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: only dark;
+  --ion-background-color: #101d27;
+  --ion-text-color: #edf4f7;
+  --ion-border-color: #304652;
+  --action: #146393;
+  --link: #97cdec;
+  --ink: #edf4f7;
+  --muted: #afc0ca;
+  --line: #304652;
+  --paper: #101d27;
+  --surface: #182a37;
+  --wash: #203542;
+  --tint: #203542;
+  --kicker: #9ccbd6;
+  --danger: #ff9aab;
+  --gold-wash: #44351b;
+  --gold-ink: #ffcf73;
+  --gold-line: #75603a;
+  --success: #9bdebc;
+  --success-wash: #1f3a32;
+  --purple-wash: #332e4e;
+  --purple-ink: #d6beff;
 }
 
 h1,
@@ -71,7 +109,7 @@ textarea:focus-visible {
 
 .kicker {
   margin: 0;
-  color: #325e6b;
+  color: var(--kicker);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.15em;
@@ -105,7 +143,7 @@ textarea:focus-visible {
 }
 
 .primary {
-  background: var(--brand);
+  background: var(--action);
   color: #fff;
 }
 .primary > span[aria-hidden='true'] {
@@ -113,11 +151,11 @@ textarea:focus-visible {
 }
 .secondary {
   border: 1px solid var(--line);
-  background: #fff;
-  color: var(--brand);
+  background: var(--surface);
+  color: var(--link);
 }
 .text-button {
-  color: var(--brand);
+  color: var(--link);
   background: transparent;
 }
 .wide {
@@ -126,7 +164,7 @@ textarea:focus-visible {
 .surface {
   border: 1px solid var(--line);
   border-radius: 17px;
-  background: #fff;
+  background: var(--surface);
 }
 .number-chip {
   display: grid;
@@ -134,8 +172,8 @@ textarea:focus-visible {
   height: 31px;
   place-items: center;
   border-radius: 10px;
-  background: #ffefc7;
-  color: var(--brand);
+  background: var(--gold-wash);
+  color: var(--link);
   font-weight: 800;
 }
 .field {
@@ -153,7 +191,7 @@ textarea:focus-visible {
   border: 1px solid var(--line);
   border-radius: 12px;
   color: var(--ink);
-  background: #fff;
+  background: var(--surface);
   font: 500 14px var(--ion-font-family);
 }
 .form-grid {
@@ -168,12 +206,12 @@ textarea:focus-visible {
   flex: none;
   place-items: center;
   border-radius: 13px;
-  background: #fff;
-  color: var(--brand);
+  background: var(--surface);
+  color: var(--link);
   font-size: 19px;
 }
 .icon-button:hover {
-  background: #edf4f5;
+  background: var(--tint);
 }
 .walker-marker {
   width: 19px;
@@ -228,13 +266,13 @@ textarea:focus-visible {
   gap: 4px;
   padding: 5px 8px;
   border-radius: 100px;
-  background: #e9f1f3;
-  color: var(--brand);
+  background: var(--tint);
+  color: var(--link);
   font-size: 10px;
   font-weight: 750;
 }
 .tag.gold {
-  background: #ffefc7;
+  background: var(--gold-wash);
 }
 ion-content {
   --background: var(--paper);
@@ -279,8 +317,8 @@ ion-content {
   height: 40px;
   place-items: center;
   border-radius: 13px;
-  color: var(--brand);
-  background: #e4efef;
+  color: var(--link);
+  background: var(--tint);
   font-size: 19px;
 }
 .empty-card {
@@ -315,7 +353,7 @@ ion-content {
   padding: 0;
   border: 1px solid var(--line);
   border-radius: 15px;
-  background: #fff;
+  background: var(--surface);
   box-shadow: 0 6px 22px #0a2e4b33;
 }
 .pin-summary {
@@ -364,7 +402,7 @@ ion-content {
   gap: 10px;
   min-height: 52px;
   padding: 9px 12px;
-  color: var(--brand);
+  color: var(--link);
   font-size: 13px;
   text-align: left;
 }
@@ -394,7 +432,7 @@ ion-content {
 }
 .layer-toggle[aria-pressed='true'] .switch-track {
   justify-content: flex-end;
-  background: var(--brand);
+  background: var(--action);
 }
 .comment-map-pin {
   display: grid;
@@ -432,7 +470,7 @@ ion-content {
   min-height: 36px;
   padding: 3px 0;
   background: transparent;
-  color: var(--brand);
+  color: var(--link);
   font-size: 13px;
   font-weight: 700;
   text-align: left;
@@ -473,7 +511,14 @@ ion-content {
   white-space: nowrap;
 }
 button:disabled:has(ion-icon[name='cloud-offline-outline']) {
-  background: #e1e7eb;
-  color: #4b5c69;
+  background: var(--wash);
+  color: var(--muted);
   opacity: 1;
+}
+
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+  border-top-color: var(--surface);
+}
+.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-bottom-color: var(--surface);
 }

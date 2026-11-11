@@ -71,6 +71,31 @@
     </button>
 
     <section class="page-stack">
+      <fieldset class="theme-setting surface">
+        <legend>{{ locale.t('theme') }}</legend>
+        <div class="theme-options">
+          @for (theme of themes; track theme) {
+            <label [class.selected]="store.state().theme === theme">
+              <input
+                class="sr-only"
+                type="radio"
+                name="theme"
+                [value]="theme"
+                [checked]="store.state().theme === theme"
+                (change)="store.patch({ theme })"
+              />
+              {{
+                locale.t(
+                  theme === 'light' ? 'themeLight' : theme === 'dark' ? 'themeDark' : 'themeSystem'
+                )
+              }}
+            </label>
+          }
+        </div>
+        @if (store.state().theme === 'system') {
+          <p>{{ locale.t('themeSystemHelp') }}</p>
+        }
+      </fieldset>
       <label class="field profile-language surface"
         >{{ locale.t('language') }}
         <select

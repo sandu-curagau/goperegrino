@@ -1,6 +1,11 @@
 import type { Message } from './locale';
 
 export const translations = {
+  theme: 'Tema',
+  themeLight: 'Claro',
+  themeDark: 'Escuro',
+  themeSystem: 'Sistema',
+  themeSystemHelp: 'Segue o tema do seu dispositivo.',
   demoSimulationHelp: 'Simule a caminhada ou salte para experimentar diferentes etapas.',
   mapGestures: 'Gestos do mapa',
   desktopMapGestures:

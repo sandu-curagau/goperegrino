@@ -3,7 +3,7 @@
   height: 156px;
   overflow: hidden;
   border-radius: 16px;
-  background: #daeae5;
+  background: var(--wash);
 }
 .photo-frame img {
   width: 100%;
@@ -49,8 +49,8 @@
   height: 65px;
   place-items: center;
   border-radius: 21px;
-  background: #dbefe3;
-  color: #165b41;
+  background: var(--success-wash);
+  color: var(--success);
   font-size: 30px;
 }
 .room-options,
@@ -70,12 +70,12 @@
   align-items: center;
   gap: 9px;
   padding: 11px;
-  color: var(--brand);
+  color: var(--link);
   cursor: pointer;
   font-size: 13px;
 }
 .room-option input {
-  accent-color: var(--brand);
+  accent-color: var(--link);
 }
 .room-option small {
   display: block;
@@ -84,8 +84,8 @@
   font-size: 10px;
 }
 .room-option.chosen {
-  border-color: #be830e;
-  background: #fff4d6;
+  border-color: var(--gold-line);
+  background: var(--gold-wash);
 }
 .room-rate {
   text-align: right;
@@ -95,12 +95,12 @@
 }
 .demo-card legend {
   padding-inline: 5px;
-  color: var(--brand);
+  color: var(--link);
   font-size: 13px;
   font-weight: 800;
 }
 .demo-card input {
-  background: #f0f5f7;
+  background: var(--wash);
 }
 .demo-card p,
 .checkout-dates,
@@ -133,7 +133,7 @@
   font-weight: 750;
 }
 .price-total strong {
-  color: var(--brand);
+  color: var(--link);
   font-size: 16px;
 }
 .own-review {

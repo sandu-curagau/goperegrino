@@ -114,15 +114,15 @@ const plans = [
     .pass input {
       position: absolute;
       inset: 12px 11px auto auto;
-      accent-color: var(--brand);
+      accent-color: var(--link);
     }
     .pass strong {
       font-size: 23px;
       letter-spacing: -0.055em;
     }
     .pass.selected {
-      border-color: #c58910;
-      background: #fff7e4;
+      border-color: var(--gold-line);
+      background: var(--gold-wash);
     }
     .benefits {
       display: grid;
@@ -141,7 +141,7 @@ const plans = [
     }
     .benefits ion-icon {
       flex: none;
-      color: #176046;
+      color: var(--success);
       font-size: 14px;
     }
     .purchase-note {

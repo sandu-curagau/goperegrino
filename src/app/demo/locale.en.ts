@@ -1,4 +1,9 @@
 export const translations = {
+  theme: 'Theme',
+  themeLight: 'Light',
+  themeDark: 'Dark',
+  themeSystem: 'System',
+  themeSystemHelp: 'Follows your device’s appearance.',
   demoSimulationHelp: 'Simulate walking or jump ahead to try different stages.',
   mapGestures: 'Map gestures',
   desktopMapGestures:

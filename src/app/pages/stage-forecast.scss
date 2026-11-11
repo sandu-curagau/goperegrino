@@ -8,8 +8,8 @@
   gap: 10px;
   padding: 14px;
   border-radius: 15px;
-  background: #e9f2f7;
-  color: var(--brand);
+  background: var(--tint);
+  color: var(--link);
 }
 .forecast-hero h3 {
   margin: 4px 0 0;
@@ -38,7 +38,7 @@
   grid-template-columns: 1.2fr 20px 1.5fr 1fr;
 }
 .forecast-row ion-icon {
-  color: #176386;
+  color: var(--link);
 }
 .forecast-row span {
   display: inline-flex;

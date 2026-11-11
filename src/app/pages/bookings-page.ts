@@ -252,8 +252,8 @@ import { Sheet } from '../demo/sheet';
       gap: 8px;
       padding: 12px;
       border-radius: 14px;
-      background: #fff3d5;
-      color: #805a12;
+      background: var(--gold-wash);
+      color: var(--gold-ink);
       font-size: 12px;
       line-height: 1.5;
     }
@@ -262,7 +262,7 @@ import { Sheet } from '../demo/sheet';
       font-size: 18px;
     }
     .booking-distance {
-      color: var(--brand);
+      color: var(--link);
       font-weight: 750;
     }
     .booking-card {
@@ -302,14 +302,14 @@ import { Sheet } from '../demo/sheet';
       min-height: 43px;
       border: 1px solid var(--line);
       border-radius: 9px;
-      background: #fff;
+      background: var(--surface);
       color: #738392;
       font-size: 20px;
       cursor: pointer;
     }
     .star-field label.lit {
-      background: #fff1c9;
-      color: #765000;
+      background: var(--gold-wash);
+      color: var(--gold-ink);
     }
     .star-field label:focus-within {
       outline: 2px solid var(--brand);

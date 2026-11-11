@@ -1,6 +1,11 @@
 import type { Message } from './locale';
 
 export const chinese = {
+  theme: '主题',
+  themeLight: '浅色',
+  themeDark: '深色',
+  themeSystem: '系统',
+  themeSystemHelp: '跟随设备的主题设置。',
   demoSimulationHelp: '模拟步行或跳转到不同路段。',
   mapGestures: '地图手势',
   desktopMapGestures: '电脑：按住鼠标左键拖动地图，按住右键拖动可旋转。',

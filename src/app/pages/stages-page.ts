@@ -182,8 +182,8 @@ import { Sheet } from '../demo/sheet';
       min-height: 44px;
       border-top: 1px solid var(--line);
       border-radius: 0;
-      background: #edf3f5;
-      color: var(--brand);
+      background: var(--tint);
+      color: var(--link);
       font-size: 12px;
       font-weight: 600;
       text-align: left;
@@ -203,7 +203,7 @@ import { Sheet } from '../demo/sheet';
       align-items: start;
       gap: 10px;
       margin: 0;
-      color: #805a12;
+      color: var(--gold-ink);
       font-size: 14px;
       line-height: 1.5;
     }
@@ -235,7 +235,7 @@ import { Sheet } from '../demo/sheet';
     .conflict-card p {
       margin: 12px 0 0;
       font-size: 12px;
-      color: #805a12;
+      color: var(--gold-ink);
       line-height: 1.5;
     }
   `,

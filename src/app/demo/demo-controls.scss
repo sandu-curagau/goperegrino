@@ -60,7 +60,7 @@
   padding: 4px 0;
   border: 1px solid var(--panel-line, var(--line));
   border-radius: 8px;
-  background: var(--panel-fill, #fff);
+  background: var(--panel-fill, var(--surface));
   color: inherit;
   font: 700 11px var(--ion-font-family);
 }
@@ -99,7 +99,7 @@
   height: 21px;
   border: 1px solid var(--panel-line, #a5b5bf);
   border-radius: 40px;
-  background: var(--panel-fill, #dfe8ec);
+  background: var(--panel-fill, var(--wash));
   cursor: pointer;
 }
 .switch input::after {
@@ -117,7 +117,7 @@
 }
 .switch input:checked::after {
   left: 17px;
-  background: var(--brand);
+  background: var(--action);
 }
 .reset {
   display: flex;

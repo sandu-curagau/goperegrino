@@ -1,6 +1,11 @@
 import type { Message } from './locale';
 
 export const translations = {
+  theme: '테마',
+  themeLight: '라이트',
+  themeDark: '다크',
+  themeSystem: '시스템',
+  themeSystemHelp: '기기의 테마 설정을 따릅니다.',
   demoSimulationHelp: '걷기를 시뮬레이션하거나 다른 구간으로 이동하세요.',
   mapGestures: '지도 제스처',
   desktopMapGestures:

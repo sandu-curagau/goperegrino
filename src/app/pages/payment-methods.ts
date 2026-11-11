@@ -113,8 +113,8 @@ const demoCards = [
       gap: 5px;
     }
     .wallet-card.selected {
-      background: #fff6e1;
-      border-color: #c38c28;
+      background: var(--gold-wash);
+      border-color: var(--gold-line);
     }
     .wallet-card label {
       display: flex;
@@ -134,7 +134,7 @@ const demoCards = [
       font-size: 11px;
     }
     .wallet-card input {
-      accent-color: var(--brand);
+      accent-color: var(--link);
     }
     .wallet-card button {
       padding: 5px;
