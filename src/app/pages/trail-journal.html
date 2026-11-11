@@ -1,0 +1,189 @@
+<ion-content class="journal-content">
+  <main class="journal-page">
+    <header class="journal-nav">
+      <button
+        type="button"
+        class="icon-button"
+        [disabled]="loadingPhoto()"
+        [attr.aria-label]="locale.t('back')"
+        (click)="back()"
+      >
+        <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+      </button>
+      <strong>{{ locale.t('journal') }}</strong>
+    </header>
+
+    @if (!premium()) {
+      <section class="journal-empty surface">
+        <h1>{{ locale.t('journal') }}</h1>
+        <button class="primary" type="button" (click)="showPremium()">GoPeregrino Premium</button>
+      </section>
+    } @else if (walk(); as current) {
+      @if (editor(); as entry) {
+        <form class="sheet-stack editor surface" (submit)="$event.preventDefault(); save()">
+          <div>
+            <p class="kicker">{{ fullDate(entry.date) }}</p>
+            <h1>{{ place(entry) }}</h1>
+          </div>
+          <label class="field">
+            {{ locale.t('journalEntryNote') }}
+            <textarea
+              #note
+              rows="5"
+              maxlength="1000"
+              [value]="draft()"
+              (input)="draft.set(note.value); feedback.set(null)"
+            ></textarea>
+          </label>
+          <div class="photo-heading">
+            <strong>{{ locale.t('journalPhotos') }}</strong>
+            <small>{{ photos().length }} / {{ maxPhotos }}</small>
+          </div>
+          @if (photos().length) {
+            <div class="journal-gallery">
+              @for (photo of photos(); track $index; let index = $index) {
+                <div class="editor-photo">
+                  <img [src]="photo" [alt]="locale.t('journalPhoto')" />
+                  <button
+                    type="button"
+                    class="icon-button"
+                    [attr.aria-label]="locale.t('removePhoto')"
+                    (click)="removePhoto(index)"
+                  >
+                    ×
+                  </button>
+                </div>
+              }
+            </div>
+          }
+          @if (photos().length < maxPhotos) {
+            <label class="secondary journal-upload">
+              <ion-icon name="camera-outline" aria-hidden="true"></ion-icon>
+              {{ locale.t(loadingPhoto() ? 'journalLoadingPhoto' : 'addPhoto') }}
+              <input
+                #file
+                class="sr-only"
+                type="file"
+                accept="image/*"
+                [disabled]="loadingPhoto()"
+                (change)="addPhoto(file)"
+              />
+            </label>
+          }
+          <button type="submit" class="primary" [disabled]="loadingPhoto()">
+            {{ locale.t('save') }}
+          </button>
+          @if (feedback(); as status) {
+            <p class="muted" role="status">{{ locale.t(status) }}</p>
+          }
+        </form>
+      } @else {
+        <section class="walk-hero">
+          @if (current.cover; as photo) {
+            <img [src]="photo" alt="" />
+          }
+          <div class="walk-hero-copy">
+            <p class="kicker">
+              {{ locale.t(current.status) }}
+              @if (current.sample) {
+                · {{ locale.t('journalSample') }}
+              }
+            </p>
+            <h1>{{ current.route.name }}</h1>
+            <p>
+              {{ fullDate(current.date) }} · {{ locale.number(current.distance, 1) }} /
+              {{ current.route.km }} km
+            </p>
+          </div>
+        </section>
+        @if (current.active) {
+          <button class="primary new-entry" type="button" (click)="addEntry()">
+            <ion-icon name="book-outline" aria-hidden="true"></ion-icon
+            >{{ locale.t('addJournalEntry') }}
+          </button>
+        }
+        @if (feedback(); as status) {
+          <p class="muted" role="status">{{ locale.t(status) }}</p>
+        }
+        <section class="journal-timeline" [attr.aria-label]="locale.t('journalTimeline')">
+          @for (entry of current.entries; track entry.id ?? entry.date) {
+            <article class="timeline-entry">
+              <time class="timeline-date" [attr.datetime]="entry.date">{{
+                fullDate(entry.date)
+              }}</time>
+              <div class="surface entry-card">
+                <div class="entry-head">
+                  <h2>
+                    <ion-icon name="location-outline" aria-hidden="true"></ion-icon
+                    >{{ place(entry) }}
+                  </h2>
+                  @if (!current.sample) {
+                    <button class="text-button" type="button" (click)="edit(entry)">
+                      {{ locale.t('editJournalEntry') }}
+                    </button>
+                  }
+                </div>
+                @if (entry.note) {
+                  <p>{{ entry.note }}</p>
+                }
+                @if (entry.photos.length) {
+                  <div class="journal-gallery" [class.single-photo]="entry.photos.length === 1">
+                    @for (photo of entry.photos; track $index) {
+                      <button
+                        type="button"
+                        class="photo-preview"
+                        (click)="expandedPhoto.set(photo)"
+                        [attr.aria-label]="locale.t('openJournalPhoto')"
+                      >
+                        <img [src]="photo" [alt]="locale.t('journalPhoto')" loading="lazy" />
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            </article>
+          } @empty {
+            <p class="journal-empty surface muted">{{ locale.t('noJournalEntries') }}</p>
+          }
+        </section>
+      }
+    } @else {
+      <header class="journal-heading">
+        <h1>{{ locale.t('walkHistory') }}</h1>
+      </header>
+      <div class="walk-list">
+        @for (item of walks(); track item.id) {
+          <button class="surface history-card" type="button" (click)="open(item.id)">
+            @if (item.cover; as cover) {
+              <img class="history-cover" [src]="cover" alt="" />
+            }
+            <span class="history-info">
+              <span class="history-status"
+                >{{ locale.t(item.status) }}
+                @if (item.sample) {
+                  · {{ locale.t('journalSample') }}
+                }
+              </span>
+              <strong>{{ item.route.name }}</strong>
+              <span class="muted"
+                >{{ fullDate(item.date) }} · {{ locale.number(item.distance, 1) }} km</span
+              >
+              <span class="history-details">
+                {{ locale.t('noteCount', { count: item.notesCount }) }} ·
+                {{ locale.t('photoCount', { count: item.photoCount }) }}
+              </span>
+            </span>
+            <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+          </button>
+        } @empty {
+          <p class="journal-empty surface muted">{{ locale.t('noWalks') }}</p>
+        }
+      </div>
+    }
+  </main>
+</ion-content>
+@if (expandedPhoto(); as photo) {
+  <app-sheet [title]="locale.t('journalPhoto')" (closed)="expandedPhoto.set('')">
+    <img class="expanded-photo" [src]="photo" [alt]="locale.t('journalPhoto')" />
+  </app-sheet>
+}

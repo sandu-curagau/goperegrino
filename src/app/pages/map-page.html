@@ -1,4 +1,8 @@
-<main class="map-page" [class.has-ad]="store.started() && !store.premium()">
+<main
+  class="map-page"
+  [class.has-ad]="store.started() && !store.premium()"
+  [class.has-arrival]="store.completed() || !!store.arrival()"
+>
   @if (store.state().started) {
     @if (store.route(); as route) {
       @if (displayMap()) {
@@ -11,13 +15,24 @@
           <app-trail-map
             [offline]="store.offline()"
             [recenter]="recenter()"
+            [walkingView]="walkingView()"
             [target]="target()"
+            [fitPoints]="fitPoints()"
+            [fitTop]="fitTop()"
             [pins]="pins()"
+            [stayHubs]="stayHubs()"
             [activePin]="selected()"
+            [comments]="commentPins()"
+            [activeComment]="activeComment()"
             (selected)="selectLodging($event)"
+            (hubSelected)="showStayStop($event)"
+            (commentSelected)="selectComment($event)"
+            (profileSelected)="openCommentProfile($event)"
+            (openComments)="openComments()"
             (clearSelection)="clearSelection()"
             (openDetails)="openSheet.set('detail')"
             (mapReady)="mapLoaded.set($event)"
+            (followingChanged)="following.set($event)"
           />
         }
       } @else {
@@ -33,13 +48,16 @@
         </div>
       }
 
-      @if (store.stage(); as stage) {
-        <div class="map-top">
+      @if (store.walkingDay(); as stage) {
+        <div #mapTop class="map-top">
           <section class="stage-card surface">
             <div class="stage-head">
               <div>
                 <p class="kicker">
-                  {{ locale.t('stage') }} {{ stage.id }} / {{ route.stages.length }}
+                  {{ locale.t('stage') }} {{ stage.day }} / {{ store.walkingPlan().length }}
+                  @if (store.offline()) {
+                    · {{ locale.t('offline') }}
+                  }
                 </p>
                 <h1>
                   @if (store.completed()) {
@@ -49,12 +67,39 @@
                   }
                 </h1>
               </div>
-              <div
-                class="weather"
-                [attr.title]="weather().simulated ? locale.t('weatherDemo') : 'Open-Meteo'"
-              >
-                <ion-icon [name]="weather().icon" aria-hidden="true"></ion-icon>
-                <strong>{{ weather().temperature }}°</strong>
+              <div class="stage-tools">
+                <button
+                  type="button"
+                  class="weather"
+                  [disabled]="store.offline()"
+                  (click)="showForecast()"
+                  [attr.aria-label]="locale.t('forecast')"
+                  [attr.title]="store.offline() ? locale.t('connectionRequired') : null"
+                >
+                  <ion-icon
+                    [name]="store.offline() ? 'cloud-offline-outline' : weather().icon"
+                    aria-hidden="true"
+                  ></ion-icon>
+                  @if (!store.offline()) {
+                    <strong>{{ weather().temperature }}°</strong>
+                    <ion-icon
+                      class="weather-arrow"
+                      name="chevron-forward-outline"
+                      aria-hidden="true"
+                    ></ion-icon>
+                  }
+                </button>
+                <button
+                  class="icon-button alert-button"
+                  type="button"
+                  [attr.aria-label]="locale.t('warnings')"
+                  (click)="openSheet.set('warnings')"
+                >
+                  <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+                  @if (store.warnings().length) {
+                    <span aria-hidden="true"></span>
+                  }
+                </button>
               </div>
             </div>
             <div class="metrics">
@@ -63,7 +108,7 @@
                 ><small>{{ locale.t('doneKm') }}</small>
               </div>
               <div>
-                <strong>{{ locale.number(store.stageRemaining(), 1) }} <span>km</span></strong
+                <strong>{{ locale.number(store.walkingDayRemaining(), 1) }} <span>km</span></strong
                 ><small>{{ locale.t('stageKm') }}</small>
               </div>
               <div>
@@ -73,54 +118,29 @@
             </div>
           </section>
           <div class="map-toolbar">
-            @if (displayMap()) {
-              <button
-                class="map-pill lodging-toggle"
-                type="button"
-                [attr.aria-pressed]="showPins()"
-                [attr.aria-label]="locale.t(showPins() ? 'hideLodging' : 'lodging')"
-                (click)="togglePins()"
-              >
-                <ion-icon name="bed-outline" aria-hidden="true"></ion-icon>{{ locale.t('lodging') }}
-              </button>
-              @if (showPins()) {
-                <button
-                  class="icon-button"
-                  type="button"
-                  [attr.aria-label]="locale.t('lodgingNearby')"
-                  (click)="showStays()"
-                >
-                  <ion-icon name="list-outline" aria-hidden="true"></ion-icon>
-                </button>
-                <button
-                  class="icon-button"
-                  type="button"
-                  [attr.aria-label]="locale.t('filters')"
-                  (click)="store.premium() ? openSheet.set('filters') : store.premiumOpen.set(true)"
-                >
-                  <ion-icon
-                    [name]="store.premium() ? 'options-outline' : 'lock-closed-outline'"
-                    aria-hidden="true"
-                  ></ion-icon>
-                </button>
-              }
-            }
-            @if (store.state().offline && store.state().premium) {
-              <span class="map-pill offline"
-                ><ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon
-                >{{ locale.t('offline') }}</span
-              >
-            }
             <button
-              class="icon-button alert-button"
+              class="explore-button"
               type="button"
-              [attr.aria-label]="locale.t('warnings')"
-              (click)="openSheet.set('warnings')"
+              [class.layer-active]="stays.showPins() && !store.offline()"
+              [disabled]="store.offline()"
+              [attr.title]="store.offline() ? locale.t('connectionRequired') : null"
+              (click)="showStays()"
             >
-              <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
-              @if (store.warnings().length) {
-                <span aria-hidden="true"></span>
-              }
+              <ion-icon
+                [name]="store.offline() ? 'cloud-offline-outline' : 'bed-outline'"
+                aria-hidden="true"
+              ></ion-icon
+              >{{ locale.t('lodging') }}
+            </button>
+            <button
+              class="explore-button"
+              [class.layer-active]="feed.showPins()"
+              type="button"
+              [attr.aria-label]="locale.t('trailComments')"
+              (click)="openComments()"
+            >
+              <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon
+              >{{ locale.t('comments') }}
             </button>
           </div>
           @if (store.warnings().length && !warningDismissed() && !selected()) {
@@ -147,12 +167,38 @@
         </div>
       }
 
+      @if (displayMap() && mapLoaded() === true) {
+        <div
+          class="map-view-switch"
+          [class.with-arrival]="store.completed() || !!store.arrival()"
+          role="group"
+          [attr.aria-label]="locale.t('mapLabel')"
+        >
+          <button
+            type="button"
+            [attr.aria-pressed]="!walkingView()"
+            (click)="setWalkingView(false)"
+          >
+            <ion-icon name="map-outline" aria-hidden="true"></ion-icon>{{ locale.t('mapView') }}
+          </button>
+          <button type="button" [attr.aria-pressed]="walkingView()" (click)="setWalkingView(true)">
+            <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
+            >{{ locale.t('walkingView') }}
+          </button>
+        </div>
+      }
       <div class="map-actions">
         @if (displayMap()) {
           <button
             class="icon-button"
             type="button"
-            [attr.aria-label]="locale.t('myPosition')"
+            [class.resume-following]="walkingView() && !following()"
+            [attr.aria-label]="
+              locale.t(walkingView() && !following() ? 'resumeFollowing' : 'myPosition')
+            "
+            [attr.title]="
+              locale.t(walkingView() && !following() ? 'resumeFollowing' : 'myPosition')
+            "
             (click)="centerWalker()"
           >
             <ion-icon name="locate-outline" aria-hidden="true"></ion-icon>
@@ -162,25 +208,45 @@
       </div>
       @if (store.completed()) {
         <div class="arrival-banner surface">
-          <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
-          <div>
-            <strong>{{ route.destination }}</strong>
-            <button class="arrival-cta" type="button" (click)="store.completionOpen.set(true)">
-              {{ locale.t('viewSummary') }} <span aria-hidden="true">→</span>
-            </button>
-          </div>
+          <button class="arrival-main" type="button" (click)="store.completionOpen.set(true)">
+            <span class="arrival-symbol"
+              ><ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon
+            ></span>
+            <span class="arrival-copy"
+              ><span class="kicker">{{ locale.t('trailFinished') }}</span
+              ><strong>{{ route.destination }}</strong
+              ><span class="arrival-link"
+                >{{ locale.t('viewSummary') }}
+                <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon></span
+            ></span>
+          </button>
         </div>
       } @else if (store.arrival(); as arrival) {
-        <div class="arrival-banner surface" role="status">
-          <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon>
-          <div>
-            <strong>{{ locale.t('arrivalTitle', { name: arrival }) }}</strong>
-            <button class="arrival-cta" type="button" (click)="showStays()">
-              {{ locale.t('findStays') }} <span aria-hidden="true">→</span>
-            </button>
-          </div>
+        <div class="arrival-banner surface">
           <button
-            class="icon-button"
+            class="arrival-main"
+            type="button"
+            [disabled]="store.offline()"
+            [attr.aria-label]="locale.t('staysAt', { name: arrival })"
+            [attr.title]="store.offline() ? locale.t('connectionRequired') : null"
+            (click)="showStays(true)"
+          >
+            <span class="arrival-symbol"
+              ><ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon
+            ></span>
+            <span class="arrival-copy"
+              ><span class="kicker">{{ locale.t('stageReached') }}</span
+              ><strong role="status">{{ arrival }}</strong
+              ><span class="arrival-link"
+                >{{ locale.t(store.offline() ? 'offline' : 'findStays') }}
+                <ion-icon
+                  [name]="store.offline() ? 'cloud-offline-outline' : 'chevron-forward-outline'"
+                  aria-hidden="true"
+                ></ion-icon></span
+            ></span>
+          </button>
+          <button
+            class="arrival-dismiss"
             type="button"
             [attr.aria-label]="locale.t('close')"
             (click)="store.arrival.set(null)"
@@ -217,7 +283,7 @@
         <p class="kicker">{{ route.name }}</p>
         <h2>{{ locale.t('trailFinishedCopy', { name: route.destination }) }}</h2>
         <span
-          >{{ route.km }} km · {{ route.stages.length }}
+          >{{ route.km }} km · {{ store.walkingPlan().length }}
           {{ locale.t('etapas').toLowerCase() }}</span
         >
       </div>
@@ -232,64 +298,50 @@
 }
 
 @if (openSheet() === 'detail' && selected(); as item) {
-  <app-lodging-flow [lodging]="item" (closed)="openSheet.set(null)" />
+  <app-lodging-flow
+    [lodging]="item"
+    [plannedArrival]="plannedArrival()"
+    (closed)="openSheet.set(null)"
+  />
+}
+@if (openSheet() === 'comments') {
+  <app-sheet
+    [title]="locale.t(commentProfileOpen() ? 'publicProfile' : 'trailComments')"
+    (closed)="openSheet.set(null)"
+  >
+    <app-trail-comments
+      [mapAvailable]="displayMap() && mapLoaded() !== false"
+      (showOnMap)="selectComment($event, true)"
+      (layerChanged)="!$event && selectedCommentId() && clearSelection()"
+      (profileViewing)="commentProfileOpen.set($event)"
+    />
+  </app-sheet>
+}
+@if (openSheet() === 'profile') {
+  <app-sheet [title]="locale.t('publicProfile')" (closed)="openSheet.set(null)">
+    <app-public-profile [profileId]="popupProfileId()" />
+  </app-sheet>
+}
+@if (openSheet() === 'weather') {
+  <app-sheet [title]="locale.t('forecast')" (closed)="openSheet.set(null)">
+    @if (store.offline()) {
+      <p class="muted">
+        <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+        {{ locale.t('connectionRequired') }}
+      </p>
+    } @else {
+      <app-stage-forecast [weather]="weather()" [place]="store.walkingDay()?.to ?? ''" />
+    }
+  </app-sheet>
 }
 @if (openSheet() === 'lodgings') {
-  <app-sheet [title]="locale.t('lodgingNearby')" (closed)="openSheet.set(null)">
-    <div class="sheet-stack">
-      @if (sortedStays().length) {
-        <p class="muted">{{ locale.t('byDistance') }}</p>
-      }
-      @for (entry of sortedStays(); track entry.item.id) {
-        @let item = entry.item;
-        <button class="row-card surface" type="button" (click)="selectLodging(item.id, true)">
-          <span class="tile" [class.partner]="item.partner"
-            ><ion-icon name="bed-outline" aria-hidden="true"></ion-icon
-          ></span>
-          <span
-            ><strong>{{ item.name }}</strong
-            ><small
-              >{{ propertyLocation(item) }} · ★ {{ locale.number(item.review_score, 1) }}</small
-            ></span
-          >
-          <span class="stay-list-price">
-            <span class="tag" [class.gold]="item.partner">{{ locale.money(item.price) }}</span>
-            @if (entry.distance !== null) {
-              <small>{{
-                locale.t('distanceAway', { km: locale.number(entry.distance, 1) })
-              }}</small>
-            }
-          </span>
-        </button>
-      } @empty {
-        <p>{{ locale.t('noStays') }}</p>
-      }
-    </div>
-  </app-sheet>
-}
-@if (openSheet() === 'filters') {
-  <app-sheet [title]="locale.t('advancedFilters')" (closed)="openSheet.set(null)">
-    <form
-      class="sheet-stack"
-      (submit)="
-        $event.preventDefault();
-        filters.set({ price: +price.value, laundry: laundry.checked, pets: pets.checked });
-        openSheet.set(null)
-      "
-    >
-      <label class="field"
-        >{{ locale.t('maxPrice') }}
-        <input #price type="number" min="10" max="100" [value]="filters().price" required
-      /></label>
-      <label class="detail-line"
-        >{{ locale.t('laundry') }} <input #laundry type="checkbox" [checked]="filters().laundry"
-      /></label>
-      <label class="detail-line"
-        >{{ locale.t('pets') }} <input #pets type="checkbox" [checked]="filters().pets"
-      /></label>
-      <button class="primary" type="submit">{{ locale.t('apply') }}</button>
-    </form>
-  </app-sheet>
+  <app-lodging-search
+    [mapAvailable]="displayMap() && mapLoaded() !== false"
+    (closed)="openSheet.set(null)"
+    (selected)="selectLodging($event)"
+    (layerChanged)="changeStayLayer()"
+    (showMap)="showStaysOnMap()"
+  />
 }
 
 @if (openSheet() === 'sos') {
@@ -304,7 +356,7 @@
       </button>
       <p class="muted">{{ locale.t('simulatedPosition') }} · {{ roundedPosition() }}</p>
       @if (link() && !copied()) {
-        <input class="share-link" readonly [value]="link()" [attr.aria-label]="locale.t('share')" />
+        <input readonly [value]="link()" [attr.aria-label]="locale.t('share')" />
       }
       <div class="detail-line">
         <strong>{{ locale.t('trusted') }}</strong

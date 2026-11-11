@@ -1,0 +1,54 @@
+.forecast {
+  gap: 15px;
+}
+.forecast-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 15px;
+  background: #e9f2f7;
+  color: var(--brand);
+}
+.forecast-hero h3 {
+  margin: 4px 0 0;
+}
+.forecast-hero > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 24px;
+  font-weight: 800;
+}
+.forecast h3:not(.forecast-hero h3) {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+.forecast-row {
+  display: grid;
+  grid-template-columns: 1.05fr 20px 0.8fr 1fr 1.3fr;
+  align-items: center;
+  gap: 6px;
+  min-height: 33px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+.forecast-days .forecast-row {
+  grid-template-columns: 1.2fr 20px 1.5fr 1fr;
+}
+.forecast-row ion-icon {
+  color: #176386;
+}
+.forecast-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.forecast p,
+.forecast-source {
+  margin: 0;
+  font-size: 11px;
+}

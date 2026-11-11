@@ -1,0 +1,155 @@
+@if (viewingProfile(); as profileId) {
+  <button class="text-button profile-back" type="button" (click)="backToComments()">
+    <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>{{ locale.t('back') }}
+  </button>
+  <app-public-profile [profileId]="profileId" />
+} @else {
+  <div class="sheet-stack">
+    @if (store.offline()) {
+      <p class="muted offline-note">
+        <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon
+        >{{ locale.t('commentsOffline') }}
+      </p>
+    }
+    <button
+      class="layer-toggle surface"
+      type="button"
+      [disabled]="!mapAvailable()"
+      [attr.aria-pressed]="feed.showPins()"
+      (click)="togglePins()"
+    >
+      <ion-icon
+        [name]="mapAvailable() ? 'map-outline' : 'cloud-offline-outline'"
+        aria-hidden="true"
+      ></ion-icon>
+      <span
+        ><strong>{{ locale.t('commentsLayer') }}</strong>
+        <small>{{ locale.t('commentsMapLimit', { count: feed.mapLimit }) }}</small></span
+      >
+      <span class="switch-track" aria-hidden="true"></span>
+    </button>
+    <div class="comment-filters">
+      <label class="field">
+        {{ locale.t('commentRadius') }}
+        <select #radiusField [value]="feed.radius()" (change)="setRadius(+radiusField.value)">
+          @for (option of radii; track option) {
+            <option [value]="option" [selected]="feed.radius() === option">
+              {{ distance(option) }}
+            </option>
+          }
+        </select>
+      </label>
+      <label class="field">
+        {{ locale.t('commentSort') }}
+        <select #sortField [value]="feed.sort()" (change)="setSort(sortField.value)">
+          <option value="liked">{{ locale.t('mostLiked') }}</option>
+          <option value="newest">{{ locale.t('newestComments') }}</option>
+        </select>
+      </label>
+    </div>
+
+    @if (writing()) {
+      <form class="sheet-stack composer surface" (submit)="$event.preventDefault(); post()">
+        <label class="field">
+          {{ locale.t('commentText') }}
+          <textarea
+            #message
+            rows="3"
+            maxlength="350"
+            required
+            [value]="draft()"
+            [disabled]="store.offline()"
+            (input)="draft.set(message.value)"
+          ></textarea>
+        </label>
+        <p class="muted">{{ locale.t('commentHere') }}</p>
+        <div class="composer-actions">
+          <button class="secondary" type="button" (click)="writing.set(false)">
+            {{ locale.t('cancel') }}
+          </button>
+          <button class="primary" type="submit" [disabled]="store.offline() || !draft().trim()">
+            @if (store.offline()) {
+              <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+            }
+            {{ locale.t('postTrailComment') }}
+          </button>
+        </div>
+      </form>
+    } @else {
+      <button
+        class="secondary add-comment"
+        type="button"
+        [disabled]="store.offline() || !feed.position()"
+        (click)="writing.set(true)"
+      >
+        <ion-icon
+          [name]="store.offline() ? 'cloud-offline-outline' : 'chatbubbles-outline'"
+          aria-hidden="true"
+        ></ion-icon>
+        {{ locale.t('addTrailComment') }}
+      </button>
+    }
+
+    <div class="comment-list">
+      @for (comment of visible(); track comment.id) {
+        <article class="surface trail-comment">
+          <div class="comment-copy">
+            <div class="comment-author">
+              <button
+                class="comment-person"
+                type="button"
+                [attr.aria-label]="locale.t('viewProfile', { name: comment.author })"
+                (click)="inspectProfile(comment.authorId)"
+              >
+                @if (profiles.get(comment.authorId); as author) {
+                  <app-pilgrim-avatar
+                    [name]="author.name"
+                    [photo]="author.photo"
+                    [color]="author.color"
+                    [size]="28"
+                  />
+                }
+                <strong>{{ comment.author }}</strong>
+              </button>
+              <time [attr.datetime]="comment.createdAt">{{ locale.date(comment.createdAt) }}</time>
+            </div>
+            <span class="comment-distance"
+              >{{ comment.location }} · {{ distance(comment.metres) }}</span
+            >
+            <p>{{ comment.message }}</p>
+            <button
+              class="comment-locate"
+              type="button"
+              [disabled]="!mapAvailable()"
+              (click)="showOnMap.emit(comment)"
+            >
+              <ion-icon name="location-outline" aria-hidden="true"></ion-icon
+              >{{ locale.t('showOnMap') }}
+            </button>
+          </div>
+          <button
+            class="like-button"
+            type="button"
+            [disabled]="store.offline()"
+            [attr.aria-label]="locale.t('likeComment', { count: comment.score })"
+            [attr.aria-pressed]="comment.liked"
+            (click)="toggleLike(comment.id)"
+          >
+            <ion-icon
+              [name]="store.offline() ? 'cloud-offline-outline' : 'arrow-up-outline'"
+              aria-hidden="true"
+            ></ion-icon>
+            {{ locale.number(comment.score) }}
+          </button>
+        </article>
+      } @empty {
+        <p class="muted" role="status">{{ locale.t('commentEmpty') }}</p>
+      }
+    </div>
+    @if (feed.results().length > limit()) {
+      <button class="secondary" type="button" (click)="showMore()">
+        {{ locale.t('commentMore') }}
+      </button>
+    }
+  </div>
+}

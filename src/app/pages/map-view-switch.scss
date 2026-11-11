@@ -1,0 +1,41 @@
+.map-view-switch {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  bottom: calc(30px + var(--map-ad-height, 0px));
+  display: flex;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 3px 12px #173d473d;
+}
+.map-view-switch.with-arrival {
+  bottom: calc(158px + var(--map-ad-height, 0px));
+}
+@media (width <= 900px) {
+  .map-view-switch {
+    bottom: calc(74px + var(--map-ad-height, 0px));
+  }
+  .map-view-switch.with-arrival {
+    bottom: calc(202px + var(--map-ad-height, 0px));
+  }
+}
+.map-view-switch button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--brand);
+  font-size: 11px;
+  font-weight: 750;
+}
+.map-view-switch button[aria-pressed='true'],
+.resume-following {
+  background: #003058;
+  color: #fff;
+}

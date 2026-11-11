@@ -3,12 +3,18 @@
     <header class="intro">
       <img class="brand-logo" src="logo.png" alt="GoPeregrino" width="72" height="72" />
       <p class="eyebrow">{{ locale.t('prototype') }}</p>
-      <h2>{{ locale.t('introTitle').slice(0, -1) }}<span>.</span></h2>
+      <h2>
+        {{ locale.t('introTitle').slice(0, -1) }}<span>{{ locale.t('introTitle').slice(-1) }}</span>
+      </h2>
       <p class="intro-copy">{{ locale.t('introCopy') }}</p>
     </header>
 
     <div class="phone">
-      <div class="phone-screen" [class.has-map-ad]="activeTab() === 'mapa' && !store.premium()">
+      <div
+        class="phone-screen"
+        [class.has-map-ad]="activeTab() === 'mapa' && !store.premium()"
+        [class.journal-mode]="activeTab() === 'diario'"
+      >
         <div class="status-bar" aria-hidden="true">
           <span>9:41</span>
           <span class="status-island"></span>
@@ -37,6 +43,20 @@
 
         @if (!store.started() || store.planningAnother()) {
           <app-onboarding />
+        }
+        @if (creditOpen()) {
+          <div class="launch-credit">
+            <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener"
+              >© OpenStreetMap</a
+            >
+            <button
+              type="button"
+              [attr.aria-label]="locale.t('close')"
+              (click)="creditOpen.set(false)"
+            >
+              ×
+            </button>
+          </div>
         }
 
         @if (store.started() && !store.planningAnother()) {

@@ -20,6 +20,33 @@
 .demo-panel {
   display: none;
 }
+.journal-mode ion-tab-bar,
+.journal-mode .open-panel {
+  display: none;
+}
+.launch-credit {
+  position: absolute;
+  z-index: 5;
+  bottom: calc(68px + var(--ion-safe-area-bottom, 0px));
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 3px 3px 9px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+  color: var(--brand);
+  font-size: 11px;
+}
+.launch-credit button {
+  width: 27px;
+  height: 27px;
+  border-radius: 7px;
+  background: #edf3f5;
+  color: var(--brand);
+  font-size: 17px;
+}
 
 ion-tab-bar {
   --background: #fff;

@@ -1,93 +1,130 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore, languages } from '../demo/demo-store';
-import { itinerary } from '../demo/itinerary';
 import { Locale, Message } from '../demo/locale';
-import { lodgingPoint, kmBetween } from '../demo/models';
 import { Sheet } from '../demo/sheet';
-import { loadOfflinePack } from './offline-map';
+import { PaymentMethods } from './payment-methods';
+import { PilgrimProfiles } from '../demo/pilgrim-profiles';
+import { AvatarColor } from '../demo/models';
+import { PilgrimAvatar } from './pilgrim-avatar';
 
-type Section =
-  'trusted' | 'journal' | 'packing' | 'breaks' | 'writeReviews' | 'download' | 'suggest' | 'about';
-const premiumSections: { id: Section; icon: string }[] = [
-  { id: 'download', icon: 'download-outline' },
-  { id: 'journal', icon: 'book-outline' },
-  { id: 'packing', icon: 'bag-outline' },
-  { id: 'breaks', icon: 'cafe-outline' },
-  { id: 'writeReviews', icon: 'star-outline' },
-];
+type Section = 'editProfile' | 'achievements' | 'trusted' | 'payments' | 'suggest' | 'about';
 
 @Component({
-  imports: [IonContent, IonIcon, Sheet],
+  imports: [IonContent, IonIcon, Sheet, PaymentMethods, PilgrimAvatar],
   templateUrl: './profile-page.html',
-  styleUrl: './profile-page.scss',
+  styleUrls: ['./profile-page.scss', './pilgrim-profile.scss'],
 })
 export class ProfilePage {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
+  protected readonly profiles = inject(PilgrimProfiles);
+  private readonly router = inject(Router);
   protected readonly languages = languages;
-  protected readonly premiumSections = premiumSections;
-  protected readonly items: Message[] = [
-    'packWater',
-    'packShoes',
-    'packRain',
-    'packKit',
-    'packPassport',
-    'packBattery',
-  ];
   protected readonly section = signal<Section | null>(null);
   protected readonly notice = signal<Message | null>(null);
-  protected readonly downloading = signal(false);
+  protected readonly draftName = signal('');
+  protected readonly draftBio = signal('');
+  protected readonly draftPhoto = signal('');
+  protected readonly draftColor = signal<AvatarColor>('ocean');
+  protected readonly loadingPhoto = signal(false);
+  protected readonly colors: { value: AvatarColor; label: Message }[] = [
+    { value: 'ocean', label: 'avatarOcean' },
+    { value: 'forest', label: 'avatarForest' },
+    { value: 'sunset', label: 'avatarSunset' },
+    { value: 'violet', label: 'avatarViolet' },
+  ];
 
-  protected readonly downloaded = computed(() => this.store.state().offlineDownloaded);
-  protected readonly walks = computed(() => {
-    const route = this.store.route();
-    const { days, date, distance } = this.store.state();
-    if (!route) return [];
-    let start = 0;
-    return itinerary(route, days, date).map((day) => {
-      const walked = Math.min(day.km, Math.max(0, distance - start));
-      start += day.km;
-      return { ...day, walked };
-    });
-  });
-  protected readonly currentDay = computed(
-    () => this.walks().find((day) => day.walked < day.km) ?? this.walks().at(-1),
-  );
-  protected readonly journalKey = computed(
-    () => this.store.state().routeId + ':' + this.currentDay()?.date,
-  );
-  protected readonly pauseSpots = computed(() => {
-    const position = this.store.progress().position;
-    if (!position) return [];
-    return this.store
-      .nearbyPoints()
-      .filter((point) => point.kind === 'water' || point.kind === 'cafe')
-      .map((point) => ({ ...point, km: kmBetween(position, point.coordinates) }))
-      .sort((a, b) => a.km - b.km)
-      .slice(0, 4);
-  });
-  protected readonly reviewPlaces = computed(() => {
-    const booked = new Set(this.store.state().reservations.map((booking) => booking.lodgingId));
-    return this.store
-      .lodgings()
-      .filter((place) => booked.has(place.id))
-      .concat(this.store.nearbyLodgings().filter((place) => !booked.has(place.id)));
-  });
-  protected readonly reviewId = signal('');
-
-  protected open(section: Section, premium = false): void {
-    if (premium && !this.store.premium()) {
-      this.store.premiumOpen.set(true);
-      return;
-    }
+  protected open(section: Section): void {
     this.notice.set(null);
-    if (section === 'writeReviews') this.reviewId.set(this.reviewPlaces()[0]?.id ?? '');
+    if (section === 'editProfile') {
+      const profile = this.store.state().profile;
+      this.draftName.set(profile.name);
+      this.draftBio.set(profile.bio);
+      this.draftPhoto.set(profile.photo);
+      this.draftColor.set(profile.color);
+    }
     this.section.set(section);
   }
 
-  protected close(): void {
+  protected saveProfile(): void {
+    const name = this.draftName().trim();
+    if (!name || this.loadingPhoto()) return;
+    this.store.patch({
+      profile: {
+        ...this.store.state().profile,
+        name,
+        bio: this.draftBio().trim(),
+        photo: this.draftPhoto(),
+        color: this.draftColor(),
+      },
+    });
     this.section.set(null);
+  }
+
+  protected feature(id: string, checked: boolean): void {
+    const profile = this.store.state().profile;
+    const featured = profile.featuredAchievements.filter((entry) => entry !== id);
+    if (
+      checked &&
+      (featured.length >= 3 || !this.profiles.unlocked().some((entry) => entry.id === id))
+    )
+      return;
+    this.store.patch({
+      profile: { ...profile, featuredAchievements: checked ? [...featured, id] : featured },
+    });
+  }
+
+  protected async photo(input: HTMLInputElement): Promise<void> {
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    this.notice.set(null);
+    this.loadingPhoto.set(true);
+    try {
+      if (
+        !['image/jpeg', 'image/png', 'image/webp'].includes(file.type) ||
+        file.size > 10 * 1024 * 1024
+      )
+        throw new Error('Unsupported photo');
+      const bitmap = await createImageBitmap(file);
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = 256;
+        const context = canvas.getContext('2d');
+        if (!context) throw new Error('Canvas unavailable');
+        const side = Math.min(bitmap.width, bitmap.height);
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, 256, 256);
+        context.drawImage(
+          bitmap,
+          (bitmap.width - side) / 2,
+          (bitmap.height - side) / 2,
+          side,
+          side,
+          0,
+          0,
+          256,
+          256,
+        );
+        this.draftPhoto.set(canvas.toDataURL('image/jpeg', 0.8));
+      } finally {
+        bitmap.close();
+      }
+    } catch {
+      this.notice.set('profilePhotoError');
+    } finally {
+      this.loadingPhoto.set(false);
+    }
+  }
+
+  protected history(): void {
+    if (!this.store.premium()) {
+      this.store.premiumOpen.set(true);
+      return;
+    }
+    void this.router.navigateByUrl('/diario');
   }
 
   protected saveContact(value: string): void {
@@ -95,41 +132,9 @@ export class ProfilePage {
     this.notice.set('saved');
   }
 
-  protected saveNote(note: string): void {
-    this.store.patch({ notes: { ...this.store.state().notes, [this.journalKey()]: note.trim() } });
-    this.notice.set('saved');
-  }
-
-  protected pack(item: Message, checked: boolean): void {
-    const pack = this.store.state().pack.filter((entry) => entry !== item);
-    this.store.patch({ pack: checked ? [...pack, item] : pack });
-  }
-
   protected suggest(value: string): void {
     if (!value.trim()) return;
     this.store.patch({ suggestions: [...this.store.state().suggestions, value.trim()] });
     this.notice.set('suggestThanks');
-  }
-
-  protected saveReview(id: string, score: number, text: string): void {
-    if (!id || !text.trim()) return;
-    this.store.patch({
-      reviews: { ...this.store.state().reviews, [id]: { score, text: text.trim() } },
-    });
-    this.notice.set('saved');
-  }
-
-  protected async download(): Promise<void> {
-    if (this.downloading() || this.downloaded()) return;
-    this.notice.set(null);
-    this.downloading.set(true);
-    try {
-      await loadOfflinePack();
-      this.store.patch({ offlineDownloaded: true });
-    } catch {
-      this.notice.set('downloadError');
-    } finally {
-      this.downloading.set(false);
-    }
   }
 }

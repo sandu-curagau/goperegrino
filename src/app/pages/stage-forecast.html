@@ -1,0 +1,48 @@
+<div class="sheet-stack forecast">
+  <div class="forecast-hero">
+    <div>
+      <p class="kicker">{{ locale.t('stageDestination') }}</p>
+      <h3>{{ place() }}</h3>
+    </div>
+    <span
+      ><ion-icon [name]="weather().icon" aria-hidden="true"></ion-icon>
+      {{ weather().temperature }}°</span
+    >
+  </div>
+  <div class="forecast-hours">
+    <h3>{{ locale.t('nextHours') }}</h3>
+    @for (hour of weather().hours; track hour.time) {
+      <div class="forecast-row">
+        <time>{{ hour.time }}</time>
+        <ion-icon [name]="hour.icon" aria-hidden="true"></ion-icon>
+        <strong>{{ hour.temperature }}°</strong>
+        <span [attr.aria-label]="locale.t('rainChance', { value: hour.rain })"
+          ><ion-icon name="water-outline" aria-hidden="true"></ion-icon>{{ hour.rain }}%</span
+        >
+        <span [attr.aria-label]="locale.t('windSpeed', { value: hour.wind })"
+          >{{ hour.wind }} km/h</span
+        >
+      </div>
+    }
+  </div>
+  <div class="forecast-days">
+    <h3>{{ locale.t('nextDays') }}</h3>
+    @for (day of weather().days; track day.date) {
+      <div class="forecast-row">
+        <time [attr.datetime]="day.date">{{ locale.date(day.date) }}</time>
+        <ion-icon [name]="day.icon" aria-hidden="true"></ion-icon>
+        <strong>{{ day.low }}° / {{ day.high }}°</strong>
+        <span [attr.aria-label]="locale.t('rainChance', { value: day.rain })"
+          ><ion-icon name="water-outline" aria-hidden="true"></ion-icon>{{ day.rain }}%</span
+        >
+      </div>
+    }
+  </div>
+  @if (weather().simulated) {
+    <p class="muted" role="status">{{ locale.t('weatherDemo') }}</p>
+  } @else {
+    <a class="muted forecast-source" href="https://open-meteo.com/" target="_blank" rel="noopener"
+      >Open-Meteo</a
+    >
+  }
+</div>

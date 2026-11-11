@@ -1,8 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale } from '../demo/locale';
-import { dateInput, kmBetween, Stamp } from '../demo/models';
+import { dateInput, kmBetween, Stamp, Waypoint } from '../demo/models';
 import { Sheet } from '../demo/sheet';
 
 @Component({
@@ -11,41 +12,35 @@ import { Sheet } from '../demo/sheet';
     <ion-content>
       <main class="page">
         <header class="page-heading">
+          <button class="text-button" type="button" (click)="back()">
+            <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon
+            >{{ locale.t('caminho') }}
+          </button>
           <p class="kicker">{{ store.route()?.name }}</p>
           <h1>{{ locale.t('credencial') }}</h1>
           <p>{{ locale.t('stampCopy') }}</p>
         </header>
+
         <section class="passport">
-          <div>
-            <p class="kicker">{{ store.route()?.destination }}</p>
-            <strong>{{ stampCount() }}</strong>
-            @if (showTarget()) {
-              <span class="stamp-target">/ 2</span>
-            }
-            <span class="today">{{ locale.t('today') }}</span>
-          </div>
           <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
-          @if (showTarget()) {
-            <p>{{ locale.t('compostela') }}</p>
-          }
+          <div>
+            <strong>{{ stamps().length }}</strong>
+            <span>{{ locale.t('recordedStamps') }}</span>
+          </div>
+          <div>
+            <strong>{{ stampCount() }}</strong>
+            <span>{{ locale.t('today') }}</span>
+          </div>
         </section>
 
-        <div class="passport-actions">
-          <button class="primary" type="button" (click)="stamp()">
-            <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>{{ locale.t('stamp') }}
-          </button>
-          <button
-            class="secondary"
-            type="button"
-            [attr.aria-label]="locale.t('stampSpots')"
-            (click)="showMap.set(true)"
-          >
-            <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
-          </button>
-        </div>
-        @if (stamped()) {
-          <p class="kicker stamp-status" role="status">{{ locale.t('stampAdded') }}</p>
+        <button class="primary wide stamp-action" type="button" (click)="showSpots.set(true)">
+          <ion-icon name="location-outline" aria-hidden="true"></ion-icon
+          >{{ locale.t('stampSpots') }}
+        </button>
+        @if (stamped(); as name) {
+          <p class="stamp-status" role="status">{{ locale.t('stampSavedAt', { name }) }}</p>
         }
+
         @for (group of groups(); track group.date) {
           <h2>{{ locale.date(group.date) }}</h2>
           <div class="page-stack">
@@ -64,56 +59,46 @@ import { Sheet } from '../demo/sheet';
         } @empty {
           <p class="surface empty-card muted">{{ locale.t('stampEmpty') }}</p>
         }
+
+        @if (store.route()?.destination === 'Santiago') {
+          <aside class="surface passport-help">
+            <strong>{{ locale.t('officialCredential') }}</strong>
+            <p>{{ locale.t('compostela') }}</p>
+            <a
+              href="https://oficinadelperegrino.com/en/ufaq/where-can-i-get-the-credencial-del-peregrino/"
+              target="_blank"
+              rel="noopener"
+              >{{ locale.t('pilgrimOffice') }}</a
+            >
+          </aside>
+        }
       </main>
     </ion-content>
 
-    @if (showMap()) {
-      <app-sheet [title]="locale.t('stampSpots')" (closed)="showMap.set(false)">
+    @if (showSpots()) {
+      <app-sheet [title]="locale.t('stampSpots')" (closed)="showSpots.set(false)">
         <div class="sheet-stack">
-          <svg class="stamp-map" viewBox="0 0 300 155" aria-hidden="true">
-            <rect width="300" height="155" rx="15" fill="#e4efe8" />
-            <path
-              d="M-9 85C42 29 79 110 123 73S217 44 307 79M-9 133C68 116 104 138 149 99s91 8 160-32"
-              fill="none"
-              stroke="#c3d8d2"
-              stroke-width="15"
-            />
-            <polyline
-              [attr.points]="mapPath()"
-              fill="none"
-              stroke="#003058"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-dasharray="6 6"
-            />
-            @for (pin of pins(); track pin.id; let index = $index) {
-              <circle
-                [attr.cx]="pin.x"
-                [attr.cy]="pin.y"
-                r="13"
-                fill="#f2a602"
-                stroke="white"
-                stroke-width="2"
-              />
-              <text
-                [attr.x]="pin.x"
-                [attr.y]="pin.y + 4"
-                text-anchor="middle"
-                font-size="11"
-                font-weight="800"
-                fill="#003058"
-              >
-                {{ index + 1 }}
-              </text>
-            }
-          </svg>
-          @for (pin of pins(); track pin.id; let index = $index) {
-            <div class="surface row-card">
-              <span class="number-chip">{{ index + 1 }}</span>
-              <span
-                ><strong>{{ pin.location }}</strong
-                ><small>{{ locale.number(pin.distance, 1) }} km</small></span
-              >
+          <p class="muted spots-intro">{{ locale.t('stampHow') }}</p>
+          @for (spot of spots(); track spot.id) {
+            <div class="surface stamp-spot">
+              <div>
+                <strong>{{ spotName(spot) }}</strong>
+                <small>{{
+                  locale.t('distanceAway', { km: locale.number(spot.distance, 1) })
+                }}</small>
+              </div>
+              @if (recordedPoints().has(spot.id)) {
+                <span class="tag">{{ locale.t('stampAdded') }}</span>
+              } @else {
+                <button
+                  class="secondary"
+                  type="button"
+                  [attr.aria-label]="locale.t('stampAt', { name: spotName(spot) })"
+                  (click)="stamp(spot)"
+                >
+                  {{ locale.t('recordStamp') }}
+                </button>
+              }
             </div>
           }
         </div>
@@ -123,64 +108,83 @@ import { Sheet } from '../demo/sheet';
   styles: `
     .passport {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 7px;
-      padding: 18px;
-      border-radius: 22px;
+      grid-template-columns: auto 1.2fr 1fr;
+      align-items: center;
+      gap: 13px;
+      padding: 16px;
+      border-radius: 19px;
       background: radial-gradient(ellipse at 100% 0%, #24617a, #003058 73%);
       color: white;
     }
-    .passport .kicker {
-      color: #ffdb78;
-    }
     .passport strong {
-      font-size: 37px;
-      letter-spacing: -0.06em;
-    }
-    .stamp-target {
-      color: #e1eaf3;
-      font-size: 19px;
-      margin-left: 4px;
-    }
-    .today {
       display: block;
-      font-size: 12px;
+      font-size: 32px;
+    }
+    .passport span {
+      font-size: 11px;
       color: #e1eaf3;
     }
     .passport ion-icon {
-      place-self: center;
       color: #ffdc74;
-      font-size: 45px;
+      font-size: 37px;
     }
-    .passport p {
-      grid-column: 1 / -1;
-      margin: 3px 0 0;
-      font-size: 12px;
-    }
-    .passport-actions {
-      display: grid;
-      grid-template-columns: 1fr 54px;
-      gap: 8px;
-      margin: 10px 0;
+    .stamp-action {
+      margin: 11px 0;
     }
     .stamp-status {
-      margin: 10px 0;
+      color: var(--brand);
+      font-size: 13px;
     }
-    .stamp-map {
-      width: 100%;
+    .passport-help,
+    .stamp-spot {
+      padding: 12px;
+      font-size: 13px;
+    }
+    .passport-help {
+      margin-top: 14px;
+    }
+    .passport-help p,
+    .spots-intro {
+      margin: 5px 0;
+      color: var(--muted);
+    }
+    .passport-help a {
+      color: var(--brand);
+    }
+    .stamp-spot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .stamp-spot small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
     }
   `,
 })
 export class PassportPage {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
-  protected readonly stamped = signal(false);
-  protected readonly showMap = signal(false);
-  private readonly stamps = computed(() =>
-    this.store.state().stamps.filter((stamp) => stamp.routeId === this.store.state().routeId),
+  private readonly router = inject(Router);
+
+  protected back(): void {
+    void this.router.navigateByUrl('/caminho');
+  }
+  protected readonly stamped = signal('');
+  protected readonly showSpots = signal(false);
+  protected readonly stamps = computed(() =>
+    this.store
+      .state()
+      .stamps.filter(
+        (stamp) =>
+          stamp.routeId === this.store.route()?.id &&
+          (!stamp.walkId || stamp.walkId === this.store.state().walkId),
+      ),
   );
-  protected readonly showTarget = computed(
-    () => this.store.route()?.destination === 'Santiago' && this.store.remaining() <= 100,
+  protected readonly recordedPoints = computed(
+    () => new Set(this.stamps().map((stamp) => stamp.pointId)),
   );
   protected readonly stampCount = computed(() => {
     const today = dateInput();
@@ -196,28 +200,26 @@ export class PassportPage {
     }
     return Array.from(groups, ([date, items]) => ({ date, items }));
   });
-  protected readonly pins = computed(() => {
-    const points = this.store.nearbyPoints().filter((point) => point.kind === 'stamp');
+  protected readonly spots = computed(() => {
     const position = this.store.progress().position;
-    if (!points.length || !position) return [];
-    const xs = points.map((point) => point.coordinates[0]);
-    const ys = points.map((point) => point.coordinates[1]);
-    const west = Math.min(...xs);
-    const south = Math.min(...ys);
-    const width = Math.max(...xs) - west;
-    const height = Math.max(...ys) - south;
-    return points.map((point) => ({
-      ...point,
-      x: width ? 35 + ((point.coordinates[0] - west) / width) * 230 : 150,
-      y: height ? 120 - ((point.coordinates[1] - south) / height) * 85 : 76,
-      distance: kmBetween(position, point.coordinates),
-    }));
+    const route = this.store.route();
+    if (!position || !route) return [];
+    return this.store
+      .points()
+      .filter(
+        (point) =>
+          point.routeId === route.id && (point.kind === 'stamp' || point.kind === 'church'),
+      )
+      .map((point) => ({ ...point, distance: kmBetween(position, point.coordinates) }))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 6);
   });
-  protected readonly mapPath = computed(() =>
-    this.pins()
-      .map((pin) => pin.x + ',' + pin.y)
-      .join(' '),
-  );
+
+  protected spotName(point: Waypoint): string {
+    return this.locale.t(point.kind === 'church' ? 'churchStampAt' : 'stampPointAt', {
+      name: point.location,
+    });
+  }
 
   protected time(value: string): string {
     return new Intl.DateTimeFormat(this.locale.tag(), {
@@ -226,17 +228,20 @@ export class PassportPage {
     }).format(new Date(value));
   }
 
-  protected stamp(): void {
-    const stage = this.store.stage();
-    if (!stage) return;
-    const name = this.store.stageRemaining() > stage.km / 2 ? stage.from : stage.to;
-    const stamp = {
+  protected stamp(point: Waypoint): void {
+    const state = this.store.state();
+    if (point.routeId !== state.routeId || this.recordedPoints().has(point.id)) return;
+    const name = this.spotName(point);
+    const stamp: Stamp = {
       id: crypto.randomUUID(),
-      routeId: this.store.state().routeId,
+      routeId: state.routeId,
+      walkId: state.walkId,
+      pointId: point.id,
       name,
       date: new Date().toISOString(),
     };
-    this.store.patch({ stamps: [stamp, ...this.store.state().stamps] });
-    this.stamped.set(true);
+    this.store.patch({ stamps: [stamp, ...state.stamps] });
+    this.stamped.set(name);
+    this.showSpots.set(false);
   }
 }

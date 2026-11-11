@@ -1,0 +1,146 @@
+<app-sheet [title]="locale.t('lodging')" (closed)="closed.emit()">
+  <div class="sheet-stack">
+    <div class="stay-modes" role="group" [attr.aria-label]="locale.t('lodging')">
+      <button
+        type="button"
+        [attr.aria-pressed]="search.mode() === 'plan'"
+        (click)="changeMode('plan')"
+      >
+        <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
+        >{{ locale.t('plannedStops') }}
+      </button>
+      <button
+        type="button"
+        [attr.aria-pressed]="search.mode() === 'nearby'"
+        (click)="changeMode('nearby')"
+      >
+        <ion-icon name="locate-outline" aria-hidden="true"></ion-icon>{{ locale.t('staysNearMe') }}
+      </button>
+    </div>
+
+    @if (mapAvailable()) {
+      <button
+        class="layer-toggle surface"
+        type="button"
+        [attr.aria-pressed]="search.showPins()"
+        (click)="togglePins()"
+      >
+        <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
+        <strong>{{ locale.t('staysLayer') }}</strong>
+        <span class="switch-track" aria-hidden="true"></span>
+      </button>
+    }
+
+    <div class="stay-actions">
+      <button
+        class="secondary"
+        type="button"
+        [attr.aria-expanded]="showFilters()"
+        (click)="filter()"
+      >
+        <ion-icon
+          [name]="store.premium() ? 'options-outline' : 'lock-closed-outline'"
+          aria-hidden="true"
+        ></ion-icon>
+        {{ locale.t('filters') }}
+      </button>
+      @if (
+        mapAvailable() &&
+        (search.mode() === 'plan' ? search.stops().length : search.results().length)
+      ) {
+        <button class="secondary" type="button" (click)="showMap.emit()">
+          {{
+            locale.t(search.mode() === 'plan' && !search.stop() ? 'showStopsOnMap' : 'showOnMap')
+          }}
+        </button>
+      }
+    </div>
+
+    @if (showFilters()) {
+      <form
+        class="sheet-stack surface stay-filter-form"
+        (submit)="
+          $event.preventDefault();
+          search.filters.set({ price: +price.value, laundry: laundry.checked, pets: pets.checked });
+          showFilters.set(false)
+        "
+      >
+        <label class="field"
+          >{{ locale.t('maxPrice') }}
+          <input
+            #price
+            type="number"
+            min="10"
+            max="100"
+            [value]="search.filters().price"
+            required
+          />
+        </label>
+        <label class="detail-line"
+          >{{ locale.t('laundry') }}
+          <input #laundry type="checkbox" [checked]="search.filters().laundry" />
+        </label>
+        <label class="detail-line"
+          >{{ locale.t('pets') }}
+          <input #pets type="checkbox" [checked]="search.filters().pets" />
+        </label>
+        <button class="primary" type="submit">{{ locale.t('apply') }}</button>
+      </form>
+    }
+
+    @if (search.mode() === 'plan' && !search.stop()) {
+      @for (stop of search.stops(); track stop.stopId) {
+        <button
+          class="surface row-card stop-row"
+          type="button"
+          (click)="search.selectedStop.set(stop.stopId)"
+        >
+          <span class="number-chip">{{ stop.day }}</span>
+          <span
+            ><strong>{{ stop.to }}</strong
+            ><small>{{ locale.date(stop.date) }}</small></span
+          >
+          <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+        </button>
+      }
+    } @else {
+      @if (search.stop(); as stop) {
+        <button class="text-button stop-back" type="button" (click)="search.selectedStop.set(null)">
+          <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon
+          >{{ locale.t('plannedStops') }}
+        </button>
+        <h3 class="stop-heading">
+          {{ stop.to }} <small>{{ locale.date(stop.date) }}</small>
+        </h3>
+      } @else if (!search.nearby().length && search.results().length) {
+        <p class="muted result-note">{{ locale.t('staysOutsideRadius', { km: radius }) }}</p>
+      } @else {
+        <p class="muted result-note">{{ locale.t('staysWithinRadius', { km: radius }) }}</p>
+      }
+      @for (entry of search.results(); track entry.item.id) {
+        @let item = entry.item;
+        <button class="surface row-card stay-row" type="button" (click)="selected.emit(item.id)">
+          <span class="tile" [class.partner]="item.partner"
+            ><ion-icon name="bed-outline" aria-hidden="true"></ion-icon
+          ></span>
+          <span
+            ><strong>{{ item.name }}</strong>
+            <small
+              >{{ propertyLocation(item) }} · ★ {{ locale.number(item.review_score, 1) }}</small
+            ></span
+          >
+          <span class="stay-price">
+            <span class="tag" [class.gold]="item.partner">{{ locale.money(item.price) }}</span>
+            <small>{{
+              locale.t(search.mode() === 'plan' ? 'distanceFromStop' : 'distanceAway', {
+                km: locale.number(entry.distance, 1),
+              })
+            }}</small>
+          </span>
+        </button>
+      } @empty {
+        <p class="muted">{{ locale.t('noStays') }}</p>
+      }
+    }
+  </div>
+</app-sheet>

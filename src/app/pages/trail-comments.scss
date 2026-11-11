@@ -1,0 +1,116 @@
+.comment-filters {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 8px;
+}
+.comment-filters select {
+  min-width: 0;
+}
+.comment-list {
+  display: grid;
+  gap: 8px;
+}
+.trail-comment {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px;
+  padding: 12px;
+}
+.comment-author {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 7px;
+  font-size: 13px;
+}
+.comment-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0;
+  background: transparent;
+  color: var(--brand);
+  text-align: left;
+}
+.comment-person strong {
+  font-size: 12px;
+}
+.profile-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 16px;
+  padding: 0;
+  min-height: 36px;
+}
+.comment-author time,
+.comment-distance {
+  color: var(--muted);
+  font-size: 11px;
+}
+.comment-distance {
+  display: block;
+  margin-top: 3px;
+}
+.comment-copy p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.comment-locate {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  min-height: 36px;
+  margin: 4px 0 -4px;
+  padding: 0;
+  background: transparent;
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 750;
+}
+.like-button {
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 5px;
+  border-radius: 12px;
+  color: var(--brand);
+  background: #e8f0ef;
+  font-size: 12px;
+  font-weight: 750;
+}
+.like-button[aria-pressed='true'] {
+  background: #ffd36d;
+  color: #17394b;
+}
+.like-button ion-icon,
+.add-comment ion-icon {
+  font-size: 17px;
+}
+.add-comment {
+  gap: 6px;
+}
+.composer {
+  padding: 12px;
+}
+.composer p {
+  margin: 0;
+}
+.composer-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 8px;
+}
+.offline-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+}

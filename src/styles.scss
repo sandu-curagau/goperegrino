@@ -185,29 +185,19 @@ textarea:focus-visible {
     0 0 0 6px #0068b833,
     0 2px 7px #001e3f80;
 }
-.walker-marker::before {
+.walker-marker.heading {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  background: #fff;
+  clip-path: polygon(50% 0, 100% 100%, 50% 76%, 0 100%);
+}
+.walker-marker.heading::before {
   position: absolute;
-  inset: -5px;
+  inset: 4px;
+  background: #0068b8;
+  clip-path: inherit;
   content: '';
-  border: 2px solid #0068b8;
-  border-radius: 50%;
-  animation: walker-pulse 2s ease-out infinite;
-}
-@keyframes walker-pulse {
-  0% {
-    transform: scale(0.75);
-    opacity: 0.8;
-  }
-  85%,
-  100% {
-    transform: scale(2.1);
-    opacity: 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .walker-marker::before {
-    animation: none;
-  }
 }
 .sheet-stack {
   display: grid;
@@ -363,4 +353,107 @@ ion-content {
 }
 .selected-stay-pin.partner {
   background: var(--gold);
+}
+.layer-toggle {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 9px 12px;
+  color: var(--brand);
+  font-size: 13px;
+  text-align: left;
+}
+.layer-toggle > ion-icon {
+  font-size: 19px;
+}
+.layer-toggle small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+}
+.switch-track {
+  display: flex;
+  align-items: center;
+  width: 36px;
+  height: 21px;
+  padding: 3px;
+  border-radius: 12px;
+  background: #8b9da9;
+}
+.switch-track::after {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: white;
+  content: '';
+}
+.layer-toggle[aria-pressed='true'] .switch-track {
+  justify-content: flex-end;
+  background: var(--brand);
+}
+.comment-map-pin {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #6544a1;
+  color: white;
+  box-shadow: 0 2px 7px #1c183b50;
+  font-size: 15px;
+  font-weight: 800;
+}
+.comment-map-pin.is-selected {
+  z-index: 1;
+  width: 35px;
+  height: 35px;
+  outline: 2px solid #4b2b80;
+  font-size: 17px;
+}
+.comment-pin-summary p {
+  max-height: 8em;
+  overflow: auto;
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.comment-popup-author {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 3px 0;
+  background: transparent;
+  color: var(--brand);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+}
+.comment-popup-author ion-icon {
+  flex: none;
+  font-size: 13px;
+}
+.stay-hub-pin {
+  max-width: 136px;
+  min-height: 28px;
+  overflow: hidden;
+  padding: 3px 8px;
+  border: 2px solid white;
+  border-radius: 11px;
+  background: #fd6;
+  color: #431;
+  box-shadow: 0 2px 7px #33260650;
+  font-size: 11px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+button:disabled:has(ion-icon[name='cloud-offline-outline']) {
+  background: #e1e7eb;
+  color: #4b5c69;
+  opacity: 1;
 }

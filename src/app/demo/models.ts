@@ -19,12 +19,23 @@ export interface Camino {
   color: string;
   km: number;
   stages: Stage[];
+  planningStops?: PlanningStop[];
+}
+
+export interface PlanningStop {
+  id: number;
+  stageId: number;
+  name: string;
+  position: Point;
+  distance: number;
+  ascent: number;
 }
 
 export interface Lodging {
   id: string;
   routeId: string;
   stageId: number;
+  intermediate?: true;
   name: string;
   location: { coordinates: { latitude: number; longitude: number }; address: string };
   price: number;
@@ -66,14 +77,66 @@ export interface Reservation {
   guests: number;
   name: string;
   status: 'confirmed' | 'cancelled';
+  roomType?: RoomType;
+  rooms?: number;
   total?: number;
+}
+
+export type RoomType = 'singleRoom' | 'doubleRoom' | 'twinRoom' | 'familyRoom';
+
+export interface PaymentCard {
+  id: string;
+  brand: string;
+  last4: string;
+  expiry: string;
+  nickname: string;
+}
+
+export type AvatarColor = 'ocean' | 'forest' | 'sunset' | 'violet';
+
+export interface PilgrimProfile {
+  name: string;
+  bio: string;
+  photo: string;
+  color: AvatarColor;
+  featuredAchievements: string[];
 }
 
 export interface Stamp {
   id: string;
   routeId: string;
+  walkId?: string;
+  pointId?: string;
   name: string;
   date: string;
+}
+
+export interface WalkRecord {
+  id: string;
+  routeId: string;
+  date: string;
+  days: number;
+  distance: number;
+}
+
+export interface JournalEntry {
+  id?: string;
+  walkId: string;
+  date: string;
+  createdAt?: string;
+  location?: string;
+  position?: Point;
+  note: string;
+  photos: string[];
+}
+
+export interface TrailComment {
+  id: string;
+  routeId: string;
+  position: Point;
+  location: string;
+  message: string;
+  createdAt: string;
 }
 
 export interface TrailLine {
@@ -104,9 +167,15 @@ export function lodgingPoint(lodging: Lodging): Point {
   return [longitude, latitude];
 }
 
-export function stayPrice(arrival: string, departure: string, guests: number, nightly: number) {
+export function stayPrice(
+  arrival: string,
+  departure: string,
+  guests: number,
+  nightly: number,
+  capacity = 2,
+) {
   const nights = Math.max(1, (Date.parse(departure) - Date.parse(arrival)) / 86400000 || 1);
-  const rooms = Math.ceil(Math.max(1, guests) / 2);
+  const rooms = Math.ceil(Math.max(1, guests) / capacity);
   return { nights, rooms, total: nights * rooms * nightly };
 }
 

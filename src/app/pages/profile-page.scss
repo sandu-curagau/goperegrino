@@ -34,43 +34,94 @@
 .profile-language select {
   min-height: 37px;
 }
-.journal-highlight {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 12px;
-  border-radius: 15px;
-  color: var(--brand);
-  background: #e8f0ef;
-  font-size: 12px;
-}
-.journal-highlight ion-icon {
-  font-size: 23px;
-}
-.journal-highlight strong {
-  display: block;
-  font-size: 20px;
-}
-.journal-photo {
-  width: 100%;
-  border-radius: 13px;
-}
-.download-success,
 .success {
   color: #176046;
   font-size: 13px;
   font-weight: 700;
 }
-.download-success {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+.photo-error {
+  color: var(--danger);
 }
-progress {
-  width: 100%;
-  accent-color: var(--brand);
+.profile-general {
+  margin-top: 14px;
 }
 .about-logo {
   display: block;
   border-radius: 14px;
+}
+.edit-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffffb3;
+  color: var(--brand);
+  font-size: 11px;
+  font-weight: 650;
+}
+.profile-achievements {
+  margin-bottom: 20px;
+}
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 12px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+.section-title h2 {
+  margin: 0;
+  font-size: 15px;
+}
+.section-title > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.avatar-editor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.avatar-editor button {
+  font-size: 12px;
+  padding-inline: 12px;
+}
+.avatar-editor .sheet-stack {
+  gap: 6px;
+}
+.avatar-colors {
+  display: flex;
+  gap: 10px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.avatar-colors legend {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 650;
+}
+.avatar-colors label {
+  padding: 4px;
+  border: 2px solid transparent;
+  border-radius: 17px;
+  cursor: pointer;
+}
+.avatar-colors label.selected {
+  border-color: var(--brand);
+}
+.avatar-colors label:focus-within {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
 }

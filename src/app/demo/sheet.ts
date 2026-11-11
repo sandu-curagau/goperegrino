@@ -90,6 +90,10 @@ export class Sheet {
   protected readonly locale = inject(Locale);
   private readonly sheet = viewChild.required<ElementRef<HTMLDialogElement>>('sheet');
 
+  scrollToTop(): void {
+    this.sheet().nativeElement.scrollTop = 0;
+  }
+
   constructor() {
     afterNextRender(() => this.sheet().nativeElement.showModal());
     inject(Router)

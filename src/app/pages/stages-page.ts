@@ -1,7 +1,7 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
-import { dayOptions, itinerary } from '../demo/itinerary';
+import { dayOptions } from '../demo/itinerary';
 import { Locale } from '../demo/locale';
 import { dateInput } from '../demo/models';
 import { Sheet } from '../demo/sheet';
@@ -27,21 +27,31 @@ import { Sheet } from '../demo/sheet';
           </button>
           <ol class="itinerary">
             @for (stage of plan(); track stage.day) {
-              <li class="surface row-card">
+              <li class="surface stage-card">
                 <span class="number-chip">{{ stage.day }}</span>
-                <div>
+                <div class="stage-route">
                   <p class="kicker">
-                    {{ locale.t('day') }} {{ stage.day }} · {{ locale.date(stage.date) }}
+                    {{ locale.t('day', { day: stage.day }) }} · {{ locale.date(stage.date) }}
                   </p>
                   <strong>{{ stage.from }} → {{ stage.to }}</strong>
-                  <small
-                    ><ion-icon name="bed-outline" aria-hidden="true"></ion-icon>
-                    {{ stage.to }}</small
-                  >
                 </div>
                 <span class="stage-distances"
-                  ><strong>{{ stage.km }} km</strong><small>↑ {{ stage.ascent }} m</small></span
+                  ><strong>{{ locale.number(stage.km, 1) }} km</strong
+                  ><small>{{ locale.t('ascentMetres', { metres: stage.ascent }) }}</small></span
                 >
+                <button
+                  class="stage-stays"
+                  type="button"
+                  [disabled]="store.offline()"
+                  (click)="store.showStayStop(stage.stopId)"
+                >
+                  <ion-icon
+                    [name]="store.offline() ? 'cloud-offline-outline' : 'bed-outline'"
+                    aria-hidden="true"
+                  ></ion-icon>
+                  <span>{{ locale.t('staysAt', { name: stage.to }) }}</span>
+                  <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+                </button>
               </li>
             }
           </ol>
@@ -82,16 +92,60 @@ import { Sheet } from '../demo/sheet';
       padding: 0;
       list-style: none;
     }
-    .row-card .kicker {
+    .stage-card {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr) auto;
+      align-items: start;
+      column-gap: 10px;
+      padding: 14px 14px 0;
+      overflow: hidden;
+    }
+    .stage-route strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .stage-card .kicker {
+      margin-top: 0;
       margin-bottom: 4px;
       font-size: 8px;
-    }
-    .row-card .number-chip {
-      flex: none;
     }
     .stage-distances {
       text-align: right;
       white-space: nowrap;
+      font-size: 13px;
+    }
+    .stage-distances small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+    .stage-stays {
+      display: flex;
+      grid-column: 1 / -1;
+      align-items: center;
+      gap: 9px;
+      margin: 12px -14px 0;
+      padding: 11px 14px;
+      min-height: 44px;
+      border-top: 1px solid var(--line);
+      border-radius: 0;
+      background: #edf3f5;
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+    }
+    .stage-stays span {
+      flex: 1;
+    }
+    .stage-stays ion-icon {
+      flex: none;
+      font-size: 18px;
+    }
+    .stage-stays ion-icon:last-child {
+      font-size: 14px;
     }
   `,
 })
@@ -100,12 +154,7 @@ export class StagesPage {
   protected readonly locale = inject(Locale);
   protected readonly editing = signal(false);
   protected readonly dayOptions = dayOptions;
-  protected readonly plan = computed(() => {
-    const route = this.store.route();
-    if (!route) return [];
-    const { days, date } = this.store.state();
-    return itinerary(route, this.store.premium() ? days : route.stages.length, date);
-  });
+  protected readonly plan = this.store.walkingPlan;
 
   protected edit(): void {
     if (this.store.premium()) this.editing.set(true);

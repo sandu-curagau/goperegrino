@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
-import { DemoStore, languages } from './demo-store';
+import { DemoStore } from './demo-store';
 import { Locale } from './locale';
 
 @Component({
@@ -44,15 +44,15 @@ import { Locale } from './locale';
         <div class="stages" [attr.aria-label]="locale.t('jump')" role="group">
           <span class="control-label">{{ locale.t('jump') }}</span>
           <div class="stage-buttons">
-            @for (stage of route.stages; track stage.id; let index = $index) {
+            @for (stage of store.walkingPlan(); track stage.day; let index = $index) {
               <button
                 type="button"
-                [class.active]="store.stageIndex() === index"
-                [attr.aria-pressed]="store.stageIndex() === index"
-                [attr.aria-label]="locale.t('jump') + ' ' + stage.id + ' · ' + stage.from"
+                [class.active]="store.walkingDayIndex() === index"
+                [attr.aria-pressed]="store.walkingDayIndex() === index"
+                [attr.aria-label]="locale.t('jump') + ' ' + stage.day + ' · ' + stage.from"
                 (click)="jump(index)"
               >
-                {{ stage.id }}
+                {{ stage.day }}
               </button>
             }
           </div>
@@ -98,20 +98,6 @@ import { Locale } from './locale';
           (change)="store.patch({ premium: premium.checked ? 30 : 0 })"
         />
       </label>
-      <label class="field"
-        >{{ locale.t('language') }}
-        <select
-          #language
-          [value]="store.state().language"
-          (change)="store.patch({ language: $any(language.value) })"
-        >
-          @for (entry of languages; track entry[0]) {
-            <option [value]="entry[0]" [selected]="store.state().language === entry[0]">
-              {{ entry[1] }}
-            </option>
-          }
-        </select>
-      </label>
       <button class="reset" type="button" (click)="reset()">
         <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>{{ locale.t('reset') }}
       </button>
@@ -123,7 +109,6 @@ export class DemoControls {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   private readonly router = inject(Router);
-  protected readonly languages = languages;
   protected readonly speeds = [1, 10, 50];
 
   protected changeRoute(id: string): void {

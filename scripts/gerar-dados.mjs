@@ -4,6 +4,9 @@ const data = new URL('../public/data/', import.meta.url);
 const lodgingLocations = JSON.parse(
   await readFile(new URL('./alojamentos-locais.json', import.meta.url), 'utf8'),
 );
+const intermediateLodgings = JSON.parse(
+  await readFile(new URL('./alojamentos-intermedios.json', import.meta.url), 'utf8'),
+);
 const porto = ['Porto', -8.611, 41.1428];
 const fatima = ['Fátima', -8.6732, 39.6313];
 const redondela = ['Redondela', -8.6093, 42.2837];
@@ -111,6 +114,90 @@ const pathways = routes.map(({ stops, km, ascent, ...route }) => ({
   })),
 }));
 
+function earthDistance(a, b) {
+  const radians = Math.PI / 180;
+  const h =
+    Math.sin(((b[1] - a[1]) * radians) / 2) ** 2 +
+    Math.cos(a[1] * radians) *
+      Math.cos(b[1] * radians) *
+      Math.sin(((b[0] - a[0]) * radians) / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(h));
+}
+
+function projectStop(point, line) {
+  let nearest = { offset: Infinity, distance: 0, position: line[0] };
+  let travelled = 0;
+  const scale = Math.cos((point[1] * Math.PI) / 180);
+  for (let index = 1; index < line.length; index++) {
+    const a = line[index - 1],
+      b = line[index];
+    const dx = (b[0] - a[0]) * scale,
+      dy = b[1] - a[1];
+    const fraction = Math.max(
+      0,
+      Math.min(
+        1,
+        ((point[0] - a[0]) * scale * dx + (point[1] - a[1]) * dy) / (dx * dx + dy * dy) || 0,
+      ),
+    );
+    const position = [a[0] + (b[0] - a[0]) * fraction, a[1] + dy * fraction];
+    const length = earthDistance(a, b);
+    const offset = earthDistance(point, position);
+    if (offset < nearest.offset)
+      nearest = { offset, distance: travelled + length * fraction, position };
+    travelled += length;
+  }
+  return { ...nearest, fraction: travelled ? nearest.distance / travelled : 0 };
+}
+
+// Slower plans stop at existing lodging locations, projected onto the walking route.
+for (const route of pathways) {
+  let geometry;
+  try {
+    geometry = JSON.parse(await readFile(new URL(`tracados/${route.id}.geojson`, data), 'utf8'));
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+  let distance = 0,
+    ascent = 0;
+  route.planningStops = [];
+  for (const stage of route.stages) {
+    const line = geometry?.features.find((feature) => feature.properties.stageId === stage.id)
+      ?.geometry.coordinates ?? [stage.start, stage.end];
+    const candidates = (intermediateLodgings[route.id]?.[stage.id] ?? [])
+      .filter((stop) => !stop.town.includes('–'))
+      .map((stop, index) => ({ ...stop, index, ...projectStop(stop.positions[0], line) }))
+      .filter(
+        (stop) =>
+          stop.offset < 3 && stop.fraction * stage.km >= 2 && (1 - stop.fraction) * stage.km >= 2,
+      )
+      .sort((a, b) => a.fraction - b.fraction);
+    let previous = 0;
+    for (const stop of candidates) {
+      if (stop.fraction * stage.km - previous < 2) continue;
+      previous = stop.fraction * stage.km;
+      route.planningStops.push({
+        id: -(stage.id * 100 + stop.index + 1),
+        stageId: stage.id,
+        name: stop.town,
+        position: stop.position,
+        distance: distance + stop.fraction * stage.km,
+        ascent: ascent + stop.fraction * stage.ascent,
+      });
+    }
+    distance += stage.km;
+    ascent += stage.ascent;
+    route.planningStops.push({
+      id: stage.id,
+      stageId: stage.id,
+      name: stage.to,
+      position: stage.end,
+      distance,
+      ascent,
+    });
+  }
+}
+
 const accommodationNames = [
   'Albergue da Seta Dourada',
   'Casa da Mochila',
@@ -123,31 +210,67 @@ const accommodationNames = [
   'Quinta do Sol Poente',
   'Casa da Janela Amarela',
 ];
+const intermediateNames = [
+  'Casa do Caminhante',
+  'Pensão do Marco',
+  'Quinta do Passo',
+  'Hospedaria do Ribeiro',
+  'Casa das Botas',
+  'Pouso da Fonte',
+  'Refúgio do Caminho',
+  'Casa da Ponte',
+];
 const facilities = ['wifi', 'laundry', 'pets', 'kitchen', 'breakfast'];
 const accommodations = pathways.flatMap((route) =>
-  route.stages.flatMap((stage) =>
-    accommodationNames.map((name, index) => {
-      const id = `${route.id}-${stage.id}-${index + 1}`;
-      const partner = index % 5 === 0;
-      const [longitude, latitude] = lodgingLocations[stage.end.join(',')][index];
+  [
+    ...route.stages.map((stage) => ({
+      id: stage.id,
+      town: stage.to,
+      positions: lodgingLocations[stage.end.join(',')] ?? [],
+    })),
+    {
+      id: 0,
+      town: route.stages[0].from,
+      positions: lodgingLocations[route.stages[0].start.join(',')] ?? [],
+    },
+    // Intermediate points are named places and dry building footprints from the offline map.
+    ...route.stages.flatMap((stage) =>
+      (intermediateLodgings[route.id]?.[stage.id] ?? []).map(({ key, town, positions }, index) => ({
+        id: stage.id,
+        key,
+        town,
+        positions,
+        group: index + 1,
+      })),
+    ),
+  ].flatMap((stop) =>
+    stop.positions.map(([longitude, latitude], index) => {
+      const group = stop.group ?? 0;
+      const prefix = group ? `${route.id}-${stop.id}-via-${stop.key}` : `${route.id}-${stop.id}`;
+      const id = `${prefix}-${index + 1}`;
+      const seed = index + group * 3;
+      const partner = group ? index === 1 && group % 3 === 0 : index % 5 === 0;
       return {
         id,
         routeId: route.id,
-        stageId: stage.id,
-        name,
+        stageId: stop.id,
+        ...(group ? { intermediate: true } : {}),
+        name: group
+          ? intermediateNames[(seed + stop.id) % intermediateNames.length]
+          : accommodationNames[index],
         location: {
           coordinates: {
             latitude,
             longitude,
           },
-          address: `${stage.to} · Morada de demonstração`,
+          address: `${stop.town} · Morada de demonstração`,
         },
-        price: 18 + ((index * 11 + stage.id * 7) % 65),
+        price: 18 + ((seed * 11 + stop.id * 7) % 65),
         currency: 'EUR',
-        review_score: Number((8 + (((index + 3) * stage.id) % 18) / 10).toFixed(1)),
-        review_count: 21 + ((stage.id * 33 + index * 29) % 340),
+        review_score: Number((8 + (((seed + 3) * stop.id) % 18) / 10).toFixed(1)),
+        review_count: 21 + ((stop.id * 33 + seed * 29) % 340),
         photos: [1, 2, 3].map((photo) => `https://picsum.photos/seed/${id}-${photo}/640/420`),
-        facilities: facilities.filter((_, feature) => feature === 0 || (index + feature) % 3 !== 0),
+        facilities: facilities.filter((_, feature) => feature === 0 || (seed + feature) % 3 !== 0),
         cancellation: 'Cancelamento gratuito até 48 horas antes da chegada.',
         partner,
         source: partner ? 'parceiro' : 'booking',
@@ -157,8 +280,8 @@ const accommodations = pathways.flatMap((route) =>
   ),
 );
 
-const points = pathways.flatMap((route) =>
-  route.stages.flatMap((stage) =>
+const points = pathways.flatMap((route) => [
+  ...route.stages.flatMap((stage) =>
     ['stamp', 'water', 'cafe', 'pharmacy', 'church'].map((kind, index) => ({
       id: `${route.id}-${stage.id}-${kind}`,
       routeId: route.id,
@@ -168,7 +291,16 @@ const points = pathways.flatMap((route) =>
       coordinates: [stage.end[0] + (index - 2) * 0.001, stage.end[1] + index * 0.0005],
     })),
   ),
-);
+  ...['stamp', 'church'].map((kind, index) => ({
+    id: `${route.id}-0-${kind}`,
+    routeId: route.id,
+    stageId: 0,
+    kind,
+    location: route.stages[0].from,
+    coordinates:
+      lodgingLocations[route.stages[0].start.join(',')]?.[index] ?? route.stages[0].start,
+  })),
+]);
 
 const warnings = [
   {

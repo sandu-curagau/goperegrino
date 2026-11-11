@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, inject, signal } from '@angular/core';
 import { IonApp, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -24,10 +24,16 @@ import {
   playOutline,
   refreshOutline,
   checkmarkOutline,
-  listOutline,
   bagOutline,
   bookOutline,
+  cardOutline,
   cafeOutline,
+  cameraOutline,
+  chatbubblesOutline,
+  locationOutline,
+  chevronForwardOutline,
+  chevronBackOutline,
+  arrowUpOutline,
   downloadOutline,
   informationCircleOutline,
   sparklesOutline,
@@ -63,8 +69,22 @@ export class App {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   protected readonly activeTab = signal('mapa');
+  protected readonly creditOpen = signal(false);
 
   constructor() {
+    const destroy = inject(DestroyRef);
+    afterNextRender(() => {
+      try {
+        const key = 'goperegrino-map-attribution';
+        if (sessionStorage.getItem(key)) return;
+        sessionStorage.setItem(key, 'seen');
+      } catch {
+        // Show the launch attribution when session storage is unavailable.
+      }
+      this.creditOpen.set(true);
+      const timer = setTimeout(() => this.creditOpen.set(false), 5000);
+      destroy.onDestroy(() => clearTimeout(timer));
+    });
     addIcons({
       batteryFull,
       bedOutline,
@@ -88,10 +108,16 @@ export class App {
       playOutline,
       refreshOutline,
       checkmarkOutline,
-      listOutline,
       bagOutline,
       bookOutline,
+      cardOutline,
       cafeOutline,
+      cameraOutline,
+      chatbubblesOutline,
+      locationOutline,
+      chevronForwardOutline,
+      chevronBackOutline,
+      arrowUpOutline,
       downloadOutline,
       informationCircleOutline,
       sparklesOutline,

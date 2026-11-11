@@ -1,0 +1,15 @@
+.download-success,
+.success {
+  color: #176046;
+  font-size: 13px;
+  font-weight: 700;
+}
+.download-success {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+progress {
+  width: 100%;
+  accent-color: var(--brand);
+}

@@ -1,0 +1,122 @@
+.profile-identity {
+  padding: 20px;
+  margin-bottom: 20px;
+  background: linear-gradient(150deg, #edf4f6, #fff 75%);
+}
+.identity-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.profile-identity h2 {
+  margin: 16px 0 6px;
+  font-size: 27px;
+  letter-spacing: -0.05em;
+  overflow-wrap: anywhere;
+}
+.profile-bio {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 18px;
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.profile-stats strong {
+  display: block;
+  font-size: 22px;
+  letter-spacing: -0.045em;
+}
+.profile-stats small {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.featured-badges {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.featured-badges > .wide {
+  grid-column: 1 / -1;
+}
+.featured-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 14px 7px;
+  border: 1px solid #e8e6d9;
+  border-radius: 18px;
+  background: #fffdf5;
+  color: var(--ink);
+  text-align: center;
+}
+.featured-badge strong {
+  font-size: 10px;
+  line-height: 1.45;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.badge-symbol {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 42px;
+  height: 42px;
+  background: #fff0c8;
+  color: #886313;
+  border-radius: 15px;
+  font-size: 22px;
+}
+.achievement-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+}
+.achievement-copy {
+  flex: 1;
+  min-width: 0;
+}
+.achievement-copy strong {
+  font-size: 13px;
+}
+.achievement-copy small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.achievement-row input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand);
+}
+.achievement-row.locked .badge-symbol {
+  background: #edf0f2;
+  color: #8b969c;
+}
+.achievement-row > ion-icon {
+  color: #8b969c;
+}
+.achievement-row progress {
+  display: block;
+  width: 100%;
+  height: 5px;
+  margin-top: 9px;
+  accent-color: var(--brand);
+}

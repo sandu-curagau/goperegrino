@@ -162,6 +162,316 @@
           }
         ]
       }
+    ],
+    "planningStops": [
+      {
+        "id": -101,
+        "stageId": 1,
+        "name": "Beato",
+        "position": [
+          -9.109318,
+          38.730686
+        ],
+        "distance": 5.552683857628621,
+        "ascent": 12.813885825296817
+      },
+      {
+        "id": 1,
+        "stageId": 1,
+        "name": "Parque das Nações",
+        "position": [
+          -9.096,
+          38.767
+        ],
+        "distance": 13,
+        "ascent": 30
+      },
+      {
+        "id": -201,
+        "stageId": 2,
+        "name": "Bobadela",
+        "position": [
+          -9.089869603128422,
+          38.80592626323282
+        ],
+        "distance": 18.130863659426105,
+        "ascent": 41.910933495096316
+      },
+      {
+        "id": -202,
+        "stageId": 2,
+        "name": "Santa Iria de Azoia",
+        "position": [
+          -9.073261,
+          38.842566
+        ],
+        "distance": 22.48857638010281,
+        "ascent": 52.02705231095295
+      },
+      {
+        "id": -203,
+        "stageId": 2,
+        "name": "Forte da Casa",
+        "position": [
+          -9.056723,
+          38.870136
+        ],
+        "distance": 26.197881610095173,
+        "ascent": 60.63793945200665
+      },
+      {
+        "id": -204,
+        "stageId": 2,
+        "name": "Arcena",
+        "position": [
+          -9.051031369825457,
+          38.90742355925625
+        ],
+        "distance": 32.001189478186895,
+        "ascent": 74.109904145791
+      },
+      {
+        "id": -205,
+        "stageId": 2,
+        "name": "Alhandra",
+        "position": [
+          -9.008114,
+          38.930095
+        ],
+        "distance": 37.612265588537866,
+        "ascent": 87.13561654482007
+      },
+      {
+        "id": 2,
+        "stageId": 2,
+        "name": "Vila Franca de Xira",
+        "position": [
+          -8.989,
+          38.9537
+        ],
+        "distance": 41,
+        "ascent": 95
+      },
+      {
+        "id": -301,
+        "stageId": 3,
+        "name": "Castanheira do Ribatejo",
+        "position": [
+          -8.964999694208037,
+          38.98906658463438
+        ],
+        "distance": 46.22372448243312,
+        "ascent": 101.5296556030414
+      },
+      {
+        "id": -302,
+        "stageId": 3,
+        "name": "Casal Pinheiro",
+        "position": [
+          -8.951113131155752,
+          39.02467878929288
+        ],
+        "distance": 51.66211863458342,
+        "ascent": 108.32764829322927
+      },
+      {
+        "id": -303,
+        "stageId": 3,
+        "name": "Casais de Baixo",
+        "position": [
+          -8.901093,
+          39.051319
+        ],
+        "distance": 57.08651775569639,
+        "ascent": 115.10814719462049
+      },
+      {
+        "id": 3,
+        "stageId": 3,
+        "name": "Azambuja",
+        "position": [
+          -8.868,
+          39.0694
+        ],
+        "distance": 61,
+        "ascent": 120
+      },
+      {
+        "id": -401,
+        "stageId": 4,
+        "name": "Virtudes",
+        "position": [
+          -8.824582231811243,
+          39.087460747663194
+        ],
+        "distance": 66.13438682243032,
+        "ascent": 136.84720676109944
+      },
+      {
+        "id": -402,
+        "stageId": 4,
+        "name": "Valada",
+        "position": [
+          -8.760736,
+          39.097456
+        ],
+        "distance": 72.48787472843445,
+        "ascent": 157.69458895267553
+      },
+      {
+        "id": -403,
+        "stageId": 4,
+        "name": "Porto de Muge",
+        "position": [
+          -8.73632,
+          39.114986
+        ],
+        "distance": 76.18079478416487,
+        "ascent": 169.811982885541
+      },
+      {
+        "id": 4,
+        "stageId": 4,
+        "name": "Santarém",
+        "position": [
+          -8.6879,
+          39.2362
+        ],
+        "distance": 93,
+        "ascent": 225
+      },
+      {
+        "id": -501,
+        "stageId": 5,
+        "name": "Portela das Padeiras",
+        "position": [
+          -8.69048331791957,
+          39.26753619364917
+        ],
+        "distance": 97.4146863155825,
+        "ascent": 245.69384210429297
+      },
+      {
+        "id": -502,
+        "stageId": 5,
+        "name": "Póvoa de Santarém",
+        "position": [
+          -8.679211000172014,
+          39.30196061246556
+        ],
+        "distance": 101.57465333688943,
+        "ascent": 265.1936875166692
+      },
+      {
+        "id": -503,
+        "stageId": 5,
+        "name": "Torre do Bispo",
+        "position": [
+          -8.68164,
+          39.340172
+        ],
+        "distance": 106.56199419262578,
+        "ascent": 288.5718477779333
+      },
+      {
+        "id": -504,
+        "stageId": 5,
+        "name": "Advagar",
+        "position": [
+          -8.698024,
+          39.355565
+        ],
+        "distance": 108.95013000561484,
+        "ascent": 299.7662344013196
+      },
+      {
+        "id": -505,
+        "stageId": 5,
+        "name": "Arneiro das Milhariças",
+        "position": [
+          -8.703347,
+          39.387552
+        ],
+        "distance": 112.88205356985392,
+        "ascent": 318.19712610869027
+      },
+      {
+        "id": -506,
+        "stageId": 5,
+        "name": "Malhou",
+        "position": [
+          -8.686089,
+          39.423943
+        ],
+        "distance": 119.0522589308128,
+        "ascent": 347.119963738185
+      },
+      {
+        "id": 5,
+        "stageId": 5,
+        "name": "Monsanto",
+        "position": [
+          -8.7084,
+          39.4621
+        ],
+        "distance": 125,
+        "ascent": 375
+      },
+      {
+        "id": -601,
+        "stageId": 6,
+        "name": "Minde",
+        "position": [
+          -8.685890170943264,
+          39.50638502217346
+        ],
+        "distance": 131.67193806546655,
+        "ascent": 492.42610995221116
+      },
+      {
+        "id": -602,
+        "stageId": 6,
+        "name": "Vale Alto",
+        "position": [
+          -8.675467,
+          39.538786
+        ],
+        "distance": 136.47470695482443,
+        "ascent": 576.9548424049099
+      },
+      {
+        "id": -603,
+        "stageId": 6,
+        "name": "Maxieira",
+        "position": [
+          -8.652975439528147,
+          39.57278278209877
+        ],
+        "distance": 141.48523413194502,
+        "ascent": 665.1401207222324
+      },
+      {
+        "id": -604,
+        "stageId": 6,
+        "name": "Pederneira",
+        "position": [
+          -8.665244140988612,
+          39.60281541578995
+        ],
+        "distance": 145.57810129124778,
+        "ascent": 737.1745827259606
+      },
+      {
+        "id": 6,
+        "stageId": 6,
+        "name": "Fátima",
+        "position": [
+          -8.6732,
+          39.6313
+        ],
+        "distance": 150,
+        "ascent": 815
+      }
     ]
   },
   {
@@ -404,6 +714,514 @@
             "number": "000 000 000"
           }
         ]
+      }
+    ],
+    "planningStops": [
+      {
+        "id": -101,
+        "stageId": 1,
+        "name": "Canidelo",
+        "position": [
+          -8.644861,
+          41.123219
+        ],
+        "distance": 4.092419329855984,
+        "ascent": 36.6163834776588
+      },
+      {
+        "id": -102,
+        "stageId": 1,
+        "name": "Francelos",
+        "position": [
+          -8.655438,
+          41.083066
+        ],
+        "distance": 9.733330780969304,
+        "ascent": 87.0876964613043
+      },
+      {
+        "id": -103,
+        "stageId": 1,
+        "name": "Arcozelo",
+        "position": [
+          -8.653489907778548,
+          41.05076628411301
+        ],
+        "distance": 13.523863392641275,
+        "ascent": 121.00298824994825
+      },
+      {
+        "id": 1,
+        "stageId": 1,
+        "name": "Espinho",
+        "position": [
+          -8.6414,
+          41.007
+        ],
+        "distance": 19,
+        "ascent": 170
+      },
+      {
+        "id": -201,
+        "stageId": 2,
+        "name": "Paramos",
+        "position": [
+          -8.648591,
+          40.977972
+        ],
+        "distance": 22.75227528172232,
+        "ascent": 183.82417209055592
+      },
+      {
+        "id": -202,
+        "stageId": 2,
+        "name": "Cortegaça",
+        "position": [
+          -8.63022662958574,
+          40.9402851452882
+        ],
+        "distance": 28.180788832601316,
+        "ascent": 203.82395885695223
+      },
+      {
+        "id": -203,
+        "stageId": 2,
+        "name": "Sobral",
+        "position": [
+          -8.620627212606099,
+          40.87873435997442
+        ],
+        "distance": 35.45214702313153,
+        "ascent": 230.61317324311617
+      },
+      {
+        "id": 2,
+        "stageId": 2,
+        "name": "Ovar",
+        "position": [
+          -8.6248,
+          40.8584
+        ],
+        "distance": 38,
+        "ascent": 240
+      },
+      {
+        "id": -301,
+        "stageId": 3,
+        "name": "Monte de Baixo",
+        "position": [
+          -8.609013,
+          40.80944
+        ],
+        "distance": 43.65827703802263,
+        "ascent": 285.70146838402894
+      },
+      {
+        "id": -302,
+        "stageId": 3,
+        "name": "Falcão",
+        "position": [
+          -8.579356216677201,
+          40.78451594917182
+        ],
+        "distance": 47.85872477024034,
+        "ascent": 319.6281616057874
+      },
+      {
+        "id": -303,
+        "stageId": 3,
+        "name": "Cadaval",
+        "position": [
+          -8.56852,
+          40.740714
+        ],
+        "distance": 53.77870016058047,
+        "ascent": 367.4433474508423
+      },
+      {
+        "id": -304,
+        "stageId": 3,
+        "name": "Vale do Castanheiro",
+        "position": [
+          -8.544485,
+          40.734017
+        ],
+        "distance": 56.17112314013683,
+        "ascent": 386.76676382418214
+      },
+      {
+        "id": 3,
+        "stageId": 3,
+        "name": "Albergaria-a-Velha",
+        "position": [
+          -8.4792,
+          40.6945
+        ],
+        "distance": 64,
+        "ascent": 450
+      },
+      {
+        "id": -401,
+        "stageId": 4,
+        "name": "Serém",
+        "position": [
+          -8.47289620805539,
+          40.65788063320402
+        ],
+        "distance": 68.86328505414563,
+        "ascent": 497.28193802641596
+      },
+      {
+        "id": -402,
+        "stageId": 4,
+        "name": "Cavadas de Baixo",
+        "position": [
+          -8.449225,
+          40.633784
+        ],
+        "distance": 73.84711029323229,
+        "ascent": 545.7357945175361
+      },
+      {
+        "id": -403,
+        "stageId": 4,
+        "name": "Mourisca do Vouga",
+        "position": [
+          -8.462387,
+          40.610872
+        ],
+        "distance": 77.56611359062397,
+        "ascent": 581.8927710199553
+      },
+      {
+        "id": 4,
+        "stageId": 4,
+        "name": "Águeda",
+        "position": [
+          -8.4498,
+          40.5753
+        ],
+        "distance": 82,
+        "ascent": 625
+      },
+      {
+        "id": -501,
+        "stageId": 5,
+        "name": "Borralha",
+        "position": [
+          -8.439354,
+          40.557257
+        ],
+        "distance": 84.40958173764992,
+        "ascent": 646.6862356388492
+      },
+      {
+        "id": -502,
+        "stageId": 5,
+        "name": "Almas da Areosa",
+        "position": [
+          -8.431954,
+          40.507848
+        ],
+        "distance": 91.00913362049785,
+        "ascent": 706.0822025844807
+      },
+      {
+        "id": -503,
+        "stageId": 5,
+        "name": "Candieira",
+        "position": [
+          -8.422723153581124,
+          40.48398069096675
+        ],
+        "distance": 93.55158483074652,
+        "ascent": 728.9642634767188
+      },
+      {
+        "id": -504,
+        "stageId": 5,
+        "name": "Arcos",
+        "position": [
+          -8.442132,
+          40.446496
+        ],
+        "distance": 98.67453740051099,
+        "ascent": 775.0708366045988
+      },
+      {
+        "id": -505,
+        "stageId": 5,
+        "name": "Aguim",
+        "position": [
+          -8.444906,
+          40.41437
+        ],
+        "distance": 102.38047677817462,
+        "ascent": 808.4242910035716
+      },
+      {
+        "id": 5,
+        "stageId": 5,
+        "name": "Mealhada",
+        "position": [
+          -8.4478,
+          40.3782
+        ],
+        "distance": 107,
+        "ascent": 850
+      },
+      {
+        "id": -601,
+        "stageId": 6,
+        "name": "Ponte de Viadores",
+        "position": [
+          -8.453769117670664,
+          40.35633537964953
+        ],
+        "distance": 110.16831173922422,
+        "ascent": 876.6426214434764
+      },
+      {
+        "id": -602,
+        "stageId": 6,
+        "name": "Carqueijo",
+        "position": [
+          -8.461693,
+          40.316005
+        ],
+        "distance": 115.5617157959049,
+        "ascent": 921.9962464655639
+      },
+      {
+        "id": -603,
+        "stageId": 6,
+        "name": "Adões",
+        "position": [
+          -8.453307,
+          40.279552
+        ],
+        "distance": 120.00367109721873,
+        "ascent": 959.3490524084302
+      },
+      {
+        "id": -604,
+        "stageId": 6,
+        "name": "Pedrulha",
+        "position": [
+          -8.45213968733523,
+          40.242249552778596
+        ],
+        "distance": 124.45662576310227,
+        "ascent": 996.7943530079053
+      },
+      {
+        "id": 6,
+        "stageId": 6,
+        "name": "Coimbra",
+        "position": [
+          -8.426,
+          40.2089
+        ],
+        "distance": 129,
+        "ascent": 1035
+      },
+      {
+        "id": -701,
+        "stageId": 7,
+        "name": "Cruz dos Morouços",
+        "position": [
+          -8.449503255225364,
+          40.18254555003681
+        ],
+        "distance": 133.6028995195885,
+        "ascent": 1099.7282744942133
+      },
+      {
+        "id": -702,
+        "stageId": 7,
+        "name": "Palheira",
+        "position": [
+          -8.450893,
+          40.164658
+        ],
+        "distance": 135.94486962324683,
+        "ascent": 1132.6622290769085
+      },
+      {
+        "id": -703,
+        "stageId": 7,
+        "name": "Casconha",
+        "position": [
+          -8.462136,
+          40.133438
+        ],
+        "distance": 140.20193478334576,
+        "ascent": 1192.5272078908
+      },
+      {
+        "id": 7,
+        "stageId": 7,
+        "name": "Condeixa-a-Nova",
+        "position": [
+          -8.498,
+          40.1128
+        ],
+        "distance": 145,
+        "ascent": 1260
+      },
+      {
+        "id": -801,
+        "stageId": 8,
+        "name": "Condeixa-a-Velha",
+        "position": [
+          -8.491372291905463,
+          40.09798216254571
+        ],
+        "distance": 147.2489422138974,
+        "ascent": 1282.8106995981022
+      },
+      {
+        "id": -802,
+        "stageId": 8,
+        "name": "Ordem",
+        "position": [
+          -8.478838,
+          40.051986
+        ],
+        "distance": 153.48021558402684,
+        "ascent": 1346.0136152094149
+      },
+      {
+        "id": -803,
+        "stageId": 8,
+        "name": "Covão das Favas",
+        "position": [
+          -8.548385,
+          39.97951
+        ],
+        "distance": 166.92894153303206,
+        "ascent": 1482.422121263611
+      },
+      {
+        "id": -804,
+        "stageId": 8,
+        "name": "Pousadas Vedras",
+        "position": [
+          -8.560433,
+          39.953523
+        ],
+        "distance": 171.42813885195437,
+        "ascent": 1528.0568369269658
+      },
+      {
+        "id": -805,
+        "stageId": 8,
+        "name": "Covão da Silva",
+        "position": [
+          -8.591264218286547,
+          39.93460857168976
+        ],
+        "distance": 175.43072917798207,
+        "ascent": 1568.6545388052468
+      },
+      {
+        "id": 8,
+        "stageId": 8,
+        "name": "Pombal",
+        "position": [
+          -8.6281,
+          39.9158
+        ],
+        "distance": 180,
+        "ascent": 1615
+      },
+      {
+        "id": -901,
+        "stageId": 9,
+        "name": "Águas Férreas",
+        "position": [
+          -8.658983,
+          39.885001
+        ],
+        "distance": 183.94502456841286,
+        "ascent": 1672.3261382597493
+      },
+      {
+        "id": -902,
+        "stageId": 9,
+        "name": "Palão",
+        "position": [
+          -8.689995291362019,
+          39.84357160934638
+        ],
+        "distance": 188.16580683501695,
+        "ascent": 1733.6593805713399
+      },
+      {
+        "id": -903,
+        "stageId": 9,
+        "name": "Lameiria",
+        "position": [
+          -8.703345,
+          39.804138
+        ],
+        "distance": 192.3354136021117,
+        "ascent": 1794.2489789056854
+      },
+      {
+        "id": -904,
+        "stageId": 9,
+        "name": "Longra",
+        "position": [
+          -8.709717863354768,
+          39.76994204257431
+        ],
+        "distance": 196.23854133128572,
+        "ascent": 1850.9663037202458
+      },
+      {
+        "id": -905,
+        "stageId": 9,
+        "name": "Caldelas",
+        "position": [
+          -8.705873645503226,
+          39.73051509439713
+        ],
+        "distance": 200.439495664916,
+        "ascent": 1912.0114213808106
+      },
+      {
+        "id": -906,
+        "stageId": 9,
+        "name": "Barreiria",
+        "position": [
+          -8.704622,
+          39.694171
+        ],
+        "distance": 204.74053011929706,
+        "ascent": 1974.5108282960355
+      },
+      {
+        "id": -907,
+        "stageId": 9,
+        "name": "Chainça",
+        "position": [
+          -8.70015,
+          39.664259
+        ],
+        "distance": 207.97808514045718,
+        "ascent": 2021.5565496972683
+      },
+      {
+        "id": 9,
+        "stageId": 9,
+        "name": "Fátima",
+        "position": [
+          -8.6732,
+          39.6313
+        ],
+        "distance": 212,
+        "ascent": 2080
       }
     ]
   },
@@ -699,6 +1517,525 @@
             "number": "000 000 000"
           }
         ]
+      }
+    ],
+    "planningStops": [
+      {
+        "id": -101,
+        "stageId": 1,
+        "name": "São Mamede de Infesta",
+        "position": [
+          -8.63206,
+          41.185938
+        ],
+        "distance": 5.721254758221743,
+        "ascent": 46.617631363288275
+      },
+      {
+        "id": -102,
+        "stageId": 1,
+        "name": "Guifões",
+        "position": [
+          -8.653688,
+          41.215197
+        ],
+        "distance": 10.528798106170715,
+        "ascent": 85.79020679102064
+      },
+      {
+        "id": -103,
+        "stageId": 1,
+        "name": "Pinheiral",
+        "position": [
+          -8.66498127443662,
+          41.25985254797787
+        ],
+        "distance": 17.080388970932617,
+        "ascent": 139.17353976315468
+      },
+      {
+        "id": -104,
+        "stageId": 1,
+        "name": "Vilar",
+        "position": [
+          -8.667514,
+          41.289483
+        ],
+        "distance": 21.328076583019733,
+        "ascent": 173.78432771349412
+      },
+      {
+        "id": 1,
+        "stageId": 1,
+        "name": "Vilarinho",
+        "position": [
+          -8.6655,
+          41.3313
+        ],
+        "distance": 27,
+        "ascent": 220
+      },
+      {
+        "id": -201,
+        "stageId": 2,
+        "name": "Tougues",
+        "position": [
+          -8.679121,
+          41.360763
+        ],
+        "distance": 31.64453530598254,
+        "ascent": 275.0463443672005
+      },
+      {
+        "id": -202,
+        "stageId": 2,
+        "name": "Arcos",
+        "position": [
+          -8.665885,
+          41.394397
+        ],
+        "distance": 36.13279003071658,
+        "ascent": 328.2404744381224
+      },
+      {
+        "id": -203,
+        "stageId": 2,
+        "name": "São Pedro de Rates",
+        "position": [
+          -8.667638,
+          41.422035
+        ],
+        "distance": 38.98311406712878,
+        "ascent": 362.02209264745227
+      },
+      {
+        "id": -204,
+        "stageId": 2,
+        "name": "Gueral",
+        "position": [
+          -8.641409,
+          41.456997
+        ],
+        "distance": 43.25770334647552,
+        "ascent": 412.6838915137839
+      },
+      {
+        "id": -205,
+        "stageId": 2,
+        "name": "Carvalhal",
+        "position": [
+          -8.640614,
+          41.510136
+        ],
+        "distance": 49.904272648908545,
+        "ascent": 491.4580462092864
+      },
+      {
+        "id": 2,
+        "stageId": 2,
+        "name": "Barcelos",
+        "position": [
+          -8.6152,
+          41.5319
+        ],
+        "distance": 54,
+        "ascent": 540
+      },
+      {
+        "id": -301,
+        "stageId": 3,
+        "name": "Lijó",
+        "position": [
+          -8.618315404811582,
+          41.56981708043521
+        ],
+        "distance": 59.44548844758708,
+        "ascent": 589.3497390562579
+      },
+      {
+        "id": -302,
+        "stageId": 3,
+        "name": "Aborim",
+        "position": [
+          -8.625621,
+          41.604335
+        ],
+        "distance": 63.49843581259911,
+        "ascent": 626.0795745516795
+      },
+      {
+        "id": -303,
+        "stageId": 3,
+        "name": "Aguiar",
+        "position": [
+          -8.64411,
+          41.623714
+        ],
+        "distance": 67.27275594597869,
+        "ascent": 660.2843507604318
+      },
+      {
+        "id": -304,
+        "stageId": 3,
+        "name": "Carvoeiro",
+        "position": [
+          -8.63879,
+          41.647087
+        ],
+        "distance": 70.02680192021184,
+        "ascent": 685.2428924019198
+      },
+      {
+        "id": -305,
+        "stageId": 3,
+        "name": "Seara",
+        "position": [
+          -8.62169,
+          41.732202
+        ],
+        "distance": 80.76619670849497,
+        "ascent": 782.5686576707357
+      },
+      {
+        "id": 3,
+        "stageId": 3,
+        "name": "Ponte de Lima",
+        "position": [
+          -8.5842,
+          41.7674
+        ],
+        "distance": 86,
+        "ascent": 830
+      },
+      {
+        "id": -401,
+        "stageId": 4,
+        "name": "Brandara",
+        "position": [
+          -8.590897,
+          41.786802
+        ],
+        "distance": 88.40086566087597,
+        "ascent": 903.359784082321
+      },
+      {
+        "id": -402,
+        "stageId": 4,
+        "name": "Labruja",
+        "position": [
+          -8.59740855754983,
+          41.836711209054855
+        ],
+        "distance": 94.80858712546038,
+        "ascent": 1099.1512732779556
+      },
+      {
+        "id": 4,
+        "stageId": 4,
+        "name": "Rubiães",
+        "position": [
+          -8.623,
+          41.9013
+        ],
+        "distance": 104,
+        "ascent": 1380
+      },
+      {
+        "id": -501,
+        "stageId": 5,
+        "name": "Fontoura",
+        "position": [
+          -8.63288389888565,
+          41.95635407648134
+        ],
+        "distance": 112.50932957414473,
+        "ascent": 1469.145357443421
+      },
+      {
+        "id": -502,
+        "stageId": 5,
+        "name": "Cerdal",
+        "position": [
+          -8.634017,
+          41.977687
+        ],
+        "distance": 115.14172746485343,
+        "ascent": 1496.7228591556072
+      },
+      {
+        "id": -503,
+        "stageId": 5,
+        "name": "Arão",
+        "position": [
+          -8.64363253845663,
+          42.01579965443456
+        ],
+        "distance": 120.32292287319294,
+        "ascent": 1551.0020491477355
+      },
+      {
+        "id": 5,
+        "stageId": 5,
+        "name": "Valença/Tui",
+        "position": [
+          -8.6449,
+          42.0467
+        ],
+        "distance": 125,
+        "ascent": 1600
+      },
+      {
+        "id": -601,
+        "stageId": 6,
+        "name": "Montes dos Cucos",
+        "position": [
+          -8.63711,
+          42.085469
+        ],
+        "distance": 131.22513640499653,
+        "ascent": 1644.231232351291
+      },
+      {
+        "id": -602,
+        "stageId": 6,
+        "name": "Centeáns",
+        "position": [
+          -8.626612099122893,
+          42.12814305954591
+        ],
+        "distance": 138.71445553233278,
+        "ascent": 1697.4448156244698
+      },
+      {
+        "id": 6,
+        "stageId": 6,
+        "name": "O Porriño",
+        "position": [
+          -8.6188,
+          42.1612
+        ],
+        "distance": 144,
+        "ascent": 1735
+      },
+      {
+        "id": -701,
+        "stageId": 7,
+        "name": "Veiga do Muíño",
+        "position": [
+          -8.608574139787894,
+          42.19824792799636
+        ],
+        "distance": 149.3538159188189,
+        "ascent": 1842.0763183763781
+      },
+      {
+        "id": -702,
+        "stageId": 7,
+        "name": "A Millarada",
+        "position": [
+          -8.610914,
+          42.248301
+        ],
+        "distance": 155.77476084506526,
+        "ascent": 1970.4952169013052
+      },
+      {
+        "id": 7,
+        "stageId": 7,
+        "name": "Redondela",
+        "position": [
+          -8.6093,
+          42.2837
+        ],
+        "distance": 160,
+        "ascent": 2055
+      },
+      {
+        "id": -801,
+        "stageId": 8,
+        "name": "A Xesteira",
+        "position": [
+          -8.606822,
+          42.331688
+        ],
+        "distance": 166.25752053801898,
+        "ascent": 2141.0409073977607
+      },
+      {
+        "id": -802,
+        "stageId": 8,
+        "name": "As Laceiras",
+        "position": [
+          -8.613656858535423,
+          42.3535796107307
+        ],
+        "distance": 169.44880773369863,
+        "ascent": 2184.921106338356
+      },
+      {
+        "id": -803,
+        "stageId": 8,
+        "name": "A Esculca",
+        "position": [
+          -8.631749,
+          42.391468
+        ],
+        "distance": 174.7988365141776,
+        "ascent": 2258.484002069942
+      },
+      {
+        "id": 8,
+        "stageId": 8,
+        "name": "Pontevedra",
+        "position": [
+          -8.6441,
+          42.431
+        ],
+        "distance": 180,
+        "ascent": 2330
+      },
+      {
+        "id": -901,
+        "stageId": 9,
+        "name": "A Cañota",
+        "position": [
+          -8.649175,
+          42.472542
+        ],
+        "distance": 185.17131090034326,
+        "ascent": 2380.5378110715365
+      },
+      {
+        "id": -902,
+        "stageId": 9,
+        "name": "A Cancela",
+        "position": [
+          -8.645503,
+          42.51845
+        ],
+        "distance": 190.80837880081737,
+        "ascent": 2435.6273382807153
+      },
+      {
+        "id": -903,
+        "stageId": 9,
+        "name": "A Seca",
+        "position": [
+          -8.637575596329459,
+          42.558186340397626
+        ],
+        "distance": 196.04161275909104,
+        "ascent": 2486.7703065092987
+      },
+      {
+        "id": 9,
+        "stageId": 9,
+        "name": "Caldas de Reis",
+        "position": [
+          -8.6424,
+          42.6049
+        ],
+        "distance": 202,
+        "ascent": 2545
+      },
+      {
+        "id": -1001,
+        "stageId": 10,
+        "name": "O Cruceiro",
+        "position": [
+          -8.64470703758265,
+          42.648138764822356
+        ],
+        "distance": 208.70849203116572,
+        "ascent": 2617.6753303376286
+      },
+      {
+        "id": -1002,
+        "stageId": 10,
+        "name": "O Pino",
+        "position": [
+          -8.637396529713829,
+          42.6788947789189
+        ],
+        "distance": 214.91909345591958,
+        "ascent": 2684.956845772462
+      },
+      {
+        "id": -1003,
+        "stageId": 10,
+        "name": "A Tarroeira",
+        "position": [
+          -8.647487,
+          42.706734
+        ],
+        "distance": 219.95889684797177,
+        "ascent": 2739.5547158530276
+      },
+      {
+        "id": 10,
+        "stageId": 10,
+        "name": "Padrón",
+        "position": [
+          -8.6605,
+          42.7388
+        ],
+        "distance": 226,
+        "ascent": 2805
+      },
+      {
+        "id": -1101,
+        "stageId": 11,
+        "name": "Tarrío",
+        "position": [
+          -8.653579,
+          42.773857
+        ],
+        "distance": 232.9491403205617,
+        "ascent": 2907.19324000826
+      },
+      {
+        "id": -1102,
+        "stageId": 11,
+        "name": "O Sisto",
+        "position": [
+          -8.637434,
+          42.806528
+        ],
+        "distance": 240.00589920931102,
+        "ascent": 3010.96910601928
+      },
+      {
+        "id": -1103,
+        "stageId": 11,
+        "name": "A Pedreira",
+        "position": [
+          -8.610892,
+          42.826756
+        ],
+        "distance": 245.7895222403696,
+        "ascent": 3096.0223858877885
+      },
+      {
+        "id": -1104,
+        "stageId": 11,
+        "name": "O Porto",
+        "position": [
+          -8.572365,
+          42.854481
+        ],
+        "distance": 253.56958162007922,
+        "ascent": 3210.4350238246943
+      },
+      {
+        "id": 11,
+        "stageId": 11,
+        "name": "Santiago",
+        "position": [
+          -8.5447,
+          42.8806
+        ],
+        "distance": 260,
+        "ascent": 3305
       }
     ]
   },
@@ -1020,6 +2357,569 @@
             "number": "000 000 000"
           }
         ]
+      }
+    ],
+    "planningStops": [
+      {
+        "id": -101,
+        "stageId": 1,
+        "name": "Foz do Douro",
+        "position": [
+          -8.670497950163787,
+          41.14755719304143
+        ],
+        "distance": 5.594385315682867,
+        "ascent": 31.46841740071613
+      },
+      {
+        "id": -102,
+        "stageId": 1,
+        "name": "Matosinhos",
+        "position": [
+          -8.689572259123652,
+          41.17952891381595
+        ],
+        "distance": 10.208917370055993,
+        "ascent": 57.42516020656496
+      },
+      {
+        "id": -103,
+        "stageId": 1,
+        "name": "Perafita",
+        "position": [
+          -8.714596734297992,
+          41.220831720757175
+        ],
+        "distance": 16.588093850192248,
+        "ascent": 93.3080279073314
+      },
+      {
+        "id": -104,
+        "stageId": 1,
+        "name": "Lavra",
+        "position": [
+          -8.723368,
+          41.258505
+        ],
+        "distance": 21.7098512669264,
+        "ascent": 122.11791337646099
+      },
+      {
+        "id": 1,
+        "stageId": 1,
+        "name": "Labruge",
+        "position": [
+          -8.729,
+          41.2759
+        ],
+        "distance": 24,
+        "ascent": 135
+      },
+      {
+        "id": -201,
+        "stageId": 2,
+        "name": "Areia - Mindelo",
+        "position": [
+          -8.739738,
+          41.311372
+        ],
+        "distance": 29.02553498851758,
+        "ascent": 153.42696162456446
+      },
+      {
+        "id": -202,
+        "stageId": 2,
+        "name": "Azurara",
+        "position": [
+          -8.74022,
+          41.344983
+        ],
+        "distance": 33.64947483391064,
+        "ascent": 170.381407724339
+      },
+      {
+        "id": 2,
+        "stageId": 2,
+        "name": "Póvoa de Varzim",
+        "position": [
+          -8.7614,
+          41.3794
+        ],
+        "distance": 39,
+        "ascent": 190
+      },
+      {
+        "id": -301,
+        "stageId": 3,
+        "name": "Aguçadoura",
+        "position": [
+          -8.783336,
+          41.427172
+        ],
+        "distance": 46.264018974195366,
+        "ascent": 224.6691814677506
+      },
+      {
+        "id": -302,
+        "stageId": 3,
+        "name": "Estela",
+        "position": [
+          -8.769875,
+          41.46041
+        ],
+        "distance": 51.06674534016251,
+        "ascent": 247.59128457804835
+      },
+      {
+        "id": -303,
+        "stageId": 3,
+        "name": "Apúlia",
+        "position": [
+          -8.768404126575106,
+          41.48284128932765
+        ],
+        "distance": 54.110223511531565,
+        "ascent": 262.1169758504916
+      },
+      {
+        "id": 3,
+        "stageId": 3,
+        "name": "Esposende",
+        "position": [
+          -8.7821,
+          41.5317
+        ],
+        "distance": 61,
+        "ascent": 295
+      },
+      {
+        "id": -401,
+        "stageId": 4,
+        "name": "Marinhas",
+        "position": [
+          -8.790001,
+          41.563309
+        ],
+        "distance": 66.0752010751432,
+        "ascent": 330.71437793619293
+      },
+      {
+        "id": -402,
+        "stageId": 4,
+        "name": "Belinho",
+        "position": [
+          -8.789556,
+          41.586762
+        ],
+        "distance": 70.05187291644904,
+        "ascent": 358.69836496760433
+      },
+      {
+        "id": -403,
+        "stageId": 4,
+        "name": "Castelo do Neiva",
+        "position": [
+          -8.809122,
+          41.616326
+        ],
+        "distance": 75.23487079130864,
+        "ascent": 395.1713129758756
+      },
+      {
+        "id": -404,
+        "stageId": 4,
+        "name": "Amorosa",
+        "position": [
+          -8.82387475347571,
+          41.64617341996763
+        ],
+        "distance": 80.12659157805861,
+        "ascent": 429.59453332707915
+      },
+      {
+        "id": 4,
+        "stageId": 4,
+        "name": "Viana do Castelo",
+        "position": [
+          -8.8287,
+          41.6932
+        ],
+        "distance": 88,
+        "ascent": 485
+      },
+      {
+        "id": -501,
+        "stageId": 5,
+        "name": "Areosa",
+        "position": [
+          -8.853121,
+          41.721033
+        ],
+        "distance": 92.89641247102988,
+        "ascent": 529.5923278611649
+      },
+      {
+        "id": -502,
+        "stageId": 5,
+        "name": "Carreço",
+        "position": [
+          -8.861883,
+          41.751545
+        ],
+        "distance": 97.34470614532782,
+        "ascent": 570.1035738235212
+      },
+      {
+        "id": -503,
+        "stageId": 5,
+        "name": "Âncora",
+        "position": [
+          -8.851561,
+          41.796158
+        ],
+        "distance": 104.25173712186056,
+        "ascent": 633.0068916455159
+      },
+      {
+        "id": -504,
+        "stageId": 5,
+        "name": "Moledo",
+        "position": [
+          -8.860528,
+          41.850674
+        ],
+        "distance": 112.42653191301478,
+        "ascent": 707.4559156363847
+      },
+      {
+        "id": 5,
+        "stageId": 5,
+        "name": "Caminha",
+        "position": [
+          -8.8387,
+          41.8758
+        ],
+        "distance": 116,
+        "ascent": 740
+      },
+      {
+        "id": -601,
+        "stageId": 6,
+        "name": "A Longra",
+        "position": [
+          -8.863231248518861,
+          41.90081180640106
+        ],
+        "distance": 121.72558143038509,
+        "ascent": 798.5570828107567
+      },
+      {
+        "id": -602,
+        "stageId": 6,
+        "name": "Os Casás",
+        "position": [
+          -8.877882,
+          41.911503
+        ],
+        "distance": 124.25244405523856,
+        "ascent": 824.3999960194852
+      },
+      {
+        "id": 6,
+        "stageId": 6,
+        "name": "Oia",
+        "position": [
+          -8.8759,
+          42.0007
+        ],
+        "distance": 138,
+        "ascent": 965
+      },
+      {
+        "id": -701,
+        "stageId": 7,
+        "name": "Pagariños",
+        "position": [
+          -8.868397,
+          42.032797
+        ],
+        "distance": 143.10771225131003,
+        "ascent": 1023.9351413612694
+      },
+      {
+        "id": -702,
+        "stageId": 7,
+        "name": "A Ponte Nova",
+        "position": [
+          -8.826972183252751,
+          42.10950295056708
+        ],
+        "distance": 155.40973855519158,
+        "ascent": 1165.881598713749
+      },
+      {
+        "id": -703,
+        "stageId": 7,
+        "name": "Gaifar",
+        "position": [
+          -8.816555180797844,
+          42.13984792820377
+        ],
+        "distance": 160.3763803363859,
+        "ascent": 1223.1890038813758
+      },
+      {
+        "id": -704,
+        "stageId": 7,
+        "name": "A Estea",
+        "position": [
+          -8.798394,
+          42.176103
+        ],
+        "distance": 165.82798054566118,
+        "ascent": 1286.0920832191673
+      },
+      {
+        "id": -705,
+        "stageId": 7,
+        "name": "A Pedreira",
+        "position": [
+          -8.753125293628008,
+          42.20382641363795
+        ],
+        "distance": 171.47038097035875,
+        "ascent": 1351.1967035041394
+      },
+      {
+        "id": 7,
+        "stageId": 7,
+        "name": "Vigo",
+        "position": [
+          -8.7228,
+          42.2396
+        ],
+        "distance": 177,
+        "ascent": 1415
+      },
+      {
+        "id": -801,
+        "stageId": 8,
+        "name": "A Madroa",
+        "position": [
+          -8.674364849127144,
+          42.24331636919544
+        ],
+        "distance": 182.86187778617276,
+        "ascent": 1491.9371459435174
+      },
+      {
+        "id": -802,
+        "stageId": 8,
+        "name": "A Millarada",
+        "position": [
+          -8.636708,
+          42.259805
+        ],
+        "distance": 187.2846234653185,
+        "ascent": 1549.9856829823052
+      },
+      {
+        "id": 8,
+        "stageId": 8,
+        "name": "Redondela",
+        "position": [
+          -8.6093,
+          42.2837
+        ],
+        "distance": 193,
+        "ascent": 1625
+      },
+      {
+        "id": -901,
+        "stageId": 9,
+        "name": "A Xesteira",
+        "position": [
+          -8.606822,
+          42.331688
+        ],
+        "distance": 199.25752053801898,
+        "ascent": 1711.040907397761
+      },
+      {
+        "id": -902,
+        "stageId": 9,
+        "name": "As Laceiras",
+        "position": [
+          -8.613656858535423,
+          42.3535796107307
+        ],
+        "distance": 202.44880773369863,
+        "ascent": 1754.921106338356
+      },
+      {
+        "id": -903,
+        "stageId": 9,
+        "name": "A Esculca",
+        "position": [
+          -8.631749,
+          42.391468
+        ],
+        "distance": 207.7988365141776,
+        "ascent": 1828.484002069942
+      },
+      {
+        "id": 9,
+        "stageId": 9,
+        "name": "Pontevedra",
+        "position": [
+          -8.6441,
+          42.431
+        ],
+        "distance": 213,
+        "ascent": 1900
+      },
+      {
+        "id": -1001,
+        "stageId": 10,
+        "name": "A Cañota",
+        "position": [
+          -8.649175,
+          42.472542
+        ],
+        "distance": 218.17131090034326,
+        "ascent": 1950.5378110715365
+      },
+      {
+        "id": -1002,
+        "stageId": 10,
+        "name": "A Cancela",
+        "position": [
+          -8.645503,
+          42.51845
+        ],
+        "distance": 223.80837880081737,
+        "ascent": 2005.627338280715
+      },
+      {
+        "id": -1003,
+        "stageId": 10,
+        "name": "A Seca",
+        "position": [
+          -8.637575596329459,
+          42.558186340397626
+        ],
+        "distance": 229.04161275909104,
+        "ascent": 2056.7703065092987
+      },
+      {
+        "id": 10,
+        "stageId": 10,
+        "name": "Caldas de Reis",
+        "position": [
+          -8.6424,
+          42.6049
+        ],
+        "distance": 235,
+        "ascent": 2115
+      },
+      {
+        "id": -1101,
+        "stageId": 11,
+        "name": "O Cruceiro",
+        "position": [
+          -8.64470703758265,
+          42.648138764822356
+        ],
+        "distance": 241.42897152986717,
+        "ascent": 2186.277727831136
+      },
+      {
+        "id": -1102,
+        "stageId": 11,
+        "name": "O Pino",
+        "position": [
+          -8.637396529713829,
+          42.6788947789189
+        ],
+        "distance": 247.38079789525625,
+        "ascent": 2252.2653679691457
+      },
+      {
+        "id": -1103,
+        "stageId": 11,
+        "name": "A Tarroeira",
+        "position": [
+          -8.647487,
+          42.706734
+        ],
+        "distance": 252.21060947930627,
+        "ascent": 2305.8132790096997
+      },
+      {
+        "id": 11,
+        "stageId": 11,
+        "name": "Padrón",
+        "position": [
+          -8.6605,
+          42.7388
+        ],
+        "distance": 258,
+        "ascent": 2370
+      },
+      {
+        "id": -1201,
+        "stageId": 12,
+        "name": "Tarrío",
+        "position": [
+          -8.653579,
+          42.773857
+        ],
+        "distance": 262.49650256036347,
+        "ascent": 2469.1274428080123
+      },
+      {
+        "id": -1202,
+        "stageId": 12,
+        "name": "O Sisto",
+        "position": [
+          -8.637434,
+          42.806528
+        ],
+        "distance": 267.0626406648483,
+        "ascent": 2569.7900328387013
+      },
+      {
+        "id": -1203,
+        "stageId": 12,
+        "name": "A Pedreira",
+        "position": [
+          -8.610892,
+          42.826756
+        ],
+        "distance": 270.8049849790627,
+        "ascent": 2652.2917143111545
+      },
+      {
+        "id": -1204,
+        "stageId": 12,
+        "name": "O Porto",
+        "position": [
+          -8.572365,
+          42.854481
+        ],
+        "distance": 275.83914104828654,
+        "ascent": 2763.2719731099533
+      },
+      {
+        "id": 12,
+        "stageId": 12,
+        "name": "Santiago",
+        "position": [
+          -8.5447,
+          42.8806
+        ],
+        "distance": 280,
+        "ascent": 2855
       }
     ]
   }

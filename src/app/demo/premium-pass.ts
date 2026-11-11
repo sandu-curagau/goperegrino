@@ -19,25 +19,34 @@ const plans = [
           ><ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon
         ></span>
         <p class="kicker">GoPeregrino Premium</p>
-        <h2>{{ locale.t('premiumTitle') }}</h2>
-        <p>{{ locale.t('premiumCopy') }}</p>
+        @if (store.premium(); as active) {
+          <h2>{{ locale.t('premiumActive') }}</h2>
+          <p>
+            {{ locale.t('activePass', { duration: locale.t(active === 7 ? 'days7' : 'days30') }) }}
+          </p>
+        } @else {
+          <h2>{{ locale.t('premiumTitle') }}</h2>
+          <p>{{ locale.t('premiumCopy') }}</p>
+        }
       </div>
 
-      <fieldset class="passes">
-        <legend class="sr-only">Premium</legend>
-        @for (plan of plans; track plan.days) {
-          <label class="pass surface" [class.selected]="selected() === plan.days">
-            <input
-              type="radio"
-              name="premium-plan"
-              [checked]="selected() === plan.days"
-              (change)="selected.set(plan.days)"
-            />
-            <span class="kicker">{{ locale.t(plan.label) }}</span>
-            <strong>{{ locale.money(plan.price) }}</strong>
-          </label>
-        }
-      </fieldset>
+      @if (!store.premium()) {
+        <fieldset class="passes">
+          <legend class="sr-only">Premium</legend>
+          @for (plan of plans; track plan.days) {
+            <label class="pass surface" [class.selected]="selected() === plan.days">
+              <input
+                type="radio"
+                name="premium-plan"
+                [checked]="selected() === plan.days"
+                (change)="selected.set(plan.days)"
+              />
+              <span class="kicker">{{ locale.t(plan.label) }}</span>
+              <strong>{{ locale.money(plan.price) }}</strong>
+            </label>
+          }
+        </fieldset>
+      }
 
       <ul class="benefits">
         @for (feature of features; track feature) {
@@ -46,10 +55,20 @@ const plans = [
           </li>
         }
       </ul>
-      <button class="primary wide" type="button" (click)="buy()">
-        {{ locale.t('buy') }} <span aria-hidden="true">→</span>
-      </button>
-      <p class="muted purchase-note">{{ locale.t('simulatedPayment') }}</p>
+      @if (!store.premium()) {
+        <button class="primary wide" type="button" [disabled]="store.offline()" (click)="buy()">
+          @if (store.offline()) {
+            <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+          }
+          {{ locale.t('buy') }}
+          @if (!store.offline()) {
+            <span aria-hidden="true">→</span>
+          }
+        </button>
+        <p class="muted purchase-note">
+          {{ locale.t(store.offline() ? 'connectionRequired' : 'simulatedPayment') }}
+        </p>
+      }
     </app-sheet>
   `,
   styles: `
@@ -146,12 +165,12 @@ export class PremiumPass {
     'advancedFilters',
     'journal',
     'breaks',
-    'writeReviews',
     'packing',
     'adFree',
   ];
 
   protected buy(): void {
+    if (this.store.premium() || this.store.offline()) return;
     this.store.patch({ premium: this.selected() });
     this.store.premiumOpen.set(false);
   }

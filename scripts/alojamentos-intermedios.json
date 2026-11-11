@@ -1,0 +1,223 @@
+{
+  "tejo": {
+    "1": [
+      {"key":"beato","town":"Beato","positions":[[-9.107752,38.731569],[-9.105802,38.732049]]}
+    ],
+    "2": [
+      {"key":"bobadela","town":"Bobadela","positions":[[-9.099,38.808107],[-9.100654,38.809298]]},
+      {"key":"santa-iria-de-azoia","town":"Santa Iria de Azoia","positions":[[-9.08646,38.845647],[-9.084475,38.845862]]},
+      {"key":"forte-da-casa","town":"Forte da Casa","positions":[[-9.060047,38.87272],[-9.058209,38.871966]]},
+      {"key":"arcena","town":"Arcena","positions":[[-9.051668,38.907909],[-9.049701,38.906524]]},
+      {"key":"alhandra","town":"Alhandra","positions":[[-9.006834,38.928527],[-9.008642,38.927585]]}
+    ],
+    "3": [
+      {"key":"castanheira-do-ribatejo","town":"Castanheira do Ribatejo","positions":[[-8.972463,38.99226],[-8.971251,38.994337]]},
+      {"key":"casal-pinheiro","town":"Casal Pinheiro","positions":[[-8.952624,39.034607],[-8.9591,39.032237]]},
+      {"key":"casais-de-baixo","town":"Casais de Baixo","positions":[[-8.907613,39.059313],[-8.902638,39.057867]]}
+    ],
+    "4": [
+      {"key":"virtudes","town":"Virtudes","positions":[[-8.825773,39.088691]]},
+      {"key":"valada","town":"Valada","positions":[[-8.758418,39.082538],[-8.757367,39.084414]]},
+      {"key":"porto-de-muge","town":"Porto de Muge","positions":[[-8.738306,39.107902]]},
+      {"key":"troco-1920","town":"Azambuja – Santarém","positions":[[-8.732049,39.153547],[-8.734098,39.152504]]},
+      {"key":"troco-2760","town":"Azambuja – Santarém","positions":[[-8.687319,39.207206]]}
+    ],
+    "5": [
+      {"key":"portela-das-padeiras","town":"Portela das Padeiras","positions":[[-8.695845,39.269017]]},
+      {"key":"povoa-de-santarem","town":"Póvoa de Santarém","positions":[[-8.672832,39.304938]]},
+      {"key":"torre-do-bispo","town":"Torre do Bispo","positions":[[-8.661757,39.34373]]},
+      {"key":"advagar","town":"Advagar","positions":[[-8.711835,39.352126],[-8.710193,39.347939]]},
+      {"key":"arneiro-das-milharicas","town":"Arneiro das Milhariças","positions":[[-8.712161,39.391683]]},
+      {"key":"malhou","town":"Malhou","positions":[[-8.694619,39.429315],[-8.698838,39.427538]]}
+    ],
+    "6": [
+      {"key":"minde","town":"Minde","positions":[[-8.681755,39.510166],[-8.685863,39.515427]]},
+      {"key":"vale-alto","town":"Vale Alto","positions":[[-8.65588,39.539444]]},
+      {"key":"maxieira","town":"Maxieira","positions":[[-8.642949,39.573843]]},
+      {"key":"pederneira","town":"Pederneira","positions":[[-8.664042,39.603212]]}
+    ]
+  },
+  "centenario": {
+    "1": [
+      {"key":"canidelo","town":"Canidelo","positions":[[-8.649207,41.124809],[-8.647298,41.123899]]},
+      {"key":"francelos","town":"Francelos","positions":[[-8.64723,41.083202],[-8.648971,41.082332]]},
+      {"key":"arcozelo","town":"Arcozelo","positions":[[-8.638095,41.053688],[-8.637517,41.055623]]}
+    ],
+    "2": [
+      {"key":"paramos","town":"Paramos","positions":[[-8.640651,40.976603],[-8.640126,40.97458]]},
+      {"key":"cortegaca","town":"Cortegaça","positions":[[-8.629291,40.940524],[-8.627636,40.938879]]},
+      {"key":"sobral","town":"Sobral","positions":[[-8.609887,40.879481],[-8.606455,40.879634]]}
+    ],
+    "3": [
+      {"key":"monte-de-baixo","town":"Monte de Baixo","positions":[[-8.622873,40.798576],[-8.607234,40.795454]]},
+      {"key":"falcao","town":"Falcão","positions":[[-8.566658,40.785146],[-8.571836,40.784834]]},
+      {"key":"cadaval","town":"Cadaval","positions":[[-8.567656,40.732726],[-8.562654,40.736479]]},
+      {"key":"vale-do-castanheiro","town":"Vale do Castanheiro","positions":[[-8.538819,40.746245]]}
+    ],
+    "4": [
+      {"key":"serem","town":"Serém","positions":[[-8.475676,40.656693],[-8.477583,40.658005]]},
+      {"key":"cavadas-de-baixo","town":"Cavadas de Baixo","positions":[[-8.454329,40.635397]]},
+      {"key":"mourisca-do-vouga","town":"Mourisca do Vouga","positions":[[-8.469759,40.610111],[-8.462082,40.61319]]}
+    ],
+    "5": [
+      {"key":"borralha","town":"Borralha","positions":[[-8.437406,40.558596],[-8.437766,40.560118]]},
+      {"key":"almas-da-areosa","town":"Almas da Areosa","positions":[[-8.433088,40.508547],[-8.435175,40.51012]]},
+      {"key":"candieira","town":"Candieira","positions":[[-8.409485,40.488328]]},
+      {"key":"arcos","town":"Arcos","positions":[[-8.441111,40.446599],[-8.439573,40.447842]]},
+      {"key":"aguim","town":"Aguim","positions":[[-8.453746,40.416877],[-8.456472,40.41551]]}
+    ],
+    "6": [
+      {"key":"ponte-de-viadores","town":"Ponte de Viadores","positions":[[-8.448629,40.353956],[-8.449239,40.352449]]},
+      {"key":"carqueijo","town":"Carqueijo","positions":[[-8.449924,40.322267]]},
+      {"key":"adoes","town":"Adões","positions":[[-8.454004,40.279544]]},
+      {"key":"pedrulha","town":"Pedrulha","positions":[[-8.443386,40.242336],[-8.444612,40.240248]]}
+    ],
+    "7": [
+      {"key":"cruz-dos-moroucos","town":"Cruz dos Morouços","positions":[[-8.449322,40.182028],[-8.44584,40.183599]]},
+      {"key":"palheira","town":"Palheira","positions":[[-8.451176,40.164294],[-8.453226,40.164348]]},
+      {"key":"casconha","town":"Casconha","positions":[[-8.469241,40.138471]]}
+    ],
+    "8": [
+      {"key":"condeixa-a-velha","town":"Condeixa-a-Velha","positions":[[-8.490932,40.098307],[-8.492861,40.099631]]},
+      {"key":"ordem","town":"Ordem","positions":[[-8.457575,40.039884]]},
+      {"key":"covao-das-favas","town":"Covão das Favas","positions":[[-8.554528,39.991587]]},
+      {"key":"pousadas-vedras","town":"Pousadas Vedras","positions":[[-8.560347,39.953523],[-8.560433,39.951251]]},
+      {"key":"covao-da-silva","town":"Covão da Silva","positions":[[-8.593331,39.936014],[-8.594529,39.933585]]}
+    ],
+    "9": [
+      {"key":"aguas-ferreas","town":"Águas Férreas","positions":[[-8.663013,39.88915],[-8.661154,39.891241]]},
+      {"key":"palao","town":"Palão","positions":[[-8.697145,39.84686]]},
+      {"key":"lameiria","town":"Lameiria","positions":[[-8.694659,39.796244]]},
+      {"key":"longra","town":"Longra","positions":[[-8.723764,39.769568]]},
+      {"key":"caldelas","town":"Caldelas","positions":[[-8.704213,39.730884],[-8.702764,39.729586]]},
+      {"key":"barreiria","town":"Barreiria","positions":[[-8.693707,39.696547]]},
+      {"key":"chainca","town":"Chainça","positions":[[-8.705414,39.665708]]}
+    ]
+  },
+  "central": {
+    "1": [
+      {"key":"sao-mamede-de-infesta","town":"São Mamede de Infesta","positions":[[-8.611083,41.190766],[-8.612883,41.191498]]},
+      {"key":"guifoes","town":"Guifões","positions":[[-8.665044,41.20133],[-8.667313,41.202734]]},
+      {"key":"pinheiral","town":"Pinheiral","positions":[[-8.665641,41.2596],[-8.66576,41.257869]]},
+      {"key":"vilar","town":"Vilar","positions":[[-8.674204,41.28833],[-8.672846,41.289598]]}
+    ],
+    "2": [
+      {"key":"tougues","town":"Tougues","positions":[[-8.694233,41.358437]]},
+      {"key":"arcos","town":"Arcos","positions":[[-8.666712,41.394877],[-8.662254,41.396752]]},
+      {"key":"sao-pedro-de-rates","town":"São Pedro de Rates","positions":[[-8.673464,41.424058],[-8.670709,41.423286]]},
+      {"key":"gueral","town":"Gueral","positions":[[-8.629786,41.458417]]},
+      {"key":"carvalhal","town":"Carvalhal","positions":[[-8.634295,41.510933],[-8.636628,41.508987]]}
+    ],
+    "3": [
+      {"key":"lijo","town":"Lijó","positions":[[-8.613789,41.568375],[-8.614872,41.562696]]},
+      {"key":"aborim","town":"Aborim","positions":[[-8.629231,41.602786],[-8.632584,41.60371]]},
+      {"key":"aguiar","town":"Aguiar","positions":[[-8.65755,41.619906]]},
+      {"key":"carvoeiro","town":"Carvoeiro","positions":[[-8.657148,41.647182]]},
+      {"key":"troco-2140","town":"Barcelos – Ponte de Lima","positions":[[-8.600148,41.661603]]},
+      {"key":"seara","town":"Seara","positions":[[-8.620558,41.733787],[-8.615638,41.733166]]}
+    ],
+    "4": [
+      {"key":"brandara","town":"Brandara","positions":[[-8.576271,41.786424]]},
+      {"key":"labruja","town":"Labruja","positions":[[-8.597847,41.836345]]}
+    ],
+    "5": [
+      {"key":"fontoura","town":"Fontoura","positions":[[-8.632696,41.956359],[-8.632774,41.954821]]},
+      {"key":"cerdal","town":"Cerdal","positions":[[-8.628429,41.978229]]},
+      {"key":"arao","town":"Arão","positions":[[-8.644778,42.015602],[-8.637331,42.015006]]}
+    ],
+    "6": [
+      {"key":"montes-dos-cucos","town":"Montes dos Cucos","positions":[[-8.629883,42.084332],[-8.625796,42.089692]]},
+      {"key":"centeans","town":"Centeáns","positions":[[-8.636325,42.12786],[-8.636055,42.129729]]}
+    ],
+    "7": [
+      {"key":"veiga-do-muino","town":"Veiga do Muíño","positions":[[-8.605095,42.199077],[-8.61031,42.192229]]},
+      {"key":"a-millarada","town":"A Millarada","positions":[[-8.630112,42.246238]]}
+    ],
+    "8": [
+      {"key":"a-xesteira","town":"A Xesteira","positions":[[-8.607121,42.33171],[-8.607287,42.330028]]},
+      {"key":"as-laceiras","town":"As Laceiras","positions":[[-8.613807,42.353485],[-8.614495,42.348192]]},
+      {"key":"a-esculca","town":"A Esculca","positions":[[-8.652731,42.388569],[-8.651937,42.386918]]}
+    ],
+    "9": [
+      {"key":"a-canota","town":"A Cañota","positions":[[-8.651724,42.47193],[-8.649832,42.469493]]},
+      {"key":"a-cancela","town":"A Cancela","positions":[[-8.645036,42.518203],[-8.649668,42.508465]]},
+      {"key":"a-seca","town":"A Seca","positions":[[-8.636889,42.558495]]}
+    ],
+    "10": [
+      {"key":"o-cruceiro","town":"O Cruceiro","positions":[[-8.64617,42.648039],[-8.649391,42.648501]]},
+      {"key":"o-pino","town":"O Pino","positions":[[-8.640114,42.678506]]},
+      {"key":"a-tarroeira","town":"A Tarroeira","positions":[[-8.65073,42.705946],[-8.653616,42.705136]]}
+    ],
+    "11": [
+      {"key":"tarrio","town":"Tarrío","positions":[[-8.651073,42.773798],[-8.646305,42.768436]]},
+      {"key":"o-sisto","town":"O Sisto","positions":[[-8.64437,42.807509],[-8.639685,42.803889]]},
+      {"key":"a-pedreira","town":"A Pedreira","positions":[[-8.615528,42.827586],[-8.608161,42.823584]]},
+      {"key":"o-porto","town":"O Porto","positions":[[-8.5777,42.855147],[-8.575931,42.847974]]}
+    ]
+  },
+  "costa": {
+    "1": [
+      {"key":"foz-do-douro","town":"Foz do Douro","positions":[[-8.670395,41.150324],[-8.668544,41.152541]]},
+      {"key":"matosinhos","town":"Matosinhos","positions":[[-8.681446,41.18003],[-8.683562,41.180972]]},
+      {"key":"perafita","town":"Perafita","positions":[[-8.696389,41.223363],[-8.697885,41.224756]]},
+      {"key":"lavra","town":"Lavra","positions":[[-8.71734,41.258442],[-8.718475,41.259955]]}
+    ],
+    "2": [
+      {"key":"areia-mindelo","town":"Areia - Mindelo","positions":[[-8.735891,41.310627],[-8.738272,41.310876]]},
+      {"key":"azurara","town":"Azurara","positions":[[-8.733782,41.345835],[-8.735194,41.344624]]}
+    ],
+    "3": [
+      {"key":"agucadoura","town":"Aguçadoura","positions":[[-8.776138,41.428045],[-8.778426,41.428948]]},
+      {"key":"estela","town":"Estela","positions":[[-8.75473,41.456567]]},
+      {"key":"apulia","town":"Apúlia","positions":[[-8.768669,41.482515],[-8.761705,41.485507]]}
+    ],
+    "4": [
+      {"key":"marinhas","town":"Marinhas","positions":[[-8.782924,41.558954],[-8.776608,41.555711]]},
+      {"key":"belinho","town":"Belinho","positions":[[-8.786023,41.587564],[-8.783457,41.591267]]},
+      {"key":"castelo-do-neiva","town":"Castelo do Neiva","positions":[[-8.798269,41.620753],[-8.798951,41.619216]]},
+      {"key":"amorosa","town":"Amorosa","positions":[[-8.820892,41.646795],[-8.820277,41.645172]]}
+    ],
+    "5": [
+      {"key":"areosa","town":"Areosa","positions":[[-8.85677,41.721908],[-8.851693,41.722576]]},
+      {"key":"carreco","town":"Carreço","positions":[[-8.864047,41.749382],[-8.865066,41.750745]]},
+      {"key":"ancora","town":"Âncora","positions":[[-8.855015,41.796056],[-8.856922,41.796895]]},
+      {"key":"moledo","town":"Moledo","positions":[[-8.860187,41.849309]]}
+    ],
+    "6": [
+      {"key":"a-longra","town":"A Longra","positions":[[-8.862186,41.901476],[-8.864933,41.903607]]},
+      {"key":"os-casas","town":"Os Casás","positions":[[-8.878002,41.906168],[-8.878938,41.904796]]}
+    ],
+    "7": [
+      {"key":"pagarinos","town":"Pagariños","positions":[[-8.872464,42.03506]]},
+      {"key":"a-ponte-nova","town":"A Ponte Nova","positions":[[-8.827077,42.109959],[-8.829465,42.11046]]},
+      {"key":"gaifar","town":"Gaifar","positions":[[-8.817036,42.139928],[-8.819329,42.142497]]},
+      {"key":"a-estea","town":"A Estea","positions":[[-8.802516,42.177421],[-8.805111,42.178403]]},
+      {"key":"a-pedreira","town":"A Pedreira","positions":[[-8.751591,42.20319],[-8.753058,42.20431]]}
+    ],
+    "8": [
+      {"key":"a-madroa","town":"A Madroa","positions":[[-8.674834,42.244221],[-8.668489,42.24607]]},
+      {"key":"a-millarada","town":"A Millarada","positions":[[-8.630112,42.246238]]}
+    ],
+    "9": [
+      {"key":"a-xesteira","town":"A Xesteira","positions":[[-8.607121,42.33171],[-8.607287,42.330028]]},
+      {"key":"as-laceiras","town":"As Laceiras","positions":[[-8.613807,42.353485],[-8.614495,42.348192]]},
+      {"key":"a-esculca","town":"A Esculca","positions":[[-8.652731,42.388569],[-8.651937,42.386918]]}
+    ],
+    "10": [
+      {"key":"a-canota","town":"A Cañota","positions":[[-8.651724,42.47193],[-8.649832,42.469493]]},
+      {"key":"a-cancela","town":"A Cancela","positions":[[-8.645036,42.518203],[-8.649668,42.508465]]},
+      {"key":"a-seca","town":"A Seca","positions":[[-8.636889,42.558495]]}
+    ],
+    "11": [
+      {"key":"o-cruceiro","town":"O Cruceiro","positions":[[-8.64617,42.648039],[-8.649391,42.648501]]},
+      {"key":"o-pino","town":"O Pino","positions":[[-8.640114,42.678506]]},
+      {"key":"a-tarroeira","town":"A Tarroeira","positions":[[-8.65073,42.705946],[-8.653616,42.705136]]}
+    ],
+    "12": [
+      {"key":"tarrio","town":"Tarrío","positions":[[-8.651073,42.773798],[-8.646305,42.768436]]},
+      {"key":"o-sisto","town":"O Sisto","positions":[[-8.64437,42.807509],[-8.639685,42.803889]]},
+      {"key":"a-pedreira","town":"A Pedreira","positions":[[-8.615528,42.827586],[-8.608161,42.823584]]},
+      {"key":"o-porto","town":"O Porto","positions":[[-8.5777,42.855147],[-8.575931,42.847974]]}
+    ]
+  }
+}

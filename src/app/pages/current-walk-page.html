@@ -1,0 +1,107 @@
+<ion-content>
+  <main class="page">
+    <header class="page-heading">
+      <p class="kicker">{{ store.route()?.name }}</p>
+      <h1>{{ locale.t('caminho') }}</h1>
+      <p>
+        {{ locale.number(store.state().distance, 1) }} / {{ store.route()?.km }} km ·
+        {{ locale.t(store.completed() ? 'trailFinished' : 'walkActive') }}
+      </p>
+    </header>
+
+    <section class="page-stack">
+      @for (entry of sections; track entry.id) {
+        <button class="surface row-card" type="button" (click)="open(entry.id, entry.premium)">
+          <span class="tile"><ion-icon [name]="entry.icon" aria-hidden="true"></ion-icon></span>
+          <span
+            ><strong>{{ locale.t(entry.id) }}</strong>
+            @if (entry.id === 'download' && downloaded()) {
+              <small>{{ locale.t('downloadDone') }}</small>
+            }
+            @if (entry.id === 'breaks') {
+              <small>{{ locale.t('breaksHelp') }}</small>
+            }
+          </span>
+          @if (entry.premium && !store.premium()) {
+            <ion-icon name="lock-closed-outline" aria-label="Premium"></ion-icon>
+          } @else {
+            <span aria-hidden="true">›</span>
+          }
+        </button>
+      }
+    </section>
+  </main>
+</ion-content>
+
+@if (section(); as active) {
+  <app-sheet [title]="locale.t(active)" (closed)="close()">
+    @switch (active) {
+      @case ('packing') {
+        <div class="sheet-stack">
+          @for (item of items; track item) {
+            <label class="detail-line">
+              <strong>{{ locale.t(item) }}</strong>
+              <input
+                #entry
+                type="checkbox"
+                [checked]="store.state().pack.includes(item)"
+                (change)="pack(item, entry.checked)"
+              />
+            </label>
+          }
+        </div>
+      }
+      @case ('breaks') {
+        <div class="sheet-stack">
+          <p class="muted">{{ locale.t('breaksDistance') }}</p>
+          @for (spot of pauseSpots(); track spot.id) {
+            <div class="row-card surface">
+              <span class="tile"
+                ><ion-icon
+                  [name]="spot.kind === 'water' ? 'water-outline' : 'cafe-outline'"
+                  aria-hidden="true"
+                ></ion-icon
+              ></span>
+              <span
+                ><strong
+                  >{{ locale.t(spot.kind === 'water' ? 'water' : 'cafe') }} ·
+                  {{ spot.location }}</strong
+                ><small>{{ locale.number(spot.km, 1) }} km</small></span
+              >
+            </div>
+          } @empty {
+            <p>{{ locale.t('noBreaks') }}</p>
+          }
+        </div>
+      }
+      @case ('download') {
+        <div class="sheet-stack">
+          <p class="kicker">{{ store.route()?.name }}</p>
+          <p class="muted">{{ locale.t('trailMaps') }}</p>
+          @if (downloaded()) {
+            <p class="download-success" role="status">
+              <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon
+              >{{ locale.t('downloadDone') }}
+            </p>
+          } @else if (downloading()) {
+            <progress [attr.aria-label]="locale.t('downloading')"></progress>
+            <p class="muted">{{ locale.t('downloading') }}</p>
+          } @else {
+            <button class="primary" type="button" [disabled]="store.offline()" (click)="download()">
+              @if (store.offline()) {
+                <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+              }
+              {{ locale.t('download') }}
+            </button>
+            @if (store.offline()) {
+              <p class="muted">{{ locale.t('connectionRequired') }}</p>
+            }
+          }
+        </div>
+      }
+    }
+    @if (notice(); as feedback) {
+      <p class="success" role="status">{{ locale.t(feedback) }}</p>
+    }
+  </app-sheet>
+}

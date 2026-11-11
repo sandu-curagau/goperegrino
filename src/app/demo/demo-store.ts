@@ -1,14 +1,21 @@
 import { computed, DestroyRef, effect, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { itinerary } from './itinerary';
+import { joinStages } from './trail-geometry';
 import {
   Camino,
+  PaymentCard,
+  PilgrimProfile,
   dateInput,
   Lodging,
+  JournalEntry,
   Notice,
   Point,
   Reservation,
   Stamp,
   TrailLine,
+  TrailComment,
+  WalkRecord,
   Waypoint,
   kmBetween,
 } from './models';
@@ -23,16 +30,22 @@ export const languages = [
   ['nl', 'Nederlands'],
   ['pl', 'Polski'],
   ['ko', '한국어'],
+  ['zh', '简体中文'],
 ] as const;
 export type Language = (typeof languages)[number][0];
 
 interface DemoState {
+  profile: PilgrimProfile;
   language: Language;
   routeId: string;
   started: boolean;
   date: string;
   days: number;
   distance: number;
+  walkId: string;
+  walkHistory: WalkRecord[];
+  trailComments: TrailComment[];
+  likedTrailComments: string[];
   premium: 0 | 7 | 30;
   offline: boolean;
   offlineDownloaded: boolean;
@@ -43,17 +56,31 @@ interface DemoState {
   pack: string[];
   suggestions: string[];
   reviews: Record<string, { score: number; text: string }>;
+  paymentCards: PaymentCard[];
+  defaultPaymentCard: string;
 }
 
 const storageKey = 'goperegrino-demo-v1';
+const journalStorageKey = 'goperegrino-journal-v1';
 function freshState(): DemoState {
   return {
+    profile: {
+      name: 'Alex',
+      bio: '',
+      photo: '',
+      color: 'ocean',
+      featuredAchievements: ['finisher', 'distance', 'journal'],
+    },
     language: 'pt',
     routeId: 'central',
     started: false,
     date: dateInput(),
     days: 11,
     distance: 0,
+    walkId: '',
+    walkHistory: [],
+    trailComments: [],
+    likedTrailComments: [],
     premium: 0,
     offline: false,
     offlineDownloaded: false,
@@ -64,15 +91,30 @@ function freshState(): DemoState {
     pack: [],
     suggestions: [],
     reviews: {},
+    paymentCards: [
+      { id: 'demo-visa', brand: 'Visa', last4: '4242', expiry: '12/30', nickname: '' },
+    ],
+    defaultPaymentCard: 'demo-visa',
   };
 }
 
 function readState(): DemoState {
   try {
     const stored = localStorage.getItem(storageKey);
-    return stored ? { ...freshState(), ...JSON.parse(stored) } : freshState();
+    const state: DemoState = stored ? { ...freshState(), ...JSON.parse(stored) } : freshState();
+    if (state.started && !state.walkId) state.walkId = 'legacy-' + state.routeId;
+    return state;
   } catch {
     return freshState();
+  }
+}
+
+function readJournal(): JournalEntry[] {
+  try {
+    const entries = JSON.parse(localStorage.getItem(journalStorageKey) ?? '[]');
+    return Array.isArray(entries) ? entries : [];
+  } catch {
+    return [];
   }
 }
 
@@ -86,8 +128,15 @@ async function load<T>(file: string): Promise<T> {
 export class DemoStore {
   private readonly router = inject(Router);
   private readonly stored = signal(readState());
+  private readonly journalEntries = signal(readJournal());
   readonly state = this.stored.asReadonly();
-  readonly offline = computed(() => this.state().offline);
+  readonly journal = this.journalEntries.asReadonly();
+  readonly activeWalk = computed<WalkRecord | null>(() => {
+    const { started, walkId, routeId, date, days, distance } = this.state();
+    return started ? { id: walkId, routeId, date, days, distance } : null;
+  });
+  private readonly connected = signal(navigator.onLine);
+  readonly offline = computed(() => this.state().offline || !this.connected());
   readonly started = computed(() => this.state().started);
   readonly premium = computed(() => this.state().premium);
   readonly routes = signal<Camino[]>([]);
@@ -106,6 +155,22 @@ export class DemoStore {
   readonly premiumOpen = signal(false);
 
   readonly route = computed(() => this.routes().find((item) => item.id === this.state().routeId));
+  private readonly plannedDays = computed(() => this.state().days);
+  private readonly departureDate = computed(() => this.state().date);
+  readonly walkingPlan = computed(() => {
+    const route = this.route();
+    return route ? itinerary(route, this.plannedDays(), this.departureDate()) : [];
+  });
+  readonly walkingDayIndex = computed(() => {
+    const plan = this.walkingPlan();
+    const next = plan.findIndex((day) => this.state().distance < day.distance);
+    return next < 0 ? Math.max(0, plan.length - 1) : next;
+  });
+  readonly walkingDay = computed(() => this.walkingPlan()[this.walkingDayIndex()]);
+  readonly walkingDayRemaining = computed(() =>
+    Math.max(0, (this.walkingDay()?.distance ?? 0) - this.state().distance),
+  );
+  readonly mapStayStop = signal<number | null>(null);
   readonly stageIndex = computed(() => {
     let end = 0;
     const stages = this.route()?.stages ?? [];
@@ -131,7 +196,7 @@ export class DemoStore {
     const trail = this.trail();
     const route = this.route();
     return trail && trail.id === route?.id
-      ? trail.line.features.map((feature) => feature.geometry.coordinates)
+      ? joinStages(trail.line.features.map((feature) => feature.geometry.coordinates))
       : (route?.stages.map((stage) => [stage.start, stage.end]) ?? []);
   });
   readonly stageGeometry = computed(() => {
@@ -151,16 +216,6 @@ export class DemoStore {
     const [a, b] = [line[next - 1], line[next]];
     const position: Point = [a[0] + (b[0] - a[0]) * ratio, a[1] + (b[1] - a[1]) * ratio];
     return { position, partial: [...line.slice(0, next), position] };
-  });
-  private readonly recentlyArrived = computed(() => this.state().distance - this.stageStart() < 2);
-  readonly nearbyLodgings = computed(() => {
-    const route = this.route();
-    const stage = this.stage();
-    if (!route || !stage) return [];
-    const first = this.recentlyArrived() ? stage.id - 1 : stage.id;
-    return this.lodgings().filter(
-      (item) => item.routeId === route.id && item.stageId >= first && item.stageId <= stage.id + 1,
-    );
   });
   readonly nearbyPoints = computed(() => {
     const stage = this.stage();
@@ -182,6 +237,7 @@ export class DemoStore {
   private saveTimer?: ReturnType<typeof setTimeout>;
 
   constructor() {
+    this.migrateNotes();
     void this.loadData();
     effect(() => {
       const state = this.state();
@@ -216,11 +272,16 @@ export class DemoStore {
       this.lastTick = now;
     }, 250);
     const flush = () => this.persist(this.state());
+    const connectionChanged = () => this.connected.set(navigator.onLine);
     window.addEventListener('pagehide', flush);
+    window.addEventListener('online', connectionChanged);
+    window.addEventListener('offline', connectionChanged);
     inject(DestroyRef).onDestroy(() => {
       clearInterval(tick);
       clearTimeout(this.saveTimer);
       window.removeEventListener('pagehide', flush);
+      window.removeEventListener('online', connectionChanged);
+      window.removeEventListener('offline', connectionChanged);
     });
   }
 
@@ -252,22 +313,56 @@ export class DemoStore {
     this.playing.set(false);
     this.arrival.set(null);
     this.completionOpen.set(false);
-    this.patch({ routeId: id, distance: 0, days: route.stages.length, started });
+    const current = this.activeWalk();
+    const archive =
+      current &&
+      (current.distance > 0 || this.journal().some((entry) => entry.walkId === current.id));
+    this.patch({
+      routeId: id,
+      distance: 0,
+      days: route.stages.length,
+      started,
+      walkId: started ? crypto.randomUUID() : '',
+      pack: [],
+      walkHistory: archive ? [current, ...this.state().walkHistory] : this.state().walkHistory,
+    });
     this.cameraRevision.update((revision) => revision + 1);
+  }
+
+  saveJournalEntry(entry: JournalEntry): boolean {
+    const entries = this.journal().filter(
+      (item) =>
+        item.walkId !== entry.walkId ||
+        (entry.id ? item.id !== entry.id : !!item.id || item.date !== entry.date),
+    );
+    if (entry.note || entry.photos.length) entries.push(entry);
+    return this.persistJournal(entries);
+  }
+
+  addTrailComment(comment: Omit<TrailComment, 'id' | 'createdAt'>): void {
+    const entry = { ...comment, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+    this.patch({ trailComments: [...this.state().trailComments, entry] });
+  }
+
+  toggleTrailCommentLike(id: string): void {
+    const likes = this.state().likedTrailComments;
+    this.patch({
+      likedTrailComments: likes.includes(id) ? likes.filter((like) => like !== id) : [...likes, id],
+    });
   }
 
   move(distance: number, announce = true): void {
     const route = this.route();
     if (!route || !Number.isFinite(distance)) return;
-    const before = this.stageIndex();
+    const before = this.walkingDayIndex();
     const next = Math.min(route.km, Math.max(0, distance));
     const atEnd = next === route.km && this.state().distance < route.km;
     this.patch({ distance: next });
     if (atEnd) {
       this.arrival.set(null);
       this.completionOpen.set(announce);
-    } else if (announce && this.stageIndex() > before) {
-      this.arrival.set(this.stage()?.from ?? null);
+    } else if (announce && this.walkingDayIndex() > before) {
+      this.arrival.set(this.walkingDay()?.from ?? null);
     }
     if (next === route.km) this.playing.set(false);
   }
@@ -278,13 +373,10 @@ export class DemoStore {
   }
 
   jumpTo(index: number): void {
-    const stages = this.route()?.stages ?? [];
-    if (!stages[index]) return;
-    this.move(
-      stages.slice(0, index).reduce((sum, stage) => sum + stage.km, 0),
-      false,
-    );
-    this.arrival.set(index ? stages[index].from : null);
+    const plan = this.walkingPlan();
+    if (!plan[index]) return;
+    this.move(plan[index - 1]?.distance ?? 0, false);
+    this.arrival.set(index ? plan[index].from : null);
     this.cameraRevision.update((revision) => revision + 1);
   }
 
@@ -296,6 +388,12 @@ export class DemoStore {
     void this.router.navigateByUrl('/mapa');
   }
 
+  showStayStop(stageId: number): void {
+    void this.router.navigateByUrl('/mapa').then((opened) => {
+      if (opened) this.mapStayStop.set(stageId);
+    });
+  }
+
   reset(): void {
     this.playing.set(false);
     this.speed.set(1);
@@ -304,14 +402,54 @@ export class DemoStore {
     this.planningAnother.set(false);
     this.cameraRevision.update((revision) => revision + 1);
     this.mapLodging.set(null);
+    this.mapStayStop.set(null);
     this.premiumOpen.set(false);
     this.stored.set(freshState());
+    this.journalEntries.set([]);
     try {
       localStorage.removeItem(storageKey);
+      localStorage.removeItem(journalStorageKey);
     } catch {
       /* Storage is optional. */
     }
     void this.router.navigateByUrl('/mapa');
+  }
+
+  private migrateNotes(): void {
+    const state = this.state();
+    if (!Object.keys(state.notes).length) return;
+    const entries = [...this.journal()];
+    const recovered = new Map<string, WalkRecord>();
+    for (const [key, note] of Object.entries(state.notes).sort()) {
+      const [routeId, date] = key.split(':');
+      if (!note || !/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+      const current = state.started && routeId === state.routeId;
+      const walkId = current ? state.walkId : 'legacy-' + routeId;
+      if (!current && !recovered.has(walkId))
+        recovered.set(walkId, { id: walkId, routeId, date, days: 0, distance: 0 });
+      if (!entries.some((entry) => entry.walkId === walkId && entry.date === date)) {
+        entries.push({ walkId, date, note, photos: [] });
+      }
+    }
+    if (this.persistJournal(entries)) {
+      const history = state.walkHistory.concat(
+        [...recovered.values()].filter(
+          (walk) => !state.walkHistory.some((item) => item.id === walk.id),
+        ),
+      );
+      this.patch({ notes: {}, walkHistory: history });
+      this.persist(this.state());
+    }
+  }
+
+  private persistJournal(entries: JournalEntry[]): boolean {
+    try {
+      localStorage.setItem(journalStorageKey, JSON.stringify(entries));
+      this.journalEntries.set(entries);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   private persist(state: DemoState): void {

@@ -16,11 +16,14 @@
   inset: calc(12px + var(--ion-safe-area-top, 0px)) 12px auto;
   pointer-events: none;
 }
+.stage-card,
+.map-toolbar {
+  box-shadow: 0 3px 18px #173d472b;
+  pointer-events: auto;
+}
 .stage-card {
   padding: 12px;
   background: #fffffff7;
-  box-shadow: 0 3px 18px #173d472b;
-  pointer-events: auto;
 }
 .stage-head {
   display: flex;
@@ -41,11 +44,24 @@
   gap: 4px;
   align-items: center;
   justify-content: center;
-  min-height: 31px;
+  min-height: 40px;
   padding: 4px 8px;
   border-radius: 10px;
   background: #fff2ce;
   color: #463702;
+  font-size: 12px;
+}
+.stage-tools {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.stage-tools .icon-button {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+}
+.weather ion-icon.weather-arrow {
   font-size: 12px;
 }
 .weather ion-icon {
@@ -76,29 +92,43 @@
   font-size: 10px;
 }
 .map-toolbar {
-  display: flex;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
   align-items: center;
-  justify-content: flex-end;
-  margin-top: 9px;
+  margin: 8px auto 0;
+  max-width: 320px;
+  padding: 4px;
+  border: 1px solid #fff;
+  border-radius: 16px;
+  background: #f8fbfcf5;
 }
-.map-toolbar > * {
-  pointer-events: auto;
-}
-.map-pill {
+.explore-button {
   display: flex;
-  gap: 6px;
+  min-height: 42px;
   align-items: center;
-  padding: 7px 10px;
-  border-radius: 100px;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 11px;
+  padding-inline: 5px;
+  background: #eaf1f4;
   color: var(--brand);
-  background: #fff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 750;
+}
+.explore-button ion-icon {
+  font-size: 17px;
+}
+.explore-button.layer-active {
+  background: #ece7fb;
+  color: #513188;
+}
+.explore-button:first-child.layer-active {
+  background: #ffefc7;
+  color: #704900;
 }
 .alert-button {
   position: relative;
-  box-shadow: 0 2px 12px #173d4729;
 }
 .alert-button span {
   position: absolute;
@@ -162,32 +192,6 @@
 .emergency {
   background: var(--danger);
 }
-.share-link {
-  width: 100%;
-}
-.arrival-banner {
-  position: absolute;
-  z-index: 1;
-  left: 12px;
-  right: 74px;
-  bottom: 30px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 5px 5px 10px;
-  box-shadow: 0 3px 12px #173d473d;
-  color: var(--brand);
-  font-size: 12px;
-}
-.arrival-banner > ion-icon {
-  flex: none;
-  font-size: 17px;
-}
-.arrival-banner > .icon-button {
-  margin-left: auto;
-  width: 33px;
-  height: 35px;
-}
 .notice {
   padding: 12px;
 }
@@ -198,25 +202,6 @@
   margin: 5px 0 0;
   color: var(--muted);
   font-size: 13px;
-}
-
-.map-toolbar .icon-button {
-  box-shadow: 0 2px 12px #173d4729;
-}
-.lodging-toggle {
-  margin-right: auto;
-  min-height: 44px;
-  padding-inline: 11px;
-  box-shadow: 0 2px 12px #173d4729;
-}
-.lodging-toggle[aria-pressed='true'] {
-  background: #ffefc7;
-}
-.lodging-toggle ion-icon {
-  font-size: 17px;
-}
-.tile.partner {
-  background: #ffefc7;
 }
 
 .has-ad {
@@ -247,14 +232,18 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.map-actions,
-.arrival-banner {
+.map-actions {
   bottom: calc(30px + var(--map-ad-height, 0px));
 }
+.has-arrival .map-actions {
+  bottom: calc(158px + var(--map-ad-height, 0px));
+}
 @media (width <= 900px) {
-  .map-actions,
-  .arrival-banner {
+  .map-actions {
     bottom: calc(74px + var(--map-ad-height, 0px));
+  }
+  .has-arrival .map-actions {
+    bottom: calc(202px + var(--map-ad-height, 0px));
   }
 }
 
@@ -266,25 +255,6 @@
   background: #edf3ec;
   color: var(--muted);
   font-size: 13px;
-}
-.arrival-banner > div {
-  flex: 1;
-  padding-block: 4px;
-}
-.arrival-banner strong {
-  display: block;
-}
-.arrival-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 31px;
-  margin-top: 4px;
-  padding: 5px 8px;
-  border-radius: 8px;
-  background: #fff0c8;
-  color: var(--brand);
-  font-weight: 800;
 }
 .finish-hero {
   padding: 20px 14px;
@@ -308,10 +278,6 @@
 }
 .finish-hero span {
   font-size: 12px;
-}
-.stay-list-price {
-  flex: none;
-  text-align: right;
 }
 .stage-warning {
   display: flex;
