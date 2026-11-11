@@ -250,7 +250,7 @@ export class TrailMap {
         closeOnClick: false,
         focusAfterOpen: false,
         offset: 26,
-        anchor: 'top',
+        anchor: this.walkingView() ? 'bottom' : 'top',
       })
         .setLngLat(point.coordinates)
         .setDOMContent(content)
@@ -324,7 +324,11 @@ export class TrailMap {
       const explicit = revision !== this.lastRevision || recenter !== this.lastRecenter;
       if (newTarget) {
         this.setFollowing(false);
-        map.jumpTo({ ...flatCamera, center: target, zoom: Math.max(15.5, map.getZoom()) });
+        map.jumpTo({
+          ...(walking ? { padding: this.walkingPadding(map) } : flatCamera),
+          center: target,
+          zoom: Math.max(15.5, map.getZoom()),
+        });
       } else if (points.length && points !== this.lastFit) {
         this.setFollowing(false);
         map.jumpTo(flatCamera);
@@ -577,7 +581,7 @@ export class TrailMap {
       closeButton: false,
       closeOnClick: false,
       focusAfterOpen: false,
-      anchor: this.target() ? 'top' : undefined,
+      anchor: this.target() ? (this.walkingView() ? 'bottom' : 'top') : undefined,
       offset: 15,
       maxWidth: '210px',
     })
@@ -632,7 +636,7 @@ export class TrailMap {
       closeButton: false,
       closeOnClick: false,
       focusAfterOpen: false,
-      anchor: this.target() ? 'top' : undefined,
+      anchor: this.target() ? (this.walkingView() ? 'bottom' : 'top') : undefined,
       offset: 17,
       maxWidth: '236px',
     })

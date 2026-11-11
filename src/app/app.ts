@@ -1,4 +1,13 @@
-import { afterNextRender, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { IonApp, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -65,6 +74,7 @@ import { PremiumPass } from './demo/premium-pass';
   templateUrl: './app.html',
 })
 export class App {
+  private readonly demoPanel = viewChild<ElementRef<HTMLDialogElement>>('demoPanel');
   protected readonly tabs = tabs;
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
@@ -72,6 +82,9 @@ export class App {
   protected readonly creditOpen = signal(false);
 
   constructor() {
+    effect(() => {
+      if (this.store.completionOpen()) this.demoPanel()?.nativeElement.close();
+    });
     const destroy = inject(DestroyRef);
     afterNextRender(() => {
       try {

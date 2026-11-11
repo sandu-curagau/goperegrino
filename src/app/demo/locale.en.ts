@@ -1,4 +1,15 @@
 export const translations = {
+  demoSimulationHelp: 'Simulate walking or jump ahead to try different stages.',
+  mapGestures: 'Map gestures',
+  desktopMapGestures:
+    'Desktop: drag with the left mouse button to pan or the right button to rotate.',
+  mobileMapGestures:
+    'Phone: drag with one finger to pan. Pinch with two fingers to zoom and twist them to rotate.',
+  resumeWalk: 'Resume walk',
+  resumeWalkCopy:
+    'Last saved position: km {km}. The demo opens the map there. On the trail, return to that point to pick up your walk.',
+  resumeOtherWalk: 'Your current walk will be saved to your history.',
+  translateOnlineComment: 'Translate online',
   packCover: 'Backpack rain cover',
   walkStopped: 'Walk stopped',
   walkAttempt: 'Attempt {count}',
@@ -37,7 +48,6 @@ export const translations = {
   translateComment: 'Translate',
   showOriginalComment: 'See original',
   translatingComment: 'Translating…',
-  commentTranslationUnavailable: 'This browser cannot translate this comment.',
   commentTranslationFailed: 'Could not translate. Try again.',
   commentAlreadyInLanguage: 'The comment is already in your app language.',
   journalReadAccess: 'Your memories remain available. Premium lets you create and edit entries.',
@@ -164,7 +174,7 @@ export const translations = {
   myPosition: 'Centre on my position',
   mapView: 'Map view',
   walkingView: 'Walk view',
-  resumeFollowing: 'Resume following',
+  resumeFollowing: 'Centre',
   lodging: 'Places to stay',
   filters: 'Filters',
   maxPrice: 'Maximum nightly price',

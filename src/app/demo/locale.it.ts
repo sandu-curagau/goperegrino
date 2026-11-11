@@ -1,6 +1,17 @@
 import type { Message } from './locale';
 
 export const translations = {
+  demoSimulationHelp: 'Simula la camminata o salta a un’altra tappa.',
+  mapGestures: 'Gesti della mappa',
+  desktopMapGestures:
+    'Computer: trascina con il tasto sinistro per spostare la mappa e con il destro per ruotarla.',
+  mobileMapGestures:
+    'Telefono: trascina con un dito per spostare. Usa due dita per ingrandire o ruotare.',
+  resumeWalk: 'Riprendi la camminata',
+  resumeWalkCopy:
+    'Ultima posizione salvata: km {km}. La demo apre la mappa in quel punto. Sul percorso, torna lì per riprendere la camminata.',
+  resumeOtherWalk: 'Il cammino attuale verrà salvato nella cronologia.',
+  translateOnlineComment: 'Traduci online',
   packCover: 'Coprizaino antipioggia',
   walkStopped: 'Cammino interrotto',
   walkAttempt: 'Tentativo {count}',
@@ -39,7 +50,6 @@ export const translations = {
   translateComment: 'Traduci',
   showOriginalComment: 'Vedi originale',
   translatingComment: 'Traduzione…',
-  commentTranslationUnavailable: 'Questo browser non può tradurre il commento.',
   commentTranslationFailed: 'Traduzione non riuscita. Riprova.',
   commentAlreadyInLanguage: 'Il commento è già nella lingua dell’app.',
   journalReadAccess:
@@ -170,7 +180,7 @@ export const translations = {
   myPosition: 'Centrato sulla mia posizione',
   mapView: 'Mappa',
   walkingView: 'Camminata',
-  resumeFollowing: 'Riprendi il percorso',
+  resumeFollowing: 'Centra',
   lodging: 'Alloggi',
   filters: 'Filtri',
   maxPrice: 'Prezzo massimo per notte',

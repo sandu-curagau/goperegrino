@@ -118,6 +118,8 @@ export interface WalkRecord {
   date: string;
   days: number;
   distance: number;
+  attempt?: number;
+  pack?: string[];
   status?: 'stopped' | 'completed';
 }
 

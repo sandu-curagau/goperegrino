@@ -93,6 +93,12 @@
             </p>
           </div>
         </section>
+        @if (current.canResume) {
+          <button class="primary new-entry" type="button" (click)="resumeOpen.set(true)">
+            <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
+            >{{ locale.t('resumeWalk') }}
+          </button>
+        }
         @if (current.active) {
           <button class="primary new-entry" type="button" (click)="addEntry()">
             <ion-icon
@@ -191,6 +197,22 @@
     }
   </main>
 </ion-content>
+@if (resumeOpen() && walk(); as current) {
+  <app-sheet [title]="locale.t('resumeWalk')" (closed)="resumeOpen.set(false)">
+    <div class="sheet-stack">
+      <p>{{ locale.t('resumeWalkCopy', { km: locale.number(current.distance, 1) }) }}</p>
+      @if (otherActive()) {
+        <p class="muted">{{ locale.t('resumeOtherWalk') }}</p>
+      }
+      <button class="primary" type="button" (click)="resumeWalk()">
+        {{ locale.t('resumeWalk') }}
+      </button>
+      <button class="secondary" type="button" (click)="resumeOpen.set(false)">
+        {{ locale.t('cancel') }}
+      </button>
+    </div>
+  </app-sheet>
+}
 @if (expandedPhoto(); as photo) {
   <app-sheet [title]="locale.t('journalPhoto')" (closed)="expandedPhoto.set('')">
     <img class="expanded-photo" [src]="photo" [alt]="locale.t('journalPhoto')" />

@@ -1,6 +1,17 @@
 import type { Message } from './locale';
 
 export const translations = {
+  demoSimulationHelp: 'Simula la caminata o salta a otras etapas.',
+  mapGestures: 'Gestos del mapa',
+  desktopMapGestures:
+    'Ordenador: arrastra con el botón izquierdo para mover el mapa y con el derecho para girarlo.',
+  mobileMapGestures:
+    'Móvil: arrastra con un dedo para mover. Pellizca con dos dedos para acercar o alejar y gíralos para rotar.',
+  resumeWalk: 'Reanudar caminata',
+  resumeWalkCopy:
+    'Última posición guardada: km {km}. La demostración abre el mapa allí. En la ruta, vuelve a ese punto para continuar.',
+  resumeOtherWalk: 'La ruta actual se guardará en tu historial.',
+  translateOnlineComment: 'Traducir en línea',
   packCover: 'Funda de lluvia para la mochila',
   walkStopped: 'Caminata interrumpida',
   walkAttempt: 'Intento {count}',
@@ -39,7 +50,6 @@ export const translations = {
   translateComment: 'Traducir',
   showOriginalComment: 'Ver original',
   translatingComment: 'Traduciendo…',
-  commentTranslationUnavailable: 'Este navegador no permite traducir este comentario.',
   commentTranslationFailed: 'No se pudo traducir. Inténtalo de nuevo.',
   commentAlreadyInLanguage: 'El comentario ya está en el idioma de la app.',
   journalReadAccess: 'Tus recuerdos siguen disponibles. Premium permite crear y editar entradas.',
@@ -168,7 +178,7 @@ export const translations = {
   myPosition: 'Centrar en mi posición',
   mapView: 'Mapa',
   walkingView: 'Caminata',
-  resumeFollowing: 'Volver a seguir',
+  resumeFollowing: 'Centrar',
   lodging: 'Alojamientos',
   filters: 'Filtros',
   maxPrice: 'Precio máximo por noche',

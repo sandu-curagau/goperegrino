@@ -308,6 +308,9 @@ ion-content {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+.maplibregl-popup:has(.pin-summary) {
+  z-index: 2;
+}
 .maplibregl-popup-content:has(.pin-summary) {
   padding: 0;
   border: 1px solid var(--line);

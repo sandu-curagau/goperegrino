@@ -12,13 +12,11 @@ interface BrowserLanguageDetector {
   destroy(): void;
 }
 
+type TranslatorOptions = { sourceLanguage: string; targetLanguage: string };
 const browser = globalThis as typeof globalThis & {
   Translator?: {
-    create(options: {
-      sourceLanguage: string;
-      targetLanguage: string;
-      signal: AbortSignal;
-    }): Promise<BrowserTranslator>;
+    availability(options: TranslatorOptions): Promise<string>;
+    create(options: TranslatorOptions & { signal: AbortSignal }): Promise<BrowserTranslator>;
   };
   LanguageDetector?: {
     availability(): Promise<string>;
@@ -40,6 +38,55 @@ interface Translation {
   error?: Message;
 }
 
+const serviceLanguages: Record<string, string> = { pt: 'pt-PT', zh: 'zh-CN' };
+
+function translationSegments(text: string, language: string): string[] {
+  const parts: string[] = [];
+  const encoder = new TextEncoder();
+  let chunk = '';
+  let bytes = 0;
+  const words = new Intl.Segmenter(language, { granularity: 'word' }).segment(text);
+  for (const { segment } of words) {
+    const units = encoder.encode(segment).length > 500 ? Array.from(segment) : [segment];
+    for (const unit of units) {
+      const size = encoder.encode(unit).length;
+      if (bytes + size > 500) {
+        if (chunk.trim()) parts.push(chunk.trim());
+        chunk = '';
+        bytes = 0;
+      }
+      chunk += unit;
+      bytes += size;
+    }
+  }
+  if (chunk.trim()) parts.push(chunk.trim());
+  return parts;
+}
+
+async function translateOnline(text: string, source: string, target: string): Promise<string> {
+  const pair = (serviceLanguages[source] ?? source) + '|' + (serviceLanguages[target] ?? target);
+  const signal = AbortSignal.timeout(10000);
+  const results = await Promise.all(
+    translationSegments(text, source).map(async (part) => {
+      const query = new URLSearchParams({ q: part, langpair: pair });
+      const response = await fetch('https://api.mymemory.translated.net/get?' + query, {
+        signal,
+        credentials: 'omit',
+        referrerPolicy: 'no-referrer',
+      });
+      if (!response.ok) throw new Error('Translation request failed');
+      const data = await response.json();
+      const translated = data.responseData?.translatedText;
+      if (Number(data.responseStatus) !== 200 || typeof translated !== 'string')
+        throw new Error('Translation unavailable');
+      const decoded = document.createElement('textarea');
+      decoded.innerHTML = translated.replace(/</g, '&lt;');
+      return decoded.value;
+    }),
+  );
+  return results.join(target === 'zh' ? '' : ' ');
+}
+
 @Injectable()
 export class CommentTranslation {
   private readonly store = inject(DemoStore);
@@ -57,7 +104,9 @@ export class CommentTranslation {
         ? 'translatingComment'
         : translated && !saved?.showOriginal
           ? 'showOriginalComment'
-          : 'translateComment') as Message,
+          : comment.original || translated
+            ? 'translateComment'
+            : 'translateOnlineComment') as Message,
       visible: !comment.original || comment.original !== comment.message,
       disabled: !!saved?.pending || (!comment.original && !saved?.text && this.store.offline()),
       error: saved?.error,
@@ -74,10 +123,6 @@ export class CommentTranslation {
       return;
     }
     if (this.store.offline()) return;
-    if (!browser.Translator) {
-      this.save(key, { error: 'commentTranslationUnavailable' });
-      return;
-    }
     this.save(key, { pending: true });
     try {
       const source = await this.sourceLanguage(comment);
@@ -86,21 +131,30 @@ export class CommentTranslation {
         return;
       }
       if (!source) throw new Error('Unknown source language');
-      const translator = await browser.Translator.create({
-        sourceLanguage: source,
-        targetLanguage: target,
-        signal: AbortSignal.timeout(45000),
-      });
-      try {
-        const translated = (await translator.translate(comment.message)).trim();
-        if (!translated) throw new Error('Empty translation');
-        this.save(key, { text: translated });
-      } finally {
-        translator.destroy();
-      }
+      const translated = (await this.translate(comment.message, source, target)).trim();
+      if (!translated) throw new Error('Empty translation');
+      this.save(key, { text: translated });
     } catch {
       this.save(key, { error: 'commentTranslationFailed' });
     }
+  }
+
+  private async translate(text: string, source: string, target: string): Promise<string> {
+    const api = browser.Translator;
+    const options = { sourceLanguage: source, targetLanguage: target };
+    if (api && (await api.availability(options).catch(() => '')) === 'available') {
+      try {
+        const translator = await api.create({ ...options, signal: AbortSignal.timeout(5000) });
+        try {
+          return await translator.translate(text);
+        } finally {
+          translator.destroy();
+        }
+      } catch {
+        /* Use the online service if the browser cannot load its translation model. */
+      }
+    }
+    return translateOnline(text, source, target);
   }
 
   private async sourceLanguage(comment: TranslatableComment): Promise<string | undefined> {

@@ -69,6 +69,14 @@
             <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
             >{{ locale.t('continueWalking') }}<span aria-hidden="true">→</span>
           </button>
+        } @else if (store.state().walkStopped) {
+          <button class="continue-walk" type="button" (click)="open('resumeWalk')">
+            <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
+            >{{ locale.t('resumeWalk') }}<span aria-hidden="true">→</span>
+          </button>
+          <button class="walk-new-link" type="button" (click)="anotherWalk()">
+            {{ locale.t('anotherRoute') }}
+          </button>
         } @else {
           <button class="continue-walk" type="button" (click)="anotherWalk()">
             <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
@@ -286,6 +294,17 @@
           <button class="primary" type="button" (click)="stopWalk()">
             {{ locale.t('stopWalk') }}</button
           ><button class="secondary" type="button" (click)="close()">
+            {{ locale.t('cancel') }}
+          </button>
+        </div>
+      }
+      @case ('resumeWalk') {
+        <div class="sheet-stack">
+          <p>{{ locale.t('resumeWalkCopy', { km: locale.number(store.state().distance, 1) }) }}</p>
+          <button class="primary" type="button" (click)="resumeWalk()">
+            {{ locale.t('resumeWalk') }}
+          </button>
+          <button class="secondary" type="button" (click)="close()">
             {{ locale.t('cancel') }}
           </button>
         </div>

@@ -1,6 +1,17 @@
 import type { Message } from './locale';
 
 export const translations = {
+  demoSimulationHelp: 'Symuluj marsz lub przejdź do innego etapu.',
+  mapGestures: 'Gesty na mapie',
+  desktopMapGestures:
+    'Komputer: przeciągnij lewym przyciskiem, aby przesunąć mapę, lub prawym, aby ją obrócić.',
+  mobileMapGestures:
+    'Telefon: przesuń mapę jednym palcem. Zsuń lub rozsuń dwa palce, aby zmienić skalę, albo obróć je, aby obrócić mapę.',
+  resumeWalk: 'Wznów wędrówkę',
+  resumeWalkCopy:
+    'Ostatnia zapisana pozycja: km {km}. Demo otwiera tam mapę. Na szlaku wróć do tego punktu, aby kontynuować wędrówkę.',
+  resumeOtherWalk: 'Obecna trasa zostanie zapisana w historii.',
+  translateOnlineComment: 'Przetłumacz online',
   packCover: 'Pokrowiec przeciwdeszczowy na plecak',
   walkStopped: 'Wędrówka przerwana',
   walkAttempt: 'Próba {count}',
@@ -38,7 +49,6 @@ export const translations = {
   translateComment: 'Przetłumacz',
   showOriginalComment: 'Pokaż oryginał',
   translatingComment: 'Tłumaczenie…',
-  commentTranslationUnavailable: 'Ta przeglądarka nie może przetłumaczyć tego komentarza.',
   commentTranslationFailed: 'Nie udało się przetłumaczyć. Spróbuj ponownie.',
   commentAlreadyInLanguage: 'Komentarz jest już w języku aplikacji.',
   journalReadAccess:
@@ -169,7 +179,7 @@ export const translations = {
   myPosition: 'Wyśrodkuj moją pozycję',
   mapView: 'Mapa',
   walkingView: 'Wędrówka',
-  resumeFollowing: 'Wznów śledzenie',
+  resumeFollowing: 'Wyśrodkuj',
   lodging: 'Noclegi',
   filters: 'Filtry',
   maxPrice: 'Maksymalna cena za noc',

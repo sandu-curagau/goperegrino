@@ -4,20 +4,24 @@
   color: var(--panel-ink, var(--ink));
   font-size: 12px;
 }
-.field {
-  color: inherit;
-}
-.field select {
-  min-height: 38px;
-  padding: 6px 8px;
-  border-color: var(--panel-line, var(--line));
-  color: var(--panel-ink, var(--ink));
-  background: var(--panel-fill, #fff);
+.simulation-help,
+.gesture-help p {
+  margin: 0;
   font-size: 11px;
+  line-height: 1.55;
 }
-option {
-  color: var(--ink);
-  background: #fff;
+.gesture-help {
+  padding: 9px 10px;
+  border: 1px solid var(--panel-line, var(--line));
+  border-radius: 10px;
+}
+.gesture-help summary {
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+}
+.gesture-help p {
+  margin-top: 8px;
 }
 .distance {
   display: grid;

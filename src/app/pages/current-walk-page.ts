@@ -11,7 +11,8 @@ import { loadOfflinePack } from './offline-map';
 import { fetchStageWeather, sampleWeather } from './stage-weather';
 import { StageForecast } from './stage-forecast';
 
-type Section = 'journal' | 'packing' | 'breaks' | 'download' | 'stopWalk' | 'anotherRoute';
+type Section =
+  'journal' | 'packing' | 'breaks' | 'download' | 'stopWalk' | 'anotherRoute' | 'resumeWalk';
 type Action = Section | 'credencial' | 'writeReviews';
 const sections: { id: Action; icon: string; premium: boolean }[] = [
   { id: 'journal', icon: 'book-outline', premium: false },
@@ -191,12 +192,18 @@ export class CurrentWalkPage {
 
   protected planAnother(): void {
     this.close();
+    this.store.playing.set(false);
     this.store.planningAnother.set(true);
   }
 
   protected stopWalk(): void {
     this.store.stopWalk();
     this.close();
+  }
+
+  protected resumeWalk(): void {
+    this.close();
+    this.store.resumeWalk(this.store.state().walkId);
   }
 
   protected showNearbyPoint(point: Waypoint): void {

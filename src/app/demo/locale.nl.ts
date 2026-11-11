@@ -1,6 +1,17 @@
 import type { Message } from './locale';
 
 export const translations = {
+  demoSimulationHelp: 'Simuleer wandelen of spring naar een andere etappe.',
+  mapGestures: 'Kaartgebaren',
+  desktopMapGestures:
+    'Computer: sleep met de linkermuisknop om de kaart te bewegen of met de rechtermuisknop om te draaien.',
+  mobileMapGestures:
+    'Telefoon: sleep met één vinger om de kaart te bewegen. Knijp of draai met twee vingers om te zoomen of te draaien.',
+  resumeWalk: 'Tocht hervatten',
+  resumeWalkCopy:
+    'Laatst opgeslagen positie: km {km}. De demo opent de kaart op die plek. Keer tijdens de tocht terug naar dat punt om verder te gaan.',
+  resumeOtherWalk: 'Je huidige tocht wordt opgeslagen in je geschiedenis.',
+  translateOnlineComment: 'Online vertalen',
   packCover: 'Regenhoes voor de rugzak',
   walkStopped: 'Tocht gestopt',
   walkAttempt: 'Poging {count}',
@@ -39,7 +50,6 @@ export const translations = {
   translateComment: 'Vertalen',
   showOriginalComment: 'Bekijk origineel',
   translatingComment: 'Bezig met vertalen…',
-  commentTranslationUnavailable: 'Deze browser kan deze reactie niet vertalen.',
   commentTranslationFailed: 'Vertalen is niet gelukt. Probeer opnieuw.',
   commentAlreadyInLanguage: 'De reactie is al in de taal van de app.',
   journalReadAccess:
@@ -170,7 +180,7 @@ export const translations = {
   myPosition: 'Centreer op mijn positie',
   mapView: 'Kaart',
   walkingView: 'Wandelen',
-  resumeFollowing: 'Volgen hervatten',
+  resumeFollowing: 'Centreren',
   lodging: 'Accommodaties',
   filters: 'Filters',
   maxPrice: 'Maximale nachtprijs',

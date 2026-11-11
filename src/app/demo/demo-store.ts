@@ -45,6 +45,7 @@ interface DemoState {
   days: number;
   distance: number;
   walkId: string;
+  walkAttempt: number;
   walkHistory: WalkRecord[];
   walkStopped: boolean;
   trailComments: TrailComment[];
@@ -81,6 +82,7 @@ function freshState(): DemoState {
     days: 11,
     distance: 0,
     walkId: '',
+    walkAttempt: 0,
     walkHistory: [],
     walkStopped: false,
     trailComments: [],
@@ -107,6 +109,18 @@ function readState(): DemoState {
     const stored = localStorage.getItem(storageKey);
     const state: DemoState = stored ? { ...freshState(), ...JSON.parse(stored) } : freshState();
     if (state.started && !state.walkId) state.walkId = 'legacy-' + state.routeId;
+    const attempts = new Map<string, number>();
+    state.walkHistory = [...state.walkHistory]
+      .reverse()
+      .map((walk) => {
+        const previous = attempts.get(walk.routeId) ?? 0;
+        const attempt = walk.attempt ?? previous + 1;
+        attempts.set(walk.routeId, Math.max(previous, attempt));
+        return { ...walk, attempt };
+      })
+      .reverse();
+    if (state.started && !state.walkAttempt)
+      state.walkAttempt = (attempts.get(state.routeId) ?? 0) + 1;
     return state;
   } catch {
     return freshState();
@@ -136,7 +150,8 @@ export class DemoStore {
   readonly state = this.stored.asReadonly();
   readonly journal = this.journalEntries.asReadonly();
   readonly activeWalk = computed<WalkRecord | null>(() => {
-    const { started, walkId, routeId, date, days, distance, walkStopped } = this.state();
+    const { started, walkId, walkAttempt, routeId, date, days, distance, walkStopped, pack } =
+      this.state();
     return started
       ? {
           id: walkId,
@@ -144,6 +159,8 @@ export class DemoStore {
           date,
           days,
           distance,
+          attempt: walkAttempt,
+          pack,
           status: this.completed() ? 'completed' : walkStopped ? 'stopped' : undefined,
         }
       : null;
@@ -369,28 +386,29 @@ export class DemoStore {
   }
 
   openWalkingMap(): void {
-    void this.router.navigateByUrl('/mapa').then((opened) => {
-      if (opened) this.mapViewRequest.set('walking');
-    });
+    if (this.walkClosed() || !this.started()) return;
+    void this.router.navigateByUrl('/mapa');
+    this.mapViewRequest.set('walking');
   }
 
   chooseRoute(id: string, started = true): void {
     const route = this.routes().find((item) => item.id === id);
     if (!route) return;
-    this.playing.set(false);
-    this.arrival.set(null);
-    this.completionOpen.set(false);
-    const current = this.activeWalk();
-    const archive = current ? { ...current, status: current.status ?? ('stopped' as const) } : null;
+    const walkHistory = this.archiveCurrent();
+    const previousAttempts = walkHistory.filter((walk) => walk.routeId === id);
+    const walkAttempt =
+      Math.max(previousAttempts.length, ...previousAttempts.map((walk) => walk.attempt ?? 0)) + 1;
+    this.resetWalkView();
     this.patch({
       routeId: id,
       distance: 0,
       days: route.stages.length,
       started,
       walkId: started ? crypto.randomUUID() : '',
+      walkAttempt: started ? walkAttempt : 0,
       walkStopped: false,
       pack: [],
-      walkHistory: archive ? [archive, ...this.state().walkHistory] : this.state().walkHistory,
+      walkHistory,
     });
     this.cameraRevision.update((revision) => revision + 1);
   }
@@ -400,6 +418,52 @@ export class DemoStore {
     this.playing.set(false);
     this.arrival.set(null);
     this.patch({ walkStopped: true });
+  }
+
+  resumeWalk(id: string): void {
+    const current = this.activeWalk();
+    const walk =
+      current?.id === id ? current : this.state().walkHistory.find((entry) => entry.id === id);
+    const route = this.routes().find((entry) => entry.id === walk?.routeId);
+    if (!walk || !route || walk.status === 'completed' || walk.distance >= route.km || !walk.days)
+      return;
+    if (current?.id === id && !this.state().walkStopped) return;
+    this.resetWalkView();
+    if (current?.id === id) {
+      this.patch({ walkStopped: false });
+    } else {
+      this.patch({
+        routeId: walk.routeId,
+        date: walk.date,
+        days: walk.days,
+        distance: walk.distance,
+        walkId: walk.id,
+        walkAttempt: walk.attempt ?? 1,
+        started: true,
+        walkStopped: false,
+        pack: walk.pack ?? [],
+        walkHistory: this.archiveCurrent().filter((entry) => entry.id !== id),
+      });
+    }
+    this.cameraRevision.update((revision) => revision + 1);
+    this.openWalkingMap();
+  }
+
+  private archiveCurrent(): WalkRecord[] {
+    const current = this.activeWalk();
+    const history = this.state().walkHistory;
+    return current
+      ? [
+          { ...current, status: current.status ?? 'stopped' },
+          ...history.filter((entry) => entry.id !== current.id),
+        ]
+      : history;
+  }
+
+  private resetWalkView(): void {
+    this.playing.set(false);
+    this.arrival.set(null);
+    this.completionOpen.set(false);
   }
 
   saveJournalEntry(entry: JournalEntry): boolean {

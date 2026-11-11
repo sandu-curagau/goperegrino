@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { DemoStore } from './demo-store';
 import { Locale } from './locale';
@@ -9,22 +8,11 @@ import { Locale } from './locale';
   imports: [IonIcon],
   template: `
     <div class="controls">
-      <label class="field"
-        >{{ locale.t('choose') }}
-        <select
-          #routeSelect
-          [value]="store.state().routeId"
-          (change)="changeRoute(routeSelect.value)"
-        >
-          @for (route of store.routes(); track route.id) {
-            <option [value]="route.id" [selected]="store.state().routeId === route.id">
-              {{ route.name }}
-            </option>
-          }
-        </select>
-      </label>
-
-      @if (store.route(); as route) {
+      @if (
+        store.started() && !store.walkClosed() && !store.planningAnother() && store.route();
+        as route
+      ) {
+        <p class="simulation-help">{{ locale.t('demoSimulationHelp') }}</p>
         <label class="distance">
           <span
             >{{ locale.t('position') }}
@@ -33,7 +21,6 @@ import { Locale } from './locale';
           <input
             #range
             type="range"
-            [disabled]="store.walkClosed()"
             min="0"
             [max]="route.km"
             step="0.1"
@@ -48,11 +35,10 @@ import { Locale } from './locale';
             @for (stage of store.walkingPlan(); track stage.day; let index = $index) {
               <button
                 type="button"
-                [disabled]="store.walkClosed()"
                 [class.active]="store.walkingDayIndex() === index"
                 [attr.aria-pressed]="store.walkingDayIndex() === index"
                 [attr.aria-label]="locale.t('jump') + ' ' + stage.day + ' · ' + stage.from"
-                (click)="jump(index)"
+                (click)="store.jumpTo(index)"
               >
                 {{ stage.day }}
               </button>
@@ -60,7 +46,7 @@ import { Locale } from './locale';
           </div>
         </div>
         <div class="transport">
-          <button type="button" class="play" [disabled]="store.walkClosed()" (click)="toggleWalk()">
+          <button type="button" class="play" (click)="toggleWalk()">
             <ion-icon
               [name]="store.playing() ? 'pause-outline' : 'play-outline'"
               aria-hidden="true"
@@ -82,6 +68,11 @@ import { Locale } from './locale';
         </div>
       }
 
+      <details class="gesture-help">
+        <summary>{{ locale.t('mapGestures') }}</summary>
+        <p>{{ locale.t('desktopMapGestures') }}</p>
+        <p>{{ locale.t('mobileMapGestures') }}</p>
+      </details>
       <label class="switch">
         <span>{{ locale.t('network') }}</span>
         <input
@@ -110,22 +101,10 @@ import { Locale } from './locale';
 export class DemoControls {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
-  private readonly router = inject(Router);
   protected readonly speeds = [1, 10, 50];
 
-  protected changeRoute(id: string): void {
-    this.store.chooseRoute(id);
-    void this.router.navigateByUrl('/mapa');
-  }
-
-  protected jump(index: number): void {
-    if (!this.store.started()) this.changeRoute(this.store.state().routeId);
-    this.store.jumpTo(index);
-  }
-
   protected toggleWalk(): void {
-    if (!this.store.started()) this.changeRoute(this.store.state().routeId);
-    if (this.store.walkClosed()) return;
+    if (!this.store.started() || this.store.walkClosed()) return;
     this.store.playing.update((playing) => !playing);
   }
 

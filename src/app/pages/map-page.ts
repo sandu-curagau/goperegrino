@@ -144,7 +144,6 @@ export class MapPage {
       if (!point) return;
       untracked(() => {
         this.clearSelection();
-        this.walkingView.set(false);
         this.nearbyPoint.set(point);
         this.target.set(point.coordinates);
         this.openSheet.set(null);
@@ -221,7 +220,6 @@ export class MapPage {
         ? this.stays.stop()
         : undefined;
     this.clearSelection();
-    this.walkingView.set(false);
     this.planOverview.set(false);
     this.selectedId.set(id);
     this.plannedArrival.set(planned?.date);
@@ -295,7 +293,6 @@ export class MapPage {
     this.focusedComment.set(comment);
     this.selectedCommentId.set(comment.id);
     if (!center) return;
-    this.walkingView.set(false);
     this.target.set([...comment.position]);
     this.store.arrival.set(null);
     this.openSheet.set(null);

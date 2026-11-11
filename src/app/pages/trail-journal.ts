@@ -48,6 +48,13 @@ export class TrailJournal {
   private readonly currentOnly = signal(false);
   protected readonly selectedWalk = signal('');
   protected readonly editor = signal<JournalEntry | null>(null);
+  protected readonly resumeOpen = signal(false);
+  protected readonly otherActive = computed(
+    () =>
+      this.store.started() &&
+      !this.store.walkClosed() &&
+      this.store.state().walkId !== this.selectedWalk(),
+  );
   protected readonly expandedPhoto = signal('');
   protected readonly draft = signal('');
   protected readonly photos = signal<string[]>([]);
@@ -101,11 +108,9 @@ export class TrailJournal {
           status,
           sample,
           active: walk.id === active?.id && !this.store.state().walkStopped,
-          attempt: sample
-            ? 0
-            : walks
-                .slice(walks.indexOf(walk))
-                .filter((other) => other.id !== sampleId && other.routeId === walk.routeId).length,
+          attempt: walk.attempt ?? 1,
+          canResume:
+            !sample && !!walk.days && (status === 'walkStopped' || status === 'walkArchived'),
           cover: entries.find((entry) => entry.photos.length)?.photos[0],
           timeline,
           notesCount: entries.filter((entry) => !!entry.note).length,
@@ -146,6 +151,12 @@ export class TrailJournal {
 
   protected showPremium(): void {
     this.store.premiumOpen.set(true);
+  }
+
+  protected resumeWalk(): void {
+    const walk = this.walk();
+    this.resumeOpen.set(false);
+    if (walk?.canResume) this.store.resumeWalk(walk.id);
   }
 
   protected addEntry(): void {

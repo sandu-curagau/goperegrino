@@ -1,6 +1,17 @@
 import type { Message } from './locale';
 
 export const translations = {
+  demoSimulationHelp: '걷기를 시뮬레이션하거나 다른 구간으로 이동하세요.',
+  mapGestures: '지도 제스처',
+  desktopMapGestures:
+    '컴퓨터: 마우스 왼쪽 버튼으로 끌어 지도를 이동하고 오른쪽 버튼으로 끌어 회전하세요.',
+  mobileMapGestures:
+    '휴대전화: 한 손가락으로 끌어 이동하세요. 두 손가락을 오므리거나 벌려 확대·축소하고 비틀어 회전하세요.',
+  resumeWalk: '걷기 재개',
+  resumeWalkCopy:
+    '마지막 저장 위치: {km}km 지점. 데모 지도는 해당 위치에서 열립니다. 실제로는 그 지점으로 돌아가 계속 걸으세요.',
+  resumeOtherWalk: '현재 경로는 기록에 저장됩니다.',
+  translateOnlineComment: '온라인 번역',
   packCover: '배낭 방수 커버',
   walkStopped: '걷기 중단',
   walkAttempt: '{count}번째 도전',
@@ -37,7 +48,6 @@ export const translations = {
   translateComment: '번역',
   showOriginalComment: '원문 보기',
   translatingComment: '번역 중…',
-  commentTranslationUnavailable: '이 브라우저에서는 이 댓글을 번역할 수 없습니다.',
   commentTranslationFailed: '번역에 실패했습니다. 다시 시도하세요.',
   commentAlreadyInLanguage: '댓글이 이미 앱의 언어로 작성되었습니다.',
   journalReadAccess:
@@ -164,7 +174,7 @@ export const translations = {
   myPosition: '내 위치를 중심으로',
   mapView: '지도 보기',
   walkingView: '걷기 모드',
-  resumeFollowing: '따라가기 재개',
+  resumeFollowing: '중앙으로',
   lodging: '숙소',
   filters: '필터',
   maxPrice: '최대 1박 가격',

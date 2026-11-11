@@ -1,6 +1,15 @@
 import type { Message } from './locale';
 
 export const chinese = {
+  demoSimulationHelp: '模拟步行或跳转到不同路段。',
+  mapGestures: '地图手势',
+  desktopMapGestures: '电脑：按住鼠标左键拖动地图，按住右键拖动可旋转。',
+  mobileMapGestures: '手机：单指拖动地图，双指捏合缩放，双指转动可旋转。',
+  resumeWalk: '继续步行',
+  resumeWalkCopy:
+    '上次保存的位置：第 {km} 公里。演示地图将在该处打开。实际步行时，请回到该点继续。',
+  resumeOtherWalk: '当前路线会保存到历史记录中。',
+  translateOnlineComment: '在线翻译',
   packCover: '背包防雨罩',
   walkStopped: '步行已中止',
   walkAttempt: '第{count}次尝试',
@@ -37,7 +46,6 @@ export const chinese = {
   translateComment: '翻译',
   showOriginalComment: '查看原文',
   translatingComment: '正在翻译…',
-  commentTranslationUnavailable: '此浏览器无法翻译该评论。',
   commentTranslationFailed: '无法翻译，请重试。',
   commentAlreadyInLanguage: '该评论已经使用应用当前语言。',
   journalReadAccess: '您仍可查看已有回忆。高级版支持创建和编辑日记。',
@@ -161,7 +169,7 @@ export const chinese = {
   myPosition: '回到我的位置',
   mapView: '地图视图',
   walkingView: '徒步视图',
-  resumeFollowing: '恢复跟随',
+  resumeFollowing: '居中',
   lodging: '住宿',
   filters: '筛选',
   maxPrice: '每晚最高价格',
