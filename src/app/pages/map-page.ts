@@ -8,7 +8,6 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale, Message } from '../demo/locale';
@@ -51,7 +50,6 @@ export class MapPage {
   protected readonly locale = inject(Locale);
   protected readonly feed = inject(TrailCommentFeed);
   protected readonly stays = inject(LodgingSearch);
-  private readonly router = inject(Router);
   protected readonly weather = signal(sampleWeather(1));
   private readonly refreshWeather = signal(0);
   protected readonly openSheet = signal<MapSheet | null>(null);
@@ -66,6 +64,7 @@ export class MapPage {
     return this.locale.t(preview ? this.warningKey(preview.id) : 'warnings');
   });
   protected readonly recenter = signal(0);
+  protected readonly zoomRequest = signal<{ delta: number } | undefined>(undefined);
   protected readonly walkingView = signal(false);
   protected readonly following = signal(true);
   protected readonly eta = computed(() => walkingTime(this.store.walkingDayRemaining()));
@@ -259,7 +258,10 @@ export class MapPage {
     const overview = this.stays.mode() === 'plan' && !this.stays.stop();
     this.planOverview.set(overview);
     const header = this.mapTop()?.nativeElement;
-    if (header) this.fitTop.set(header.offsetTop + header.offsetHeight + (overview ? 48 : 22));
+    if (header) {
+      const inset = header.parentElement?.offsetTop ?? 0;
+      this.fitTop.set(inset + header.offsetHeight + (overview ? 48 : 22));
+    }
     this.fitPoints.set(this.stays.focusPoints());
     this.openSheet.set(null);
   }
@@ -314,12 +316,6 @@ export class MapPage {
   protected setWalkingView(enabled: boolean): void {
     this.walkingView.set(enabled);
     this.centerWalker();
-  }
-
-  protected finishAction(action: 'passport' | 'route'): void {
-    this.store.completionOpen.set(false);
-    if (action === 'route') this.store.planningAnother.set(true);
-    else void this.router.navigateByUrl('/credencial');
   }
 
   protected warningKey(id: string, body = false): Message {

@@ -13,34 +13,48 @@
       </p>
     </header>
 
-    @if (store.walkingDay(); as day) {
+    @if (store.completed() && store.route(); as route) {
+      <section class="daily-overview walk-finished">
+        <span class="finish-emblem"
+          ><ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon
+        ></span>
+        <p class="daily-label">{{ locale.t('trailFinishedCopy', { name: route.destination }) }}</p>
+        <h2>{{ locale.t('trailFinished') }}</h2>
+        <p class="finish-stats">
+          {{ locale.number(route.km) }} km · {{ store.walkingPlan().length }}
+          {{ locale.t('etapas').toLowerCase() }}
+        </p>
+        <button class="continue-walk" type="button" (click)="anotherWalk()">
+          <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon>
+          {{ locale.t('anotherRoute') }}<span aria-hidden="true">→</span>
+        </button>
+      </section>
+    } @else if (store.walkingDay(); as day) {
       <section class="daily-overview">
         <div class="daily-top">
           <p class="kicker">
             {{ locale.t('day', { day: day.day }) }} · {{ locale.date(day.date) }}
           </p>
-          <button
-            class="daily-weather"
-            type="button"
-            [disabled]="store.offline()"
-            [attr.aria-label]="locale.t('forecast')"
-            (click)="weatherOpen.set(true)"
-          >
-            <ion-icon
-              [name]="store.offline() ? 'cloud-offline-outline' : weather().icon"
-              aria-hidden="true"
-            ></ion-icon>
-            @if (!store.offline()) {
-              <span>{{ weather().temperature }}°</span>
-            }
-          </button>
+          @if (!store.walkClosed()) {
+            <button
+              class="daily-weather"
+              type="button"
+              [disabled]="store.offline()"
+              [attr.aria-label]="locale.t('forecast')"
+              (click)="weatherOpen.set(true)"
+            >
+              <ion-icon
+                [name]="store.offline() ? 'cloud-offline-outline' : weather().icon"
+                aria-hidden="true"
+              ></ion-icon>
+              @if (!store.offline()) {
+                <span>{{ weather().temperature }}°</span>
+              }
+            </button>
+          }
         </div>
         <p class="daily-label">
-          {{
-            locale.t(
-              store.completed() ? 'trailFinished' : store.walkClosed() ? 'walkStopped' : 'nextStop'
-            )
-          }}
+          {{ locale.t(store.walkClosed() ? 'walkStopped' : 'nextStop') }}
         </p>
         <h2>{{ store.walkClosed() ? store.route()?.destination : day.to }}</h2>
         @if (!store.walkClosed()) {
@@ -69,18 +83,13 @@
             <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
             >{{ locale.t('continueWalking') }}<span aria-hidden="true">→</span>
           </button>
-        } @else if (store.state().walkStopped) {
+        } @else {
           <button class="continue-walk" type="button" (click)="open('resumeWalk')">
             <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
             >{{ locale.t('resumeWalk') }}<span aria-hidden="true">→</span>
           </button>
           <button class="walk-new-link" type="button" (click)="anotherWalk()">
             {{ locale.t('anotherRoute') }}
-          </button>
-        } @else {
-          <button class="continue-walk" type="button" (click)="anotherWalk()">
-            <ion-icon name="footsteps-outline" aria-hidden="true"></ion-icon
-            >{{ locale.t('anotherRoute') }}<span aria-hidden="true">→</span>
           </button>
         }
       </section>
@@ -134,7 +143,7 @@
 
     <h2 class="tools-heading">{{ locale.t('routeTools') }}</h2>
     <section class="page-stack tools-grid">
-      @for (entry of sections; track entry.id) {
+      @for (entry of availableSections(); track entry.id) {
         <button class="surface row-card" type="button" (click)="open(entry.id, entry.premium)">
           <span class="tile"
             ><ion-icon

@@ -105,26 +105,6 @@ function lodgingIcon(): ImageData {
       [attr.aria-label]="locale.t('mapLabel')"
       [class.ready]="ready()"
     ></div>
-    @if (ready()) {
-      <div class="zoom-controls">
-        <button
-          class="icon-button"
-          type="button"
-          [attr.aria-label]="locale.t('zoomIn')"
-          (click)="zoom(1)"
-        >
-          +
-        </button>
-        <button
-          class="icon-button"
-          type="button"
-          [attr.aria-label]="locale.t('zoomOut')"
-          (click)="zoom(-1)"
-        >
-          −
-        </button>
-      </div>
-    }
   `,
   styles: `
     :host,
@@ -147,25 +127,6 @@ function lodgingIcon(): ImageData {
     .map-canvas.ready {
       pointer-events: auto;
     }
-    .zoom-controls {
-      position: absolute;
-      top: clamp(207px, 40%, 248px);
-      left: 12px;
-      display: grid;
-      overflow: hidden;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px #173d4729;
-      pointer-events: auto;
-    }
-    .zoom-controls button {
-      width: 38px;
-      height: 38px;
-      border-radius: 0;
-      font-size: 21px;
-    }
-    .zoom-controls button + button {
-      border-top: 1px solid var(--line);
-    }
   `,
 })
 export class TrailMap {
@@ -180,6 +141,7 @@ export class TrailMap {
   readonly fitTop = input(220);
   readonly stayHubs = input<PlannedStop[]>([]);
   readonly recenter = input(0);
+  readonly zoomRequest = input<{ delta: number }>();
   readonly walkingView = input(false);
   readonly offline = input(false);
   readonly activePin = input<Lodging>();
@@ -221,6 +183,10 @@ export class TrailMap {
   private readonly lodgingData = computed(() => pinFeatures(this.pins()));
 
   constructor() {
+    effect(() => {
+      const request = this.zoomRequest();
+      if (request) this.zoom(request.delta);
+    });
     effect((onCleanup) => {
       const point = this.nearbyPoint();
       const map = this.map;

@@ -9,6 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { IonApp, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
+import { PRIMARY_OUTLET, Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import {
   batteryFull,
@@ -50,7 +51,7 @@ import {
   waterOutline,
   wifi,
 } from 'ionicons/icons';
-import { tabs } from './app.routes';
+import { tabs, walkOnlyTabs } from './app.routes';
 import { DemoStore } from './demo/demo-store';
 import { Locale } from './demo/locale';
 import { Onboarding } from './demo/onboarding';
@@ -75,7 +76,9 @@ import { PremiumPass } from './demo/premium-pass';
 })
 export class App {
   private readonly demoPanel = viewChild<ElementRef<HTMLDialogElement>>('demoPanel');
+  private readonly router = inject(Router);
   protected readonly tabs = tabs;
+  protected readonly walkOnlyTabs = walkOnlyTabs;
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   protected readonly activeTab = signal('mapa');
@@ -83,7 +86,17 @@ export class App {
 
   constructor() {
     effect(() => {
-      if (this.store.completionOpen()) this.demoPanel()?.nativeElement.close();
+      if (this.store.walkClosed()) this.demoPanel()?.nativeElement.close();
+    });
+    effect(() => {
+      if (!this.store.walkClosed() || this.router.currentNavigation()) return;
+      const path =
+        this.router.lastSuccessfulNavigation()?.finalUrl?.root.children[PRIMARY_OUTLET]?.segments[0]
+          ?.path;
+      // Older saved walks can only be classified as complete once the route data loads.
+      if (path && walkOnlyTabs.has(path)) {
+        void this.router.navigateByUrl('/caminho', { replaceUrl: true });
+      }
     });
     const destroy = inject(DestroyRef);
     afterNextRender(() => {

@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
 import { Locale } from '../demo/locale';
-import { distanceToLodging, Reservation, stayPrice } from '../demo/models';
+import { distanceToLodging, type Lodging, Reservation, stayPrice } from '../demo/models';
 import { Sheet } from '../demo/sheet';
 
 @Component({
@@ -180,13 +180,24 @@ import { Sheet } from '../demo/sheet';
               <strong>{{ locale.t('totalStay') }}</strong
               ><span>{{ locale.money(entry.total) }}</span>
             </div>
-            <button
-              type="button"
-              class="primary"
-              (click)="selection.set(null); store.showLodging(entry.place.id)"
-            >
-              {{ locale.t('directions') }}
-            </button>
+            @if (store.walkInProgress()) {
+              <button
+                type="button"
+                class="primary"
+                (click)="selection.set(null); store.showLodging(entry.place.id)"
+              >
+                {{ locale.t('directions') }}
+              </button>
+            } @else {
+              <a
+                class="secondary"
+                [href]="locationUrl(entry.place)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ locale.t('directions') }} · OpenStreetMap
+              </a>
+            }
             <button
               type="button"
               class="secondary"
@@ -353,6 +364,11 @@ export class BookingsPage {
 
   protected conflictFor(code: string) {
     return this.store.bookingPlanConflicts().find((conflict) => conflict.booking.code === code);
+  }
+
+  protected locationUrl(place: Lodging): string {
+    const { latitude, longitude } = place.location.coordinates;
+    return `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=17/${latitude}/${longitude}`;
   }
 
   protected open(code: string, review = false): void {

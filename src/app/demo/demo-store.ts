@@ -178,7 +178,6 @@ export class DemoStore {
   readonly playing = signal(false);
   readonly speed = signal(1);
   readonly arrival = signal<string | null>(null);
-  readonly completionOpen = signal(false);
   readonly planningAnother = signal(false);
   readonly cameraRevision = signal(0);
   readonly mapLodging = signal<string | null>(null);
@@ -234,6 +233,7 @@ export class DemoStore {
   readonly remaining = computed(() => Math.max(0, (this.route()?.km ?? 0) - this.state().distance));
   readonly completed = computed(() => !!this.route() && this.started() && this.remaining() === 0);
   readonly walkClosed = computed(() => this.state().walkStopped || this.completed());
+  readonly walkInProgress = computed(() => this.started() && !this.walkClosed());
   readonly stageRemaining = computed(() =>
     Math.max(0, this.stageStart() + (this.stage()?.km ?? 0) - this.state().distance),
   );
@@ -463,7 +463,6 @@ export class DemoStore {
   private resetWalkView(): void {
     this.playing.set(false);
     this.arrival.set(null);
-    this.completionOpen.set(false);
   }
 
   saveJournalEntry(entry: JournalEntry): boolean {
@@ -497,7 +496,7 @@ export class DemoStore {
     this.patch({ distance: next });
     if (atEnd) {
       this.arrival.set(null);
-      this.completionOpen.set(announce);
+      if (announce) void this.router.navigateByUrl('/caminho', { replaceUrl: true });
     } else if (announce && this.walkingDayIndex() > before) {
       this.arrival.set(this.walkingDay()?.from ?? null);
     }
@@ -518,6 +517,7 @@ export class DemoStore {
   }
 
   showLodging(id: string): void {
+    if (!this.walkInProgress()) return;
     const item = this.lodgings().find((lodging) => lodging.id === id);
     if (!item) return;
     this.arrival.set(null);
@@ -541,7 +541,6 @@ export class DemoStore {
     this.playing.set(false);
     this.speed.set(1);
     this.arrival.set(null);
-    this.completionOpen.set(false);
     this.planningAnother.set(false);
     this.cameraRevision.update((revision) => revision + 1);
     this.mapLodging.set(null);

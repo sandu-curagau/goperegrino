@@ -1,10 +1,10 @@
 <main
   class="map-page"
   [class.has-ad]="store.started() && !store.premium()"
-  [class.has-arrival]="store.completed() || !!store.arrival()"
+  [class.has-arrival]="!!store.arrival()"
 >
   @if (store.state().started) {
-    @if (store.route(); as route) {
+    @if (store.route()) {
       @if (displayMap()) {
         @if (mapLoaded() !== true) {
           <div class="map-loading" aria-live="polite">
@@ -15,6 +15,7 @@
           <app-trail-map
             [offline]="store.offline()"
             [recenter]="recenter()"
+            [zoomRequest]="zoomRequest()"
             [walkingView]="walkingView()"
             [target]="target()"
             [fitPoints]="fitPoints()"
@@ -54,161 +55,183 @@
       }
 
       @if (store.walkingDay(); as stage) {
-        <div #mapTop class="map-top">
-          @if (walkingView() && !store.walkClosed()) {
-            <section class="navigation-card surface">
-              <span class="navigation-symbol"
-                ><ion-icon
-                  [name]="
-                    store.navigation().kind === 'finish' ? 'ribbon-outline' : 'arrow-up-outline'
-                  "
-                  [style.transform]="'rotate(' + store.navigation().rotation + 'deg)'"
-                  aria-hidden="true"
-                ></ion-icon
-              ></span>
-              <div class="navigation-copy">
-                <p class="kicker">{{ navigationDistance(store.navigation().metres) }}</p>
-                <h1>{{ locale.t(navigationTitle()) }}</h1>
-                <p>{{ locale.t('towardsStop', { place: stage.to }) }}</p>
-              </div>
-              <button
-                class="weather navigation-weather"
-                type="button"
-                [disabled]="store.offline()"
-                [attr.aria-label]="locale.t('forecast')"
-                (click)="showForecast()"
-              >
-                <ion-icon
-                  [name]="store.offline() ? 'cloud-offline-outline' : weather().icon"
-                  aria-hidden="true"
-                ></ion-icon>
-                @if (!store.offline()) {
-                  {{ weather().temperature }}°
-                }
-              </button>
-              <div class="navigation-footer">
-                <span
-                  >{{ locale.number(store.walkingDayRemaining(), 1) }} km ·
-                  {{ locale.t('walkingTime', eta()) }}</span
-                >
-              </div>
-            </section>
-          } @else {
-            <section class="stage-card surface">
-              <div class="stage-head">
-                <div>
-                  <p class="kicker">
-                    {{ locale.t('stage') }} {{ stage.day }} / {{ store.walkingPlan().length }}
-                    @if (store.offline()) {
-                      · {{ locale.t('offline') }}
-                    }
-                  </p>
-                  <h1>
-                    @if (store.completed()) {
-                      {{ locale.t('trailFinished') }}
-                    } @else if (store.walkClosed()) {
-                      {{ locale.t('walkStopped') }}
-                    } @else {
-                      {{ stage.from }} <span aria-hidden="true">→</span> {{ stage.to }}
-                    }
-                  </h1>
+        <div class="map-top">
+          <div #mapTop>
+            @if (walkingView() && !store.walkClosed()) {
+              <section class="navigation-card surface">
+                <span class="navigation-symbol"
+                  ><ion-icon
+                    [name]="
+                      store.navigation().kind === 'finish' ? 'ribbon-outline' : 'arrow-up-outline'
+                    "
+                    [style.transform]="'rotate(' + store.navigation().rotation + 'deg)'"
+                    aria-hidden="true"
+                  ></ion-icon
+                ></span>
+                <div class="navigation-copy">
+                  <p class="kicker">{{ navigationDistance(store.navigation().metres) }}</p>
+                  <h1>{{ locale.t(navigationTitle()) }}</h1>
+                  <p>{{ locale.t('towardsStop', { place: stage.to }) }}</p>
                 </div>
-                <div class="stage-tools">
-                  <button
-                    type="button"
-                    class="weather"
-                    [disabled]="store.offline()"
-                    (click)="showForecast()"
-                    [attr.aria-label]="locale.t('forecast')"
-                    [attr.title]="store.offline() ? locale.t('connectionRequired') : null"
+                <button
+                  class="weather navigation-weather"
+                  type="button"
+                  [disabled]="store.offline()"
+                  [attr.aria-label]="locale.t('forecast')"
+                  (click)="showForecast()"
+                >
+                  <ion-icon
+                    [name]="store.offline() ? 'cloud-offline-outline' : weather().icon"
+                    aria-hidden="true"
+                  ></ion-icon>
+                  @if (!store.offline()) {
+                    {{ weather().temperature }}°
+                  }
+                </button>
+                <div class="navigation-footer">
+                  <span
+                    >{{ locale.number(store.walkingDayRemaining(), 1) }} km ·
+                    {{ locale.t('walkingTime', eta()) }}</span
                   >
-                    <ion-icon
-                      [name]="store.offline() ? 'cloud-offline-outline' : weather().icon"
-                      aria-hidden="true"
-                    ></ion-icon>
-                    @if (!store.offline()) {
-                      <strong>{{ weather().temperature }}°</strong>
+                </div>
+              </section>
+            } @else {
+              <section class="stage-card surface">
+                <div class="stage-head">
+                  <div>
+                    <p class="kicker">
+                      {{ locale.t('stage') }} {{ stage.day }} / {{ store.walkingPlan().length }}
+                      @if (store.offline()) {
+                        · {{ locale.t('offline') }}
+                      }
+                    </p>
+                    <h1>
+                      @if (store.completed()) {
+                        {{ locale.t('trailFinished') }}
+                      } @else if (store.walkClosed()) {
+                        {{ locale.t('walkStopped') }}
+                      } @else {
+                        {{ stage.from }} <span aria-hidden="true">→</span> {{ stage.to }}
+                      }
+                    </h1>
+                  </div>
+                  <div class="stage-tools">
+                    <button
+                      type="button"
+                      class="weather"
+                      [disabled]="store.offline()"
+                      (click)="showForecast()"
+                      [attr.aria-label]="locale.t('forecast')"
+                      [attr.title]="store.offline() ? locale.t('connectionRequired') : null"
+                    >
                       <ion-icon
-                        class="weather-arrow"
-                        name="chevron-forward-outline"
+                        [name]="store.offline() ? 'cloud-offline-outline' : weather().icon"
                         aria-hidden="true"
                       ></ion-icon>
-                    }
-                  </button>
-                  <button
-                    class="icon-button alert-button"
-                    type="button"
-                    [attr.aria-label]="locale.t('warnings')"
-                    (click)="openSheet.set('warnings')"
-                  >
-                    <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
-                    @if (store.warnings().length) {
-                      <span aria-hidden="true"></span>
-                    }
-                  </button>
+                      @if (!store.offline()) {
+                        <strong>{{ weather().temperature }}°</strong>
+                        <ion-icon
+                          class="weather-arrow"
+                          name="chevron-forward-outline"
+                          aria-hidden="true"
+                        ></ion-icon>
+                      }
+                    </button>
+                    <button
+                      class="icon-button alert-button"
+                      type="button"
+                      [attr.aria-label]="locale.t('warnings')"
+                      (click)="openSheet.set('warnings')"
+                    >
+                      <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+                      @if (store.warnings().length) {
+                        <span aria-hidden="true"></span>
+                      }
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div class="metrics">
-                <div>
-                  <strong>{{ locale.number(store.state().distance, 1) }} <span>km</span></strong
-                  ><small>{{ locale.t('doneKm') }}</small>
+                <div class="metrics">
+                  <div>
+                    <strong>{{ locale.number(store.state().distance, 1) }} <span>km</span></strong
+                    ><small>{{ locale.t('doneKm') }}</small>
+                  </div>
+                  <div>
+                    <strong
+                      >{{ locale.number(store.walkingDayRemaining(), 1) }} <span>km</span></strong
+                    ><small>{{ locale.t('stageKm') }}</small>
+                  </div>
+                  <div>
+                    <strong>{{ locale.number(store.remaining(), 1) }} <span>km</span></strong
+                    ><small>{{ locale.t('totalKm') }}</small>
+                  </div>
                 </div>
-                <div>
-                  <strong
-                    >{{ locale.number(store.walkingDayRemaining(), 1) }} <span>km</span></strong
-                  ><small>{{ locale.t('stageKm') }}</small>
-                </div>
-                <div>
-                  <strong>{{ locale.number(store.remaining(), 1) }} <span>km</span></strong
-                  ><small>{{ locale.t('totalKm') }}</small>
-                </div>
-              </div>
-            </section>
-          }
-          <div class="map-toolbar">
-            <button
-              class="explore-button"
-              type="button"
-              [class.layer-active]="stays.showPins() && !store.offline()"
-              [disabled]="store.offline()"
-              [attr.title]="store.offline() ? locale.t('connectionRequired') : null"
-              (click)="showStays()"
-            >
-              <ion-icon
-                [name]="store.offline() ? 'cloud-offline-outline' : 'bed-outline'"
-                aria-hidden="true"
-              ></ion-icon
-              >{{ locale.t('lodging') }}
-            </button>
-            <button
-              class="explore-button"
-              [class.layer-active]="feed.showPins()"
-              type="button"
-              [attr.aria-label]="locale.t('trailComments')"
-              (click)="openComments()"
-            >
-              <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon
-              >{{ locale.t('comments') }}
-            </button>
-          </div>
-          @if (store.warnings().length && !warningDismissed() && !selected()) {
-            <div class="stage-warning" role="status">
-              <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
-              <span>{{ warningTitle() }}</span>
+              </section>
+            }
+            <div class="map-toolbar">
               <button
+                class="explore-button"
                 type="button"
-                class="stage-warning-action"
-                (click)="openSheet.set('warnings')"
+                [class.layer-active]="stays.showPins() && !store.offline()"
+                [disabled]="store.offline()"
+                [attr.title]="store.offline() ? locale.t('connectionRequired') : null"
+                (click)="showStays()"
               >
-                {{ locale.t('viewWarnings') }}
+                <ion-icon
+                  [name]="store.offline() ? 'cloud-offline-outline' : 'bed-outline'"
+                  aria-hidden="true"
+                ></ion-icon
+                >{{ locale.t('lodging') }}
               </button>
               <button
+                class="explore-button"
+                [class.layer-active]="feed.showPins()"
                 type="button"
-                class="stage-warning-close"
-                [attr.aria-label]="locale.t('close')"
-                (click)="warningDismissed.set(true)"
+                [attr.aria-label]="locale.t('trailComments')"
+                (click)="openComments()"
               >
-                ×
+                <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon
+                >{{ locale.t('comments') }}
+              </button>
+            </div>
+            @if (store.warnings().length && !warningDismissed() && !selected()) {
+              <div class="stage-warning" role="status">
+                <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+                <span>{{ warningTitle() }}</span>
+                <button
+                  type="button"
+                  class="stage-warning-action"
+                  (click)="openSheet.set('warnings')"
+                >
+                  {{ locale.t('viewWarnings') }}
+                </button>
+                <button
+                  type="button"
+                  class="stage-warning-close"
+                  [attr.aria-label]="locale.t('close')"
+                  (click)="warningDismissed.set(true)"
+                >
+                  ×
+                </button>
+              </div>
+            }
+          </div>
+          @if (displayMap() && mapLoaded()) {
+            <div class="zoom-controls">
+              <button
+                class="icon-button"
+                type="button"
+                [attr.aria-label]="locale.t('zoomIn')"
+                (click)="zoomRequest.set({ delta: 1 })"
+              >
+                +
+              </button>
+              <button
+                class="icon-button"
+                type="button"
+                [attr.aria-label]="locale.t('zoomOut')"
+                (click)="zoomRequest.set({ delta: -1 })"
+              >
+                −
               </button>
             </div>
           }
@@ -218,7 +241,7 @@
       @if (displayMap() && mapLoaded() === true) {
         <div
           class="map-view-switch"
-          [class.with-arrival]="store.completed() || !!store.arrival()"
+          [class.with-arrival]="!!store.arrival()"
           role="group"
           [attr.aria-label]="locale.t('mapLabel')"
         >
@@ -262,22 +285,7 @@
         }
         <button class="sos" type="button" (click)="sos()">SOS</button>
       </div>
-      @if (store.completed()) {
-        <div class="arrival-banner surface">
-          <button class="arrival-main" type="button" (click)="store.completionOpen.set(true)">
-            <span class="arrival-symbol"
-              ><ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon
-            ></span>
-            <span class="arrival-copy"
-              ><span class="kicker">{{ locale.t('trailFinished') }}</span
-              ><strong>{{ route.destination }}</strong
-              ><span class="arrival-link"
-                >{{ locale.t('viewSummary') }}
-                <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon></span
-            ></span>
-          </button>
-        </div>
-      } @else if (store.arrival(); as arrival) {
+      @if (store.arrival(); as arrival) {
         <div class="arrival-banner surface">
           <button
             class="arrival-main"
@@ -330,28 +338,6 @@
     }
   }
 </main>
-
-@if (store.completionOpen() && store.completed() && store.route(); as route) {
-  <app-sheet [title]="locale.t('trailFinished')" (closed)="store.completionOpen.set(false)">
-    <div class="sheet-stack">
-      <div class="finish-hero">
-        <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
-        <p class="kicker">{{ route.name }}</p>
-        <h2>{{ locale.t('trailFinishedCopy', { name: route.destination }) }}</h2>
-        <span
-          >{{ route.km }} km · {{ store.walkingPlan().length }}
-          {{ locale.t('etapas').toLowerCase() }}</span
-        >
-      </div>
-      <button class="primary wide" type="button" (click)="finishAction('passport')">
-        {{ locale.t('viewPassport') }}
-      </button>
-      <button class="secondary wide" type="button" (click)="finishAction('route')">
-        {{ locale.t('anotherRoute') }}
-      </button>
-    </div>
-  </app-sheet>
-}
 
 @if (openSheet() === 'detail' && selected(); as item) {
   <app-lodging-flow

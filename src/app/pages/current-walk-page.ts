@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { DemoStore } from '../demo/demo-store';
@@ -64,7 +64,14 @@ export class CurrentWalkPage {
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   private readonly router = inject(Router);
-  protected readonly sections = sections;
+  private readonly content = viewChild(IonContent);
+  protected readonly availableSections = computed(() =>
+    this.store.walkInProgress()
+      ? sections
+      : sections.filter(
+          ({ id }) => id === 'journal' || id === 'credencial' || id === 'writeReviews',
+        ),
+  );
   protected readonly packingGroups = packingGroups;
   protected readonly items = packingGroups.flatMap(({ items }) => [...items]);
   protected readonly packed = computed(
@@ -111,6 +118,9 @@ export class CurrentWalkPage {
   });
 
   constructor() {
+    effect(() => {
+      if (this.store.walkClosed()) void this.content()?.scrollToTop();
+    });
     effect((onCleanup) => {
       const day = this.store.walkingDay();
       const offline = this.store.offline();

@@ -1,4 +1,10 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes, type CanActivateFn } from '@angular/router';
+import { DemoStore } from './demo/demo-store';
+
+export const walkOnlyTabs = new Set(['etapas', 'mapa']);
+const requireOpenWalk: CanActivateFn = () =>
+  !inject(DemoStore).walkClosed() || inject(Router).createUrlTree(['/caminho']);
 
 export const tabs = [
   {
@@ -30,7 +36,9 @@ export const tabs = [
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'mapa' },
-  ...tabs,
+  ...tabs.map((tab) =>
+    walkOnlyTabs.has(tab.path) ? { ...tab, canActivate: [requireOpenWalk] } : tab,
+  ),
   {
     path: 'credencial',
     loadComponent: () => import('./pages/passport-page').then((m) => m.PassportPage),

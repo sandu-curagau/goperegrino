@@ -31,7 +31,10 @@
         >
           <ion-tab-bar slot="bottom">
             @for (tab of tabs; track tab.path) {
-              <ion-tab-button [tab]="tab.path">
+              <ion-tab-button
+                [tab]="tab.path"
+                [disabled]="walkOnlyTabs.has(tab.path) && !store.walkInProgress()"
+              >
                 <span class="tab-icon">
                   <ion-icon [name]="tab.icon" aria-hidden="true"></ion-icon>
                 </span>
