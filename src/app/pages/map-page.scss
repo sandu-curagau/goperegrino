@@ -172,6 +172,9 @@
 .map-actions > button {
   box-shadow: 0 3px 12px #173d473d;
 }
+.demo-test-button {
+  display: none;
+}
 .sos {
   min-width: 51px;
   min-height: 47px;
@@ -259,11 +262,21 @@
   bottom: calc(158px + var(--map-ad-height, 0px));
 }
 @media (width <= 900px) {
-  .map-actions {
-    bottom: calc(74px + var(--map-ad-height, 0px));
+  .demo-test-button {
+    display: grid;
+    width: 51px;
+    height: 44px;
+    grid-template-rows: 21px auto;
+    align-content: center;
+    gap: 1px;
+    color: white;
+    background: var(--brand);
   }
-  .has-arrival .map-actions {
-    bottom: calc(202px + var(--map-ad-height, 0px));
+  .demo-test-button span {
+    font-size: 8px;
+    font-weight: 750;
+    line-height: 1.2;
+    text-transform: uppercase;
   }
 }
 

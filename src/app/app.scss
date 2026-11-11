@@ -330,11 +330,6 @@ ion-label {
     display: none;
   }
 }
-@media (width <= 900px) {
-  .has-map-ad .open-panel {
-    bottom: calc(119px + var(--ion-safe-area-bottom, 0px));
-  }
-}
 @supports (zoom: calc(100px / 100px)) {
   @media (width > 900px) and (height < 888px) {
     .presentation {

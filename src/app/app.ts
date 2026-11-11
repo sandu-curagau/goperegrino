@@ -16,6 +16,7 @@ import {
   bedOutline,
   cellular,
   closeOutline,
+  codeSlashOutline,
   footstepsOutline,
   mapOutline,
   optionsOutline,
@@ -84,9 +85,15 @@ export class App {
   protected readonly locale = inject(Locale);
   protected readonly activeTab = signal('mapa');
   protected readonly creditOpen = signal(false);
+  protected readonly testIcon = codeSlashOutline;
 
   constructor() {
     inject(Appearance);
+    effect(() => {
+      if (!this.store.demoOpen()) return;
+      this.demoPanel()?.nativeElement.showModal();
+      this.store.demoOpen.set(false);
+    });
     effect(() => {
       if (this.store.walkClosed()) this.demoPanel()?.nativeElement.close();
     });

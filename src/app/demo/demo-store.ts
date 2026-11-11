@@ -192,6 +192,7 @@ export class DemoStore {
   readonly mapLodging = signal<string | null>(null);
   readonly mapNearbyPoint = signal<Waypoint | null>(null);
   readonly premiumOpen = signal(false);
+  readonly demoOpen = signal(false);
 
   readonly route = computed(() => this.routes().find((item) => item.id === this.state().routeId));
   private readonly plannedDays = computed(() => this.state().days);

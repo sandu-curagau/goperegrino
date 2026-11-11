@@ -9,6 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
+import { codeSlashOutline } from 'ionicons/icons';
 import { DemoStore } from '../demo/demo-store';
 import { Locale, Message } from '../demo/locale';
 import { lodgingPoint, Point, type TrailPlaceKind, type Waypoint } from '../demo/models';
@@ -59,6 +60,7 @@ type MapSheet =
   ],
 })
 export class MapPage {
+  protected readonly testIcon = codeSlashOutline;
   protected readonly store = inject(DemoStore);
   protected readonly locale = inject(Locale);
   protected readonly feed = inject(TrailCommentFeed);

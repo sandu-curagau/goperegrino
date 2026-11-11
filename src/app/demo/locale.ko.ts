@@ -1,6 +1,7 @@
 import type { Message } from './locale';
 
 export const translations = {
+  testDemo: '테스트',
   placeViewDetails: '상세 보기',
   placeHours: '영업시간',
   placeDaily: '매일',

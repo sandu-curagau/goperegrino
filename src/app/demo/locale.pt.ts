@@ -1,6 +1,7 @@
 import type { Message } from './locale';
 
 export const translations = {
+  testDemo: 'Testar',
   placeViewDetails: 'Ver detalhes',
   placeHours: 'Horário',
   placeDaily: 'Todos os dias',

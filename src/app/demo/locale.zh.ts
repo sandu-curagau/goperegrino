@@ -1,6 +1,7 @@
 import type { Message } from './locale';
 
 export const chinese = {
+  testDemo: '测试',
   placeViewDetails: '查看详情',
   placeHours: '营业时间',
   placeDaily: '每天',

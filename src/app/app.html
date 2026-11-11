@@ -10,11 +10,7 @@
     </header>
 
     <div class="phone">
-      <div
-        class="phone-screen"
-        [class.has-map-ad]="activeTab() === 'mapa' && !store.premium()"
-        [class.journal-mode]="activeTab() === 'diario'"
-      >
+      <div class="phone-screen" [class.journal-mode]="activeTab() === 'diario'">
         <div class="status-bar" aria-hidden="true">
           <span>9:41</span>
           <span class="status-island"></span>
@@ -62,7 +58,9 @@
           </div>
         }
 
-        @if (store.started() && !store.planningAnother()) {
+        @if (
+          store.started() && !store.planningAnother() && (activeTab() !== 'mapa' || !store.route())
+        ) {
           <button
             type="button"
             class="open-panel"
@@ -70,7 +68,7 @@
             aria-haspopup="dialog"
             (click)="demoPanel.showModal()"
           >
-            <ion-icon name="options-outline" aria-hidden="true"></ion-icon>
+            <ion-icon [icon]="testIcon" aria-hidden="true"></ion-icon>
           </button>
         }
         <div class="home-indicator" aria-hidden="true"></div>
@@ -79,9 +77,7 @@
 
     <aside class="demo-panel" aria-labelledby="demo-title">
       <div class="panel-heading">
-        <span class="panel-icon"
-          ><ion-icon name="options-outline" aria-hidden="true"></ion-icon
-        ></span>
+        <span class="panel-icon"><ion-icon [icon]="testIcon" aria-hidden="true"></ion-icon></span>
         <h2 id="demo-title">{{ locale.t('demo') }}</h2>
       </div>
       <app-demo-controls />
@@ -90,9 +86,7 @@
 
   <dialog #demoPanel class="mobile-panel" aria-labelledby="mobile-demo-title">
     <form method="dialog">
-      <span class="panel-icon"
-        ><ion-icon name="options-outline" aria-hidden="true"></ion-icon
-      ></span>
+      <span class="panel-icon"><ion-icon [icon]="testIcon" aria-hidden="true"></ion-icon></span>
       <h2 id="mobile-demo-title">{{ locale.t('demo') }}</h2>
       <button type="submit" class="close-panel" [attr.aria-label]="locale.t('close')">
         <ion-icon name="close-outline" aria-hidden="true"></ion-icon>

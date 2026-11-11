@@ -14,14 +14,6 @@
 .map-view-switch.with-arrival {
   bottom: calc(158px + var(--map-ad-height, 0px));
 }
-@media (width <= 900px) {
-  .map-view-switch {
-    bottom: calc(74px + var(--map-ad-height, 0px));
-  }
-  .map-view-switch.with-arrival {
-    bottom: calc(202px + var(--map-ad-height, 0px));
-  }
-}
 .map-view-switch button {
   display: flex;
   align-items: center;

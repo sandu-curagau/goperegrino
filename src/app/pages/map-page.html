@@ -279,6 +279,16 @@
         </div>
       }
       <div class="map-actions">
+        <button
+          class="icon-button demo-test-button"
+          type="button"
+          [attr.aria-label]="locale.t('demo')"
+          aria-haspopup="dialog"
+          (click)="store.demoOpen.set(true)"
+        >
+          <ion-icon [icon]="testIcon" aria-hidden="true"></ion-icon>
+          <span>{{ locale.t('testDemo') }}</span>
+        </button>
         @if (displayMap()) {
           <button
             class="icon-button"

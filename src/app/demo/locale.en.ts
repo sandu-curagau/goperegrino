@@ -1,4 +1,5 @@
 export const translations = {
+  testDemo: 'Test',
   placeViewDetails: 'View details',
   placeHours: 'Opening hours',
   placeDaily: 'Every day',
