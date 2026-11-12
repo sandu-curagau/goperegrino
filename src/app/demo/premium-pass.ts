@@ -6,7 +6,7 @@ import { Sheet } from './sheet';
 
 const plans = [
   { days: 7, cents: 299, label: 'days7' },
-  { days: 30, cents: 499, label: 'days30' },
+  { days: 30, cents: 599, label: 'days30' },
 ] as const;
 const welcomeDiscount = 20;
 
