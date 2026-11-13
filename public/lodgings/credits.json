@@ -1,0 +1,26 @@
+[
+  {
+    "file": "room-1.jpg",
+    "source": "https://images.unsplash.com/photo-1611892440504-42a792e24d32",
+    "license": "https://unsplash.com/license",
+    "usage": "Illustrative lodging photographs for the prototype; not photos of the fictitious establishments."
+  },
+  {
+    "file": "room-2.jpg",
+    "source": "https://images.unsplash.com/photo-1566665797739-1674de7a421a",
+    "license": "https://unsplash.com/license",
+    "usage": "Illustrative lodging photographs for the prototype; not photos of the fictitious establishments."
+  },
+  {
+    "file": "room-3.jpg",
+    "source": "https://images.unsplash.com/photo-1590490360182-c33d57733427",
+    "license": "https://unsplash.com/license",
+    "usage": "Illustrative lodging photographs for the prototype; not photos of the fictitious establishments."
+  },
+  {
+    "file": "room-4.jpg",
+    "source": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304",
+    "license": "https://unsplash.com/license",
+    "usage": "Illustrative lodging photographs for the prototype; not photos of the fictitious establishments."
+  }
+]

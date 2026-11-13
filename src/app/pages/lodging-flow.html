@@ -5,7 +5,7 @@
       <div class="photo-frame">
         <img
           #picture
-          [src]="store.offline() ? 'stay.svg' : item.photos[photo()]"
+          [src]="item.photos[photo()] || 'stay.svg'"
           (error)="picture.src = 'stay.svg'"
           [alt]="locale.t('photo')"
         />

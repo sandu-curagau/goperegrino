@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { locatePlaces } from './localizar-pontos.mjs';
 import { detailPlaces } from './detalhar-pontos.mjs';
+import { lodgingPhotos } from './lodging-photos.mjs';
 
 const data = new URL('../public/data/', import.meta.url);
 const lodgingLocations = JSON.parse(
@@ -251,7 +252,7 @@ function accommodation({
     currency: 'EUR',
     review_score: Number((8 + (((seed + 3) * stageId) % 18) / 10).toFixed(1)),
     review_count: 21 + ((stageId * 33 + seed * 29) % 340),
-    photos: [1, 2, 3].map((photo) => `https://picsum.photos/seed/${id}-${photo}/640/420`),
+    photos: lodgingPhotos(id),
     facilities: facilities.filter((_, feature) => feature === 0 || (seed + feature) % 3 !== 0),
     cancellation: 'Cancelamento gratuito até 48 horas antes da chegada.',
     partner,
