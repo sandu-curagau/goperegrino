@@ -51,6 +51,16 @@ const placePinLayers = ['trail-place-pin', 'trail-place-clusters', 'trail-place-
 const lodgingPinLayers = ['lodging-pin', 'lodging-clusters'];
 let protocolRegistered = false;
 
+function appendPopupPhoto(content: HTMLElement, source: string | undefined, name: string): void {
+  if (!source) return;
+  const photo = document.createElement('img');
+  photo.className = 'pin-photo';
+  photo.src = source;
+  photo.alt = name;
+  photo.addEventListener('error', () => photo.remove(), { once: true });
+  content.append(photo);
+}
+
 function headingTo(from: Point, to: Point): number {
   const east = (to[0] - from[0]) * Math.cos(from[1] * radians);
   return Math.atan2(east, to[1] - from[1]) / radians;
@@ -264,14 +274,7 @@ export class TrailMap {
       close.setAttribute('aria-label', this.locale.t('close'));
       close.onclick = () => this.clearSelection.emit();
       content.append(kind, title, location, close);
-      if (point.photos?.length) {
-        const photo = document.createElement('img');
-        photo.className = 'place-pin-photo';
-        photo.src = point.photos[0];
-        photo.alt = this.locale.t('photo');
-        photo.addEventListener('error', () => photo.remove(), { once: true });
-        content.append(photo);
-      }
+      appendPopupPhoto(content, point.photos?.[0], placeTitle(point, this.locale));
       const position = untracked(() => this.store.progress().position);
       if (position) {
         const distance = document.createElement('span');
@@ -633,7 +636,9 @@ export class TrailMap {
     close.textContent = '×';
     close.setAttribute('aria-label', this.locale.t('close'));
     close.addEventListener('click', () => this.clearSelection.emit());
-    content.append(type, name, price, details, close);
+    content.append(type, name);
+    appendPopupPhoto(content, item.photos[0], item.name);
+    content.append(price, details, close);
     const popup = new Popup({
       closeButton: false,
       closeOnClick: false,
